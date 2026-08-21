@@ -138,8 +138,6 @@ export default function Home() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const [selectedFeature, setSelectedFeature] = useState<Feature | null>(null);
-  const [selectedNaat, setSelectedNaat] = useState<Naat | null>(null);
   const [naatFilter, setNaatFilter] = useState("All");
   const [dhikr, setDhikr] = useState(18);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -147,15 +145,17 @@ export default function Home() {
   const [toast, setToast] = useState("");
 
   useEffect(() => {
-    setNow(new Date());
+    const hydrateTimer = window.setTimeout(() => {
+      setNow(new Date());
+      const storedTheme = window.localStorage.getItem("noor-theme");
+      const storedSaved = window.localStorage.getItem("noor-saved-naats");
+      const storedDhikr = window.localStorage.getItem("noor-dhikr");
+      if (storedTheme === "dark") setDark(true);
+      if (storedSaved) setSaved(JSON.parse(storedSaved));
+      if (storedDhikr) setDhikr(Number(storedDhikr));
+    }, 0);
     const timer = window.setInterval(() => setNow(new Date()), 1000);
-    const storedTheme = window.localStorage.getItem("noor-theme");
-    const storedSaved = window.localStorage.getItem("noor-saved-naats");
-    const storedDhikr = window.localStorage.getItem("noor-dhikr");
-    if (storedTheme === "dark") setDark(true);
-    if (storedSaved) setSaved(JSON.parse(storedSaved));
-    if (storedDhikr) setDhikr(Number(storedDhikr));
-    return () => window.clearInterval(timer);
+    return () => { window.clearTimeout(hydrateTimer); window.clearInterval(timer); };
   }, []);
 
   useEffect(() => { window.localStorage.setItem("noor-theme", dark ? "dark" : "light"); }, [dark]);
@@ -201,12 +201,14 @@ export default function Home() {
       window.location.assign("/namaz");
       return;
     }
-    setSelectedFeature(feature);
+    window.location.assign(`/topics/${feature.id}`);
   };
+
+  const openNaat = (naat: Naat) => window.location.assign(`/naat/${naat.id}`);
 
   const openItem = (item: Feature | Naat) => {
     if ("subtitle" in item) openFeature(item);
-    else setSelectedNaat(item);
+    else openNaat(item);
     setSearchOpen(false);
   };
 
@@ -252,9 +254,9 @@ export default function Home() {
 
       <section className="quick-tools" aria-label="Daily tools">
         <button onClick={() => openFeature(features.find((feature) => feature.id === "namaz")!)}><span><Icon name="prayer"/></span><div><strong>Prayer & Wudu</strong><small>Complete Hanafi learning guide</small></div><Icon name="chevron" size={16}/></button>
-        <button onClick={() => setSelectedFeature(features.find((feature) => feature.id === "quotes")!)}><span><Icon name="book"/></span><div><strong>Quran</strong><small>Read, reflect and save</small></div><Icon name="chevron" size={16}/></button>
-        <button onClick={() => setSelectedFeature(features.find((feature) => feature.id === "durood")!)}><span><Icon name="tasbih"/></span><div><strong>Dhikr & Durood</strong><small>{dhikr} recitations today</small></div><Icon name="chevron" size={16}/></button>
-        <button onClick={() => setSelectedFeature(features.find((feature) => feature.id === "festivals")!)}><span><Icon name="calendar"/></span><div><strong>Islamic Calendar</strong><small>Events and reminders</small></div><Icon name="chevron" size={16}/></button>
+        <button onClick={() => openFeature(features.find((feature) => feature.id === "quotes")!)}><span><Icon name="book"/></span><div><strong>Quran</strong><small>Read, reflect and save</small></div><Icon name="chevron" size={16}/></button>
+        <button onClick={() => openFeature(features.find((feature) => feature.id === "durood")!)}><span><Icon name="tasbih"/></span><div><strong>Dhikr & Durood</strong><small>{dhikr} recitations today</small></div><Icon name="chevron" size={16}/></button>
+        <button onClick={() => openFeature(features.find((feature) => feature.id === "festivals")!)}><span><Icon name="calendar"/></span><div><strong>Islamic Calendar</strong><small>Events and reminders</small></div><Icon name="chevron" size={16}/></button>
       </section>
 
       <section className="content-section naat-section" id="naat-library">
@@ -264,26 +266,26 @@ export default function Home() {
           <div className="naat-list">
             {filteredNaats.map((naat, index) => (
               <article className="naat-row" key={naat.id}>
-                <button className="naat-index" type="button" onClick={() => setSelectedNaat(naat)}>{String(index + 1).padStart(2, "0")}</button>
-                <button className="naat-info" type="button" onClick={() => setSelectedNaat(naat)}><span>{naat.category}</span><h3>{naat.title}</h3><p>Writer: {naat.writer} <i/> Reciter: {naat.reciter}</p></button>
+                <button className="naat-index" type="button" onClick={() => openNaat(naat)}>{String(index + 1).padStart(2, "0")}</button>
+                <button className="naat-info" type="button" onClick={() => openNaat(naat)}><span>{naat.category}</span><h3>{naat.title}</h3><p>Writer: {naat.writer} <i/> Reciter: {naat.reciter}</p></button>
                 <div className="language-tags">{naat.languages.map((language) => <span key={language}>{language}</span>)}</div>
                 <button className={saved.includes(naat.id) ? "save-button saved" : "save-button"} type="button" onClick={() => toggleSaved(naat.id)} aria-label={saved.includes(naat.id) ? "Remove saved Naat" : "Save Naat"}><Icon name="heart" size={17}/></button>
-                <button className="row-arrow" type="button" onClick={() => setSelectedNaat(naat)} aria-label={`Read ${naat.title}`}><Icon name="arrow" size={17}/></button>
+                <button className="row-arrow" type="button" onClick={() => openNaat(naat)} aria-label={`Read ${naat.title}`}><Icon name="arrow" size={17}/></button>
               </article>
             ))}
           </div>
           <aside className="library-aside">
             <p className="eyebrow">BROWSE COLLECTIONS</p>
-            <button onClick={() => setSelectedFeature(features.find((feature) => feature.id === "writers")!)}><span className="aside-icon"><Icon name="quote"/></span><div><strong>By writer</strong><small>Poets and complete works</small></div><b>42</b></button>
-            <button onClick={() => setSelectedFeature(features.find((feature) => feature.id === "reciters")!)}><span className="aside-icon"><Icon name="people"/></span><div><strong>By reciter</strong><small>Naat Khawan profiles</small></div><b>68</b></button>
-            <button onClick={() => setSelectedFeature(features.find((feature) => feature.id === "lyrics")!)}><span className="aside-icon"><Icon name="book"/></span><div><strong>By language</strong><small>Roman, Urdu, Hindi</small></div><b>03</b></button>
+            <button onClick={() => openFeature(features.find((feature) => feature.id === "writers")!)}><span className="aside-icon"><Icon name="quote"/></span><div><strong>By writer</strong><small>Poets and complete works</small></div><b>42</b></button>
+            <button onClick={() => openFeature(features.find((feature) => feature.id === "reciters")!)}><span className="aside-icon"><Icon name="people"/></span><div><strong>By reciter</strong><small>Naat Khawan profiles</small></div><b>68</b></button>
+            <button onClick={() => openFeature(features.find((feature) => feature.id === "lyrics")!)}><span className="aside-icon"><Icon name="book"/></span><div><strong>By language</strong><small>Roman, Urdu, Hindi</small></div><b>03</b></button>
             <div className="aside-note"><Icon name="info" size={17}/><p>Lyrics should be published only after rights and source checks. This build demonstrates the complete reader experience without copying full songs.</p></div>
           </aside>
         </div>
       </section>
 
       <section className="belief-band" id="faith">
-        <div className="belief-copy"><p className="eyebrow">FAITH, PRACTICE & CHARACTER</p><h2>A clear path through the essentials of Islam.</h2><p>Short lessons, visible references and a calm progression—made for learners at every stage.</p><button className="light-button" onClick={() => setSelectedFeature(features.find((feature) => feature.id === "ahle-sunnat")!)}>Begin with Ahle Sunnat <Icon name="arrow" size={17}/></button></div>
+        <div className="belief-copy"><p className="eyebrow">FAITH, PRACTICE & CHARACTER</p><h2>A clear path through the essentials of Islam.</h2><p>Short lessons, visible references and a calm progression—made for learners at every stage.</p><button className="light-button" onClick={() => openFeature(features.find((feature) => feature.id === "ahle-sunnat")!)}>Begin with Ahle Sunnat <Icon name="arrow" size={17}/></button></div>
         <div className="pillars-panel"><div className="pillar-heading"><span>THE FIVE PILLARS</span><small>Tap any pillar to explore</small></div>{pillars.map((pillar) => <button type="button" key={pillar.title} onClick={() => openFeature(features.find((feature) => feature.id === ({Shahadah:"tawheed", Salah:"namaz", Zakat:"zakat", Sawm:"roza", Hajj:"hajj"} as Record<string,string>)[pillar.title])!)}><span>{pillar.n}</span><div><strong>{pillar.title}</strong><small>{pillar.text}</small></div><Icon name="chevron" size={16}/></button>)}</div>
       </section>
 
@@ -294,7 +296,7 @@ export default function Home() {
       </section>
 
       <section className="content-section family-section">
-        <div className="section-heading"><div><p className="eyebrow">FAMILY & SACRED HISTORY</p><h2>A respectful family-tree experience.</h2><p>Text-only, easy to follow and designed for sourced biographies.</p></div><button className="text-button" onClick={() => setSelectedFeature(features.find((feature) => feature.id === "family-tree")!)}>Open full tree <Icon name="arrow" size={17}/></button></div>
+        <div className="section-heading"><div><p className="eyebrow">FAMILY & SACRED HISTORY</p><h2>A respectful family-tree experience.</h2><p>Text-only, easy to follow and designed for sourced biographies.</p></div><button className="text-button" onClick={() => openFeature(features.find((feature) => feature.id === "family-tree")!)}>Open full tree <Icon name="arrow" size={17}/></button></div>
         <div className="family-tree" role="img" aria-label="Simplified family tree of Prophet Muhammad, peace be upon him">
           <div className="tree-node parents"><span>PARENTS</span><strong>Hazrat Abdullah & Sayyidah Amina</strong></div><i className="tree-line vertical one"/>
           <div className="tree-node prophet"><span>THE BELOVED PROPHET ﷺ</span><strong>Prophet Muhammad ﷺ</strong></div><i className="tree-line vertical two"/><i className="tree-line horizontal"/>
@@ -306,17 +308,17 @@ export default function Home() {
       <section className="community-section" id="community">
         <div className="community-head"><p className="eyebrow">COMMUNITY SERVICES</p><h2>Useful connections, handled with care.</h2><p>Directories and services are clearly separated from learning content, with verification and privacy notes where they matter.</p></div>
         <div className="service-grid">
-          {["donation", "matrimony", "jobs", "institutes"].map((id) => { const feature = features.find((item) => item.id === id)!; return <button className={`service-card ${id}`} type="button" key={id} onClick={() => setSelectedFeature(feature)}><div className="service-top"><span><Icon name={feature.icon}/></span><Icon name="arrow" size={18}/></div><p>{feature.eyebrow}</p><h3>{feature.title}</h3><span>{feature.subtitle}</span>{id === "donation" && <div className="donation-tags"><small>Food</small><small>Education</small><small>Medical</small></div>}{id === "jobs" && <div className="job-preview"><small>12 roles</small><small>5 cities</small></div>}</button>; })}
+          {["donation", "matrimony", "jobs", "institutes"].map((id) => { const feature = features.find((item) => item.id === id)!; return <button className={`service-card ${id}`} type="button" key={id} onClick={() => openFeature(feature)}><div className="service-top"><span><Icon name={feature.icon}/></span><Icon name="arrow" size={18}/></div><p>{feature.eyebrow}</p><h3>{feature.title}</h3><span>{feature.subtitle}</span>{id === "donation" && <div className="donation-tags"><small>Food</small><small>Education</small><small>Medical</small></div>}{id === "jobs" && <div className="job-preview"><small>12 roles</small><small>5 cities</small></div>}</button>; })}
         </div>
       </section>
 
       <section className="content-section quote-section">
-        <article className="quran-quote"><div className="quote-ornament">۞</div><p className="eyebrow">QURANIC REMINDER</p><blockquote lang="ar" dir="rtl">إِنَّ مَعَ الْعُسْرِ يُسْرًا</blockquote><h2>Indeed, with hardship comes ease.</h2><span>Surah Ash-Sharh · 94:6</span><button type="button" onClick={() => setSelectedFeature(features.find((feature) => feature.id === "quotes")!)}>Explore Quranic quotes <Icon name="arrow" size={16}/></button></article>
+        <article className="quran-quote"><div className="quote-ornament">۞</div><p className="eyebrow">QURANIC REMINDER</p><blockquote lang="ar" dir="rtl">إِنَّ مَعَ الْعُسْرِ يُسْرًا</blockquote><h2>Indeed, with hardship comes ease.</h2><span>Surah Ash-Sharh · 94:6</span><button type="button" onClick={() => openFeature(features.find((feature) => feature.id === "quotes")!)}>Explore Quranic quotes <Icon name="arrow" size={16}/></button></article>
         <div className="dhikr-panel"><p className="eyebrow">TODAY’S DHIKR</p><h3>SubhanAllah</h3><p>Glory be to Allah</p><button className="counter" type="button" onClick={() => setDhikr((value) => value + 1)} aria-label="Add one dhikr"><span className="counter-ring" style={{ "--progress": `${Math.min((dhikr / 33) * 360, 360)}deg` } as React.CSSProperties}><strong>{dhikr}</strong><small>OF 33</small></span></button><div><button type="button" onClick={() => setDhikr(0)}>Reset</button><span>Tap to count</span></div></div>
       </section>
 
       <section className="content-section faq-section">
-        <div className="section-heading"><div><p className="eyebrow">COMMON QUESTIONS</p><h2>Clear answers. Visible responsibility.</h2></div><button className="text-button" onClick={() => setSelectedFeature(features.find((feature) => feature.id === "faqs")!)}>Browse all FAQs <Icon name="arrow" size={17}/></button></div>
+        <div className="section-heading"><div><p className="eyebrow">COMMON QUESTIONS</p><h2>Clear answers. Visible responsibility.</h2></div><button className="text-button" onClick={() => openFeature(features.find((feature) => feature.id === "faqs")!)}>Browse all FAQs <Icon name="arrow" size={17}/></button></div>
         <div className="faq-list">{faqItems.map((item, index) => <article className={openFaq === index ? "open" : ""} key={item.q}><button type="button" onClick={() => setOpenFaq(openFaq === index ? null : index)} aria-expanded={openFaq === index}><span>{String(index + 1).padStart(2,"0")}</span><strong>{item.q}</strong><i>{openFaq === index ? "−" : "+"}</i></button>{openFaq === index && <p>{item.a}</p>}</article>)}</div>
       </section>
 
@@ -328,10 +330,6 @@ export default function Home() {
       </footer>
 
       {searchOpen && <div className="overlay" role="dialog" aria-modal="true" aria-label="Search NOOR"><button className="overlay-close" type="button" onClick={() => setSearchOpen(false)} aria-label="Close search"><Icon name="x"/></button><div className="search-dialog"><div className="search-input"><Icon name="search"/><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Naats, writers, scholars, pillars…"/><kbd>ESC</kbd></div><p className="search-label">{query ? `${searchResults.length} RESULTS` : "POPULAR IN NOOR"}</p><div className="search-results">{searchResults.map((item) => <button type="button" onClick={() => openItem(item)} key={item.id}><span><Icon name={"subtitle" in item ? item.icon : "book"}/></span><div><strong>{item.title}</strong><small>{"subtitle" in item ? `${item.category} · ${item.subtitle}` : `${item.category} · ${item.writer}`}</small></div><Icon name="chevron" size={16}/></button>)}</div></div></div>}
-
-      {selectedFeature && <div className="overlay" role="dialog" aria-modal="true" aria-label={selectedFeature.title}><button className="overlay-close" type="button" onClick={() => setSelectedFeature(null)} aria-label="Close detail"><Icon name="x"/></button><article className="detail-dialog"><div className="detail-top"><span className="detail-icon"><Icon name={selectedFeature.icon} size={26}/></span><div><p>{selectedFeature.eyebrow} · {selectedFeature.category}</p><h2>{selectedFeature.title}</h2><span>{selectedFeature.subtitle}</span></div></div><p className="detail-description">{selectedFeature.description}</p><div className="detail-points">{selectedFeature.points.map((point) => <div key={point}><span><Icon name="check" size={15}/></span>{point}</div>)}</div>{selectedFeature.id === "donation" && <div className="demo-box"><strong>Choose a giving category</strong><div>{["Food", "Education", "Medical", "Masjid", "Emergency"].map((item) => <button key={item} type="button" onClick={() => setToast(`${item} category selected`)}>{item}</button>)}</div><small>Payments remain disabled until a verified organization and secure payment provider are connected.</small></div>}{selectedFeature.id === "matrimony" && <div className="demo-box"><strong>Privacy-first registration</strong><p>Profiles will not be public by default. Identity checks, moderation and family involvement settings are required before launch.</p><button type="button" onClick={() => setToast("Matrimony interest noted for this preview")}>View planned process</button></div>}{selectedFeature.id === "jobs" && <div className="demo-box"><strong>Sample opportunity filters</strong><div>{["Teaching", "Administration", "Charity", "Media", "Remote"].map((item) => <button key={item} type="button" onClick={() => setToast(`${item} filter selected`)}>{item}</button>)}</div></div>}<div className="detail-actions"><button className="primary-action" type="button" onClick={() => setToast(`${selectedFeature.title} added to your learning list`)}>Add to my list</button><button type="button" onClick={() => setSelectedFeature(null)}>Close</button></div><p className="review-note"><Icon name="info" size={14}/> Content structure is ready; final religious text and directory entries require verification before publication.</p></article></div>}
-
-      {selectedNaat && <div className="overlay" role="dialog" aria-modal="true" aria-label={selectedNaat.title}><button className="overlay-close" type="button" onClick={() => setSelectedNaat(null)} aria-label="Close Naat reader"><Icon name="x"/></button><article className="naat-dialog"><div className="reader-head"><p>{selectedNaat.category} · MULTILINGUAL READER</p><h2>{selectedNaat.title}</h2><span>Written by {selectedNaat.writer} · Recited by {selectedNaat.reciter}</span></div><div className="reader-tabs">{selectedNaat.languages.map((language, index) => <button className={index === 0 ? "active" : ""} type="button" key={language}>{language}</button>)}</div><div className="reader-body"><p className="reader-kicker">Reader preview</p><h3>Lyrics content area</h3><p>{selectedNaat.summary}</p><div className="rights-note"><Icon name="info"/><span>Full lyrics are intentionally not copied from reference websites. Add verified text only with appropriate permission and source attribution.</span></div></div><div className="reader-actions"><button className="primary-action" type="button" onClick={() => toggleSaved(selectedNaat.id)}><Icon name="heart" size={16}/>{saved.includes(selectedNaat.id) ? "Saved" : "Save Naat"}</button><button type="button" onClick={() => setToast("Share link copied for preview")}>Share</button><button type="button" onClick={() => setSelectedNaat(null)}>Close reader</button></div></article></div>}
 
       {toast && <div className="toast"><Icon name="check" size={16}/>{toast}</div>}
     </main>

@@ -18,9 +18,12 @@ export default function PrayerTracker() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(`noor-salah-${todayKey()}`);
-    if (stored) setChecked(JSON.parse(stored));
-    setReady(true);
+    const hydrateTimer = window.setTimeout(() => {
+      const stored = window.localStorage.getItem(`noor-salah-${todayKey()}`);
+      if (stored) setChecked(JSON.parse(stored));
+      setReady(true);
+    }, 0);
+    return () => window.clearTimeout(hydrateTimer);
   }, []);
 
   const toggle = (name: string) => {
