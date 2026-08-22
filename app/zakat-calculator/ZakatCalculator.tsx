@@ -63,7 +63,7 @@ export default function ZakatCalculator() {
       <div className="calculator-form-card">
         <div className="calculator-card-head"><div><span>01</span><div><strong>Your Zakatable wealth</strong><small>Enter current values in one currency</small></div></div><select value={currency} onChange={(event) => setCurrency(event.target.value)} aria-label="Currency">{currencies.map(([code, mark]) => <option value={code} key={code}>{code} · {mark}</option>)}</select></div>
         <div className="calculator-field-list">
-          {assetFields.map((field) => <MoneyInput key={field.key} {...field} symbol={symbol} value={values[field.key]} onChange={(value) => updateValue(field.key, value)} />)}
+          {assetFields.map(({ key, label, help }) => <MoneyInput key={key} label={label} help={help} symbol={symbol} value={values[key]} onChange={(value) => updateValue(key, value)} />)}
           <MoneyInput label="Short-term liabilities" help="Eligible debts or bills due within the coming year" symbol={symbol} value={values.liabilities} onChange={(value) => updateValue("liabilities", value)} />
         </div>
 
