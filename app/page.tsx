@@ -197,8 +197,14 @@ export default function Home() {
   }, [naatFilter]);
 
   const openFeature = (feature: Feature) => {
-    if (feature.id === "namaz") {
-      window.location.assign("/namaz");
+    const dedicatedRoutes: Record<string, string> = {
+      namaz: "/namaz",
+      "family-tree": "/family-tree",
+      quotes: "/quran",
+      matrimony: "/matrimony",
+    };
+    if (dedicatedRoutes[feature.id]) {
+      window.location.assign(dedicatedRoutes[feature.id]);
       return;
     }
     window.location.assign(`/topics/${feature.id}`);
@@ -292,7 +298,7 @@ export default function Home() {
       <section className="content-section explore-section">
         <div className="section-heading"><div><p className="eyebrow">EXPLORE NOOR</p><h2>Everything, without the clutter.</h2><p>Choose an area, then open only the detail you need.</p></div></div>
         <div className="category-tabs" role="group" aria-label="Feature categories">{["All", "Faith", "Naat", "Knowledge", "Community"].map((item) => <button className={category === item ? "active" : ""} type="button" onClick={() => setCategory(item)} key={item}>{item}<span>{item === "All" ? features.length : features.filter((feature) => feature.category === item).length}</span></button>)}</div>
-        <div className="feature-grid">{filteredFeatures.map((feature) => <button className="feature-card" type="button" onClick={() => openFeature(feature)} key={feature.id}><span className="feature-icon"><Icon name={feature.icon}/></span><span className="feature-category">{feature.eyebrow}</span><h3>{feature.title}</h3><p>{feature.subtitle}</p><span className="feature-link">{feature.id === "namaz" ? "Open full guide" : "Explore"} <Icon name="arrow" size={15}/></span></button>)}</div>
+        <div className="feature-grid">{filteredFeatures.map((feature) => <button className="feature-card" type="button" onClick={() => openFeature(feature)} key={feature.id}><span className="feature-icon"><Icon name={feature.icon}/></span><span className="feature-category">{feature.eyebrow}</span><h3>{feature.title}</h3><p>{feature.subtitle}</p><span className="feature-link">{["namaz", "family-tree", "quotes", "matrimony"].includes(feature.id) ? "Open full experience" : "Open full guide"} <Icon name="arrow" size={15}/></span></button>)}</div>
       </section>
 
       <section className="content-section family-section">
@@ -325,7 +331,7 @@ export default function Home() {
       <section className="scholar-note"><Icon name="info"/><div><strong>Trust before publishing</strong><p>Religious rulings, historical claims, institute listings, matrimonial profiles and donation partners should be reviewed and verified before public launch.</p></div></section>
 
       <footer>
-        <div className="footer-main"><div><a className="brand footer-brand" href="#top"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></a><p>A calmer way to learn, remember and stay connected.</p></div><div><strong>Learn</strong><a href="#faith">Faith</a><a href="#faith">Five Pillars</a><a href="#top">Quran</a><a href="#community">Scholars</a></div><div><strong>Library</strong><a href="#naat-library">Naat Lyrics</a><a href="#naat-library">Writers</a><a href="#naat-library">Reciters</a><a href="#community">Waqiyahs</a></div><div><strong>Community</strong><a href="#community">Institutes</a><a href="#community">Jobs</a><a href="#community">Matrimony</a><a href="#community">Donations</a></div></div>
+        <div className="footer-main"><div><a className="brand footer-brand" href="#top"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></a><p>A calmer way to learn, remember and stay connected.</p></div><div><strong>Learn</strong><a href="#faith">Faith</a><a href="#faith">Five Pillars</a><a href="/quran">Quran</a><a href="#community">Scholars</a></div><div><strong>Library</strong><a href="#naat-library">Naat Lyrics</a><a href="#naat-library">Writers</a><a href="#naat-library">Reciters</a><a href="#community">Waqiyahs</a></div><div><strong>Community</strong><a href="#community">Institutes</a><a href="#community">Jobs</a><a href="/matrimony">Matrimony</a><a href="#community">Donations</a></div></div>
         <div className="footer-bottom"><span>© 2026 NOOR. Made with care for the Ummah.</span><span>Educational platform · Scholar review required</span></div>
       </footer>
 

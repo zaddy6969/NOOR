@@ -393,7 +393,7 @@ export const knowledgeTopics: Topic[] = [
     atAGlance: ["No illustrated depictions", "Wives are Mothers of the Believers", "Fatimah, ‘Ali, Hasan and Husayn are central Ahl al-Bayt", "Disputed genealogies are labelled"],
     chapters: [
       { id: "roots", title: "Parents and ancestry", intro: "The Prophet ﷺ belonged to Banu Hashim of Quraysh, among the descendants of Prophet Isma‘il عليه السلام.", items: [
-        { title: "Father and mother", body: "His father was ‘Abdullah ibn ‘Abd al-Muttalib and his mother was Aminah bint Wahb. ‘Abdullah died before his birth; Aminah died when he was about six." },
+        { title: "Father and mother", body: "His father was ‘Abdullah ibn ‘Abd al-Muttalib and his mother was Aminah bint Wahb. ‘Abdullah died before his birth; Aminah died when he was about six.", href: "/family-tree", linkLabel: "Open interactive family tree" },
         { title: "Grandfather and guardian", body: "‘Abd al-Muttalib cared for him after his mother’s death. After the grandfather died, his paternal uncle Abu Talib became his guardian and protected him for many years." },
         { title: "Lineage", body: "Early biographical works preserve the line through ‘Abdullah, ‘Abd al-Muttalib, Hashim and Quraysh. Genealogies beyond ‘Adnan contain reported differences and should not be shown as equally certain." },
       ] },
@@ -896,7 +896,7 @@ export const communityTopics: Topic[] = [
         { title: "After nikah", body: "Agree on maintenance, housing, privacy, work/study, in-laws, children and conflict support. Abuse is never made acceptable by patience slogans; seek safety and professional help." },
       ] },
       { id: "safety", title: "Platform safety", intro: "A matrimony service holds highly sensitive data and must be built around harm prevention.", items: [
-        { title: "Private profiles", body: "Default to initials or controlled visibility, blur or restrict photos, hide exact workplace and location, and let users revoke access." },
+        { title: "Private profiles", body: "Default to initials or controlled visibility, blur or restrict photos, hide exact workplace and location, and let users revoke access.", href: "/matrimony", linkLabel: "Create a private account" },
         { title: "Moderation", body: "Screen harassment, scams, already-married deception, coercive behaviour and requests for money. Preserve evidence securely and provide blocking and reporting." },
         { title: "Emergency help", body: "The service needs country-specific links for domestic abuse, forced marriage, child protection, police and legal aid; religious advice does not replace emergency protection." },
       ] },

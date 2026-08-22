@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Noto_Naskh_Arabic } from "next/font/google";
+import { isClerkConfigured } from "@/lib/auth-config";
 import "./globals.css";
 
 const geist = Geist({
@@ -31,9 +33,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const content = isClerkConfigured()
+    ? <ClerkProvider dynamic>{children}</ClerkProvider>
+    : children;
+
   return (
     <html lang="en">
-      <body className={`${geist.variable} ${notoArabic.variable}`}>{children}</body>
+      <body className={`${geist.variable} ${notoArabic.variable}`}>{content}</body>
     </html>
   );
 }
