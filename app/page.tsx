@@ -213,7 +213,7 @@ export default function Home() {
     window.location.assign(`/topics/${feature.id}`);
   };
 
-  const openNaat = (naat: Naat) => window.location.assign(`/naat/${naat.id}`);
+  const openNaat = (naat: Naat, section = "") => window.location.assign(`/naat/${naat.id}${section}`);
 
   const openItem = (item: Feature | Naat) => {
     if ("subtitle" in item) openFeature(item);
@@ -279,6 +279,7 @@ export default function Home() {
                 <button className="naat-index" type="button" onClick={() => openNaat(naat)}>{String(index + 1).padStart(2, "0")}</button>
                 <button className="naat-info" type="button" onClick={() => openNaat(naat)}><span>{naat.category}</span><h3>{naat.title}</h3><p>Writer: {naat.writer} <i/> Reciter: {naat.reciter}</p></button>
                 <div className="language-tags">{naat.languages.map((language) => <span key={language}>{language}</span>)}</div>
+                <div className="naat-media-actions"><button type="button" onClick={() => openNaat(naat, "#media")} aria-label={`Listen to ${naat.title}`}><Icon name="play" size={14}/><span>Listen</span></button><button type="button" onClick={() => openNaat(naat, "#media")} aria-label={`Watch ${naat.title}`}><Icon name="video" size={14}/><span>Video</span></button></div>
                 <button className={saved.includes(naat.id) ? "save-button saved" : "save-button"} type="button" onClick={() => toggleSaved(naat.id)} aria-label={saved.includes(naat.id) ? "Remove saved Naat" : "Save Naat"}><Icon name="heart" size={17}/></button>
                 <button className="row-arrow" type="button" onClick={() => openNaat(naat)} aria-label={`Read ${naat.title}`}><Icon name="arrow" size={17}/></button>
               </article>
@@ -289,7 +290,7 @@ export default function Home() {
             <button onClick={() => openFeature(features.find((feature) => feature.id === "writers")!)}><span className="aside-icon"><Icon name="quote"/></span><div><strong>By writer</strong><small>Poets and complete works</small></div><b>42</b></button>
             <button onClick={() => openFeature(features.find((feature) => feature.id === "reciters")!)}><span className="aside-icon"><Icon name="people"/></span><div><strong>By reciter</strong><small>Naat Khawan profiles</small></div><b>68</b></button>
             <button onClick={() => openFeature(features.find((feature) => feature.id === "lyrics")!)}><span className="aside-icon"><Icon name="book"/></span><div><strong>By language</strong><small>Roman, Urdu, Hindi</small></div><b>03</b></button>
-            <div className="aside-note"><Icon name="info" size={17}/><p>Lyrics should be published only after rights and source checks. This build demonstrates the complete reader experience without copying full songs.</p></div>
+            <div className="aside-note"><Icon name="info" size={17}/><p>Audio and video stream from their original platforms with reciter and channel credit. NOOR does not copy or re-host protected recordings.</p></div>
           </aside>
         </div>
       </section>

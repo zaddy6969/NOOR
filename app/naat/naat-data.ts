@@ -5,6 +5,13 @@ export type NaatEntry = {
   reciter: string;
   genre: string;
   languages: string[];
+  media: {
+    youtubeId: string;
+    title: string;
+    performer: string;
+    channel: string;
+    sourceUrl: string;
+  };
   summary: string;
   themes: string[];
   readingNotes: { title: string; body: string }[];
@@ -20,6 +27,13 @@ export const naatEntries: NaatEntry[] = [
     reciter: "Multiple reciters; popular recordings include Owais Raza Qadri",
     genre: "Naat",
     languages: ["Urdu", "Arabic phrases", "Persian phrases", "Roman Urdu"],
+    media: {
+      youtubeId: "HcwARQbsSPw",
+      title: "Lamyati Nazeero Kafi Nazarin — official video",
+      performer: "Owais Raza Qadri",
+      channel: "Owais Raza Qadri Official",
+      sourceUrl: "https://www.youtube.com/watch?v=HcwARQbsSPw",
+    },
     summary: "A celebrated multilingual Naat associated with Imam Ahmad Raza Khan, known for dense Arabic, Persian and Urdu expression. A reliable edition needs careful comparison because online versions often differ in spelling, stanza order and transliteration.",
     themes: ["Uniqueness of the Prophet’s excellence", "Beauty and noble character", "Love and longing", "Arabic–Persian–Urdu literary craft"],
     readingNotes: [
@@ -42,6 +56,13 @@ export const naatEntries: NaatEntry[] = [
     reciter: "Many Naat Khawans worldwide",
     genre: "Salam",
     languages: ["Urdu", "Arabic phrases", "Persian phrases", "Roman Urdu"],
+    media: {
+      youtubeId: "Ov71ngBLq7A",
+      title: "Mustafa Jaan-e-Rehmat Pe Lakhon Salam — official video",
+      performer: "Owais Raza Qadri",
+      channel: "Owais Raza Qadri Official",
+      sourceUrl: "https://www.youtube.com/watch?v=Ov71ngBLq7A",
+    },
     summary: "Commonly known as Salam-e-Raza, this long Salam sends peace upon the Prophet ﷺ, members of his blessed family, Companions and sacred places through a rich sequence of couplets.",
     themes: ["Salam upon the Prophet ﷺ", "Ahl al-Bayt and Companions", "Madinah and sacred memory", "Prophetic qualities"],
     readingNotes: [
@@ -64,6 +85,13 @@ export const naatEntries: NaatEntry[] = [
     reciter: "Multiple reciters",
     genre: "Naat / Arabic praise",
     languages: ["Arabic", "Roman Arabic", "English meaning", "Urdu meaning"],
+    media: {
+      youtubeId: "QYYE2Tjanww",
+      title: "Balaghal Ula Bi Kamaalihi",
+      performer: "Qari Shahid Mahmood Qadri",
+      channel: "Hafiz Studio",
+      sourceUrl: "https://www.youtube.com/watch?v=QYYE2Tjanww",
+    },
     summary: "A concise classical Arabic praise text widely recited across Muslim communities. Online sources give differing author attributions, so a responsible library should not state one name as certain without bibliographic proof.",
     themes: ["Prophetic perfection", "Beauty and noble character", "Blessings upon the Prophet ﷺ", "Concise classical Arabic"],
     readingNotes: [
@@ -85,6 +113,13 @@ export const naatEntries: NaatEntry[] = [
     reciter: "Multiple reciters and regional adaptations",
     genre: "Salam",
     languages: ["Arabic", "Urdu adaptations", "Roman Arabic", "English meaning"],
+    media: {
+      youtubeId: "q-CZ4IGxTI0",
+      title: "Ya Nabi Salam Alaika",
+      performer: "Atif Aslam",
+      channel: "Atif Aslam",
+      sourceUrl: "https://www.youtube.com/watch?v=q-CZ4IGxTI0",
+    },
     summary: "A widely used Salam refrain with multiple regional verses and arrangements. The refrain, full lyric versions and modern compositions must not be collapsed into one anonymous text.",
     themes: ["Salam upon the Prophet ﷺ", "Love and longing", "Madinah", "Communal response"],
     readingNotes: [
@@ -106,6 +141,13 @@ export const naatEntries: NaatEntry[] = [
     reciter: "Associated with multiple qawwali and Naat performers",
     genre: "Qawwali / devotional poetry",
     languages: ["Urdu", "Hindi", "Roman Urdu"],
+    media: {
+      youtubeId: "ZkyiJBLKtvU",
+      title: "Bhar Do Jholi Meri",
+      performer: "Sabri Brothers",
+      channel: "Hi-Tech Music Ltd",
+      sourceUrl: "https://www.youtube.com/watch?v=ZkyiJBLKtvU",
+    },
     summary: "A popular devotional composition heard in multiple arrangements. The commonly circulated versions differ, and modern recordings have clear performance and publishing rights.",
     themes: ["Need and hope", "Madinah", "Intercession language", "Communal qawwali form"],
     readingNotes: [
@@ -127,6 +169,13 @@ export const naatEntries: NaatEntry[] = [
     reciter: "Multiple reciters",
     genre: "Naat",
     languages: ["Urdu", "Roman Urdu", "Hindi", "English meaning"],
+    media: {
+      youtubeId: "SNgyHh_Fsd8",
+      title: "Sab Se Aula O Aala Hamara Nabi — official video",
+      performer: "Owais Raza Qadri",
+      channel: "Owais Raza Qadri Official",
+      sourceUrl: "https://www.youtube.com/watch?v=SNgyHh_Fsd8",
+    },
     summary: "A well-known Urdu Naat of praise associated with Imam Ahmad Raza Khan. The online text often appears without edition notes or with reciter-added repetitions.",
     themes: ["Excellence of the Prophet ﷺ", "Love and praise", "Prophethood", "Community recitation"],
     readingNotes: [
