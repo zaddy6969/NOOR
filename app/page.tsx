@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import PrayerTimesStrip from "./home/PrayerTimesStrip";
+import SiteFooter from "./site/SiteFooter";
+import { HeaderUtilities } from "./site/SiteUtilities";
 
 type Category = "All" | "Daily" | "Learn" | "Naat" | "Community";
 type IconName = "book" | "calendar" | "compass" | "prayer" | "beads" | "audio" | "mosque" | "tree" | "gift" | "pen" | "mic" | "help" | "story" | "pillars" | "moon" | "coins" | "hajj" | "heart" | "school" | "work" | "scholar" | "video";
@@ -102,13 +105,15 @@ export default function Home() {
     <main className="noor-home-compact">
       <header className="compact-home-header">
         <Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link>
-        <nav><Link href="/quran">Quran</Link><Link href="/naat">Naat</Link><Link href="/qibla">Qibla</Link><Link href="/islamic-calendar">Calendar</Link></nav>
+        <div className="home-header-right"><nav><Link href="/quran">Quran</Link><Link href="/naat">Naat</Link><Link href="/qibla">Qibla</Link><Link href="/islamic-calendar">Calendar</Link></nav><HeaderUtilities /></div>
       </header>
 
       <section className="compact-home-intro">
         <div><p>YOUR DAILY MUSLIM COMPANION</p><h1>Everything useful.<br/><em>Nothing confusing.</em></h1></div>
         <div className="compact-home-date"><strong>{hijriDate}</strong><span>{gregorianDate}</span></div>
       </section>
+
+      <PrayerTimesStrip />
 
       <section className="daily-launcher" aria-labelledby="daily-tools-title">
         <div className="compact-section-title"><div><span>DAILY TOOLS</span><h2 id="daily-tools-title">Open what you need</h2></div></div>
@@ -122,7 +127,7 @@ export default function Home() {
         {filtered.length === 0 ? <p className="compact-empty">No feature matched your search.</p> : null}
       </section>
 
-      <footer className="compact-home-footer"><span>© 2026 NOOR</span><p>Quran, prayer and everyday Islamic tools in one simple place.</p></footer>
+      <SiteFooter />
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HeaderUtilities } from "../site/SiteUtilities";
 import PrayerTracker from "./PrayerTracker";
 
 export const metadata: Metadata = {
@@ -152,7 +153,7 @@ export default function NamazPage() {
       <header className="namaz-topbar">
         <Link className="brand" href="/" aria-label="Back to NOOR home"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link>
         <nav aria-label="Prayer guide navigation"><a href="#purity">Wudu</a><a href="#times">Prayer table</a><a href="#method">How to pray</a><a href="#recitations">Recitations</a></nav>
-        <Link className="namaz-home-link" href="/">← Back to NOOR</Link>
+        <aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="namaz-home-link" href="/">← Back to NOOR</Link></aside>
       </header>
 
       <section className="namaz-hero" id="overview">
@@ -166,7 +167,7 @@ export default function NamazPage() {
         <div className="namaz-hero-card">
           <span className="hero-card-kicker">THE FIVE DAILY PRAYERS</span>
           {[["01","Fajr","2 Fard"],["02","Dhuhr","4 Fard"],["03","Asr","4 Fard"],["04","Maghrib","3 Fard"],["05","Isha","4 Fard"]].map((item) => <div key={item[1]}><span>{item[0]}</span><strong>{item[1]}</strong><small>{item[2]}</small></div>)}
-          <p>Prayer is prescribed for believers at appointed times. <a href="https://quran.com/an-nisa/103" target="_blank" rel="noreferrer">Qur’an 4:103 ↗</a></p>
+          <p>Prayer is prescribed for believers at appointed times. <Link href="/quran?surah=4&ayah=103">Qur’an 4:103 →</Link></p>
         </div>
       </section>
 
@@ -182,7 +183,7 @@ export default function NamazPage() {
         <article className="namaz-content">
           <section className="namaz-section overview-section">
             <SectionHead number="01" label="FOUNDATIONS" title="Before you begin" copy="Salah joins intention, purity, time, direction, recitation and physical worship. Learn the foundations before memorizing movements." />
-            <div className="evidence-card"><span>QUR’ANIC FOUNDATION</span><blockquote lang="ar" dir="rtl">حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ وَقُومُوا لِلَّهِ قَانِتِينَ</blockquote><h3>Guard the prayers and stand before Allah with devotion.</h3><a href="https://quran.com/al-baqarah/238" target="_blank" rel="noreferrer">Read Qur’an 2:238 with context ↗</a></div>
+            <div className="evidence-card"><span>QUR’ANIC FOUNDATION</span><blockquote lang="ar" dir="rtl">حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ وَقُومُوا لِلَّهِ قَانِتِينَ</blockquote><h3>Guard the prayers and stand before Allah with devotion.</h3><Link href="/quran?surah=2&ayah=238">Read Qur’an 2:238 with context →</Link></div>
             <div className="condition-grid">
               {[
                 ["Taharah", "Purity", "Body, clothes and place are clean; ritual purity is valid."],
@@ -199,7 +200,7 @@ export default function NamazPage() {
 
           <section className="namaz-section" id="purity">
             <SectionHead number="02" label="RITUAL PURITY" title="Wudu, step by step" copy="Qur’an 5:6 names the core washes of ablution. The Sunnah teaches a careful, ordered method without wasting water." />
-            <div className="wudu-reference"><div><span>THE FOUR FARD ACTS · HANAFI</span><h3>Face · Arms · Head · Feet</h3><p>Wash the complete face, wash both arms including elbows, wipe at least one quarter of the head, and wash both feet including ankles.</p></div><a href="https://quran.com/al-maidah/6" target="_blank" rel="noreferrer">Qur’an 5:6 ↗</a></div>
+            <div className="wudu-reference"><div><span>THE FOUR FARD ACTS · HANAFI</span><h3>Face · Arms · Head · Feet</h3><p>Wash the complete face, wash both arms including elbows, wipe at least one quarter of the head, and wash both feet including ankles.</p></div><Link href="/quran?surah=5&ayah=6">Qur’an 5:6 →</Link></div>
             <div className="step-list wudu-list">{wuduSteps.map(([n,title,copy]) => <article key={n}><span>{n}</span><div><h3>{title}</h3><p>{copy}</p></div></article>)}</div>
             <div className="two-column-cards">
               <div className="rule-card positive"><span>SUNNAH & CARE</span><h3>Complete Wudu well</h3><ul><li>Follow the order without long gaps.</li><li>Wash the limbs three times where Sunnah.</li><li>Begin from the right.</li><li>Rub gently and ensure water reaches dry folds.</li><li>Use only the water needed.</li><li>Do not talk unnecessarily during Wudu.</li></ul></div>
@@ -220,7 +221,7 @@ export default function NamazPage() {
 
           <section className="namaz-section" id="times">
             <SectionHead number="04" label="DAILY SCHEDULE" title="Prayer times and Rak‘ahs" copy="Prayer times follow the sun and change by date and location. Use a verified local timetable or mosque and understand the time windows below." />
-            <div className="time-warning"><strong>Do not rely on the demonstration clock on the NOOR homepage for worship.</strong><p>It currently shows sample Bengaluru values. Always confirm with a trusted local authority or properly configured calculation service.</p></div>
+            <div className="time-warning"><strong>NOOR now calculates today’s timings from your location.</strong><p>Calculation methods and local mosque practice can differ, so confirm with your trusted local timetable when exact observance matters.</p></div>
             <div className="time-table"><div className="time-row time-head"><span>Prayer</span><span>Begins</span><span>Ends</span><span>Guidance</span></div>{prayerTimes.map((row) => <div className="time-row" key={row[0]}>{row.map((cell,index) => index === 0 ? <strong key={cell}>{cell}</strong> : <span key={cell}>{cell}</span>)}</div>)}</div>
             <div className="prohibited-times"><span>THREE VERY RESTRICTED PERIODS</span><p>Do not begin ordinary Salah while the sun is rising, at the exact zenith, or while it is setting. Voluntary prayer also has restrictions after Fajr until sunrise and after Asr until sunset. Exceptional prayers have separate rulings.</p></div>
             <h3 className="subheading">Daily Rak‘ah planner · Hanafi</h3>
@@ -230,7 +231,7 @@ export default function NamazPage() {
 
           <section className="namaz-section" id="method">
             <SectionHead number="05" label="COMPLETE SEQUENCE" title="How to perform Salah" copy="The Prophet ﷺ instructed Muslims to pray as they saw him pray. Move calmly, allow every posture to settle and do not race through the prayer." />
-            <div className="hadith-strip"><span>PROPHETIC METHOD</span><p>“Pray as you have seen me praying.”</p><a href="https://sunnah.com/bukhari:631" target="_blank" rel="noreferrer">Sahih al-Bukhari 631 ↗</a></div>
+            <div className="hadith-strip"><span>PROPHETIC METHOD</span><p>“Pray as you have seen me praying.”</p><strong>Sahih al-Bukhari 631</strong></div>
             <div className="step-list salah-list">{salahSteps.map(([n,title,copy]) => <article key={n}><span>{n}</span><div><h3>{title}</h3><p>{copy}</p></div></article>)}</div>
             <div className="rakats-explainer">
               <article><span>2 RAK‘AHS</span><p>After the second Sajdah, sit for Tashahhud, Durood and dua, then finish with Salam.</p></article>
@@ -243,7 +244,7 @@ export default function NamazPage() {
           <section className="namaz-section" id="recitations">
             <SectionHead number="06" label="ARABIC, ROMAN & MEANING" title="Essential recitations" copy="Open each card to revise the Arabic, a reading aid and a concise meaning. Transliteration helps memory but cannot replace correct pronunciation from a teacher." />
             <div className="recitation-list">{phraseCards.map((phrase,index) => <details open={index === 0} key={phrase.title}><summary><span>{String(index + 1).padStart(2,"0")}</span><div><strong>{phrase.title}</strong><small>{phrase.when}</small></div><i>+</i></summary><div className="recitation-body"><p className="arabic" lang="ar" dir="rtl">{phrase.arabic}</p><p className="roman"><span>ROMAN READING AID</span>{phrase.roman}</p><p className="meaning"><span>CONCISE MEANING</span>{phrase.meaning}</p></div></details>)}</div>
-            <div className="qunut-card"><span>WITR WAJIB · HANAFI</span><h3>Dua-e-Qunoot</h3><p>In the third Rak‘ah of Witr, after al-Fatihah and another Surah, say Takbir with the Hanafi hand movement and read Dua-e-Qunoot before Ruku‘. Because accurate Arabic matters, learn the complete dua directly from a qualified teacher or the linked Hanafi prayer manual.</p><a href="https://www.dawateislami.net/bookslibrary/en/method-of-salah-hanafi" target="_blank" rel="noreferrer">Open the complete Hanafi manual ↗</a></div>
+            <div className="qunut-card"><span>WITR WAJIB · HANAFI</span><h3>Dua-e-Qunoot</h3><p>In the third Rak‘ah of Witr, after al-Fatihah and another Surah, say Takbir with the Hanafi hand movement and read Dua-e-Qunoot before Ruku‘. Accurate Arabic matters, so revise this guide and learn pronunciation directly from a qualified teacher.</p><strong className="contained-reference">Reference: Method of Salah — Hanafi</strong></div>
           </section>
 
           <section className="namaz-section" id="mistakes">
@@ -270,7 +271,7 @@ export default function NamazPage() {
           <section className="namaz-section" id="special">
             <SectionHead number="09" label="SPECIAL CIRCUMSTANCES" title="Travel, illness, Qada and special prayers" copy="Islamic law provides structured concessions, not guesswork. Use this overview, then obtain case-specific guidance." />
             <div className="special-grid">
-              <article><span>TRAVEL · QASR</span><h3>Shortening Fard prayer</h3><p>A Hanafi Shari‘ traveller shortens the four-Rak‘ah Fard of Dhuhr, Asr and Isha to two. Fajr remains two and Maghrib remains three. Common Hanafi guidance uses a journey of roughly 92 km and an intended stay shorter than 15 days; verify your route and intention.</p><a href="https://www.dawateislami.net/bookslibrary/en/the-travellers-salah-hanafi/page-1" target="_blank" rel="noreferrer">Traveller’s Salah source ↗</a></article>
+              <article><span>TRAVEL · QASR</span><h3>Shortening Fard prayer</h3><p>A Hanafi Shari‘ traveller shortens the four-Rak‘ah Fard of Dhuhr, Asr and Isha to two. Fajr remains two and Maghrib remains three. Common Hanafi guidance uses a journey of roughly 92 km and an intended stay shorter than 15 days; verify your route and intention.</p><strong className="contained-reference">Reference: The Traveller’s Salah — Hanafi</strong></article>
               <article><span>ILLNESS & DISABILITY</span><h3>Pray according to ability</h3><p>Stand when able. If genuinely unable, pray sitting; if Ruku‘ or Sajdah cannot be performed, use the recognized gestures. Do not use a chair merely for convenience, and do not force a harmful posture.</p></article>
               <article><span>MISSED PRAYER · QADA</span><h3>Make up Fard obligations</h3><p>Record and make up missed Fard prayers and Witr according to Hanafi rules. Repent for deliberate neglect. Long backlogs, prayer order and prohibited times need a personal plan from a scholar.</p></article>
               <article><span>TARAWIH</span><h3>Ramadan night prayer</h3><p>In the Hanafi school, twenty Rak‘ahs of Tarawih are emphasized Sunnah in Ramadan, normally offered after Isha and before or after Witr in congregation.</p></article>
@@ -285,18 +286,18 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section sources-section" id="sources">
-            <SectionHead number="11" label="VISIBLE REFERENCES" title="Sources used for this guide" copy="The wording is summarized for learners. Open the source links for context and consult qualified scholars before acting on case-specific rulings." />
+            <SectionHead number="11" label="VISIBLE REFERENCES" title="Sources used for this guide" copy="The wording is summarized for learners. Quran references open inside NOOR; collection and manual names remain visible for verification." />
             <div className="source-list">
-              <a href="https://quran.com/al-maidah/6" target="_blank" rel="noreferrer"><span>QUR’AN · 5:6</span><strong>Wudu, Ghusl and Tayammum</strong><i>↗</i></a>
-              <a href="https://quran.com/an-nisa/103" target="_blank" rel="noreferrer"><span>QUR’AN · 4:103</span><strong>Prayer at appointed times</strong><i>↗</i></a>
-              <a href="https://quran.com/al-baqarah/238" target="_blank" rel="noreferrer"><span>QUR’AN · 2:238</span><strong>Guarding the prayers</strong><i>↗</i></a>
-              <a href="https://quran.com/an-nisa/101-103" target="_blank" rel="noreferrer"><span>QUR’AN · 4:101–103</span><strong>Prayer during travel</strong><i>↗</i></a>
-              <a href="https://sunnah.com/bukhari:135" target="_blank" rel="noreferrer"><span>SAHIH AL-BUKHARI · 135</span><strong>Purity before prayer</strong><i>↗</i></a>
-              <a href="https://sunnah.com/bukhari:164" target="_blank" rel="noreferrer"><span>SAHIH AL-BUKHARI · 164</span><strong>Prophetic Wudu report</strong><i>↗</i></a>
-              <a href="https://sunnah.com/bukhari:631" target="_blank" rel="noreferrer"><span>SAHIH AL-BUKHARI · 631</span><strong>Learn the prophetic prayer</strong><i>↗</i></a>
-              <a href="https://www.dar-alifta.org/en/article/details/249/how-to-perform-wudhu-ablution" target="_blank" rel="noreferrer"><span>DAR AL-IFTA EGYPT</span><strong>How to perform Wudu</strong><i>↗</i></a>
-              <a href="https://www.dar-alifta.org/en/article/details/250/how-to-perform-prayer-salah" target="_blank" rel="noreferrer"><span>DAR AL-IFTA EGYPT</span><strong>How to perform Salah</strong><i>↗</i></a>
-              <a href="https://www.dawateislami.net/bookslibrary/en/method-of-salah-hanafi" target="_blank" rel="noreferrer"><span>MAKTABA-TUL-MADINA</span><strong>Method of Salah — Hanafi</strong><i>↗</i></a>
+              <Link href="/quran?surah=5&ayah=6"><span>QUR’AN · 5:6</span><strong>Wudu, Ghusl and Tayammum</strong><i>→</i></Link>
+              <Link href="/quran?surah=4&ayah=103"><span>QUR’AN · 4:103</span><strong>Prayer at appointed times</strong><i>→</i></Link>
+              <Link href="/quran?surah=2&ayah=238"><span>QUR’AN · 2:238</span><strong>Guarding the prayers</strong><i>→</i></Link>
+              <Link href="/quran?surah=4&ayah=101"><span>QUR’AN · 4:101–103</span><strong>Prayer during travel</strong><i>→</i></Link>
+              <div><span>SAHIH AL-BUKHARI · 135</span><strong>Purity before prayer</strong><i>IN NOOR</i></div>
+              <div><span>SAHIH AL-BUKHARI · 164</span><strong>Prophetic Wudu report</strong><i>IN NOOR</i></div>
+              <div><span>SAHIH AL-BUKHARI · 631</span><strong>Learn the prophetic prayer</strong><i>IN NOOR</i></div>
+              <div><span>DAR AL-IFTA EGYPT</span><strong>How to perform Wudu</strong><i>REFERENCE</i></div>
+              <div><span>DAR AL-IFTA EGYPT</span><strong>How to perform Salah</strong><i>REFERENCE</i></div>
+              <div><span>MAKTABA-TUL-MADINA</span><strong>Method of Salah — Hanafi</strong><i>REFERENCE</i></div>
             </div>
             <div className="editorial-note"><strong>Editorial status</strong><p>This page is an educational summary, not an independent fatwa. Before presenting it as institutionally approved material, arrange a complete review by qualified Sunni Hanafi scholars, including Arabic spelling and transliteration.</p></div>
           </section>

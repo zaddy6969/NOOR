@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { isClerkConfigured } from "@/lib/auth-config";
 import MatrimonyAccountActions from "./_components/MatrimonyAccountActions";
+import { HeaderUtilities } from "../site/SiteUtilities";
 
 export const metadata: Metadata = {
   title: "Private Islamic Matrimony | NOOR",
@@ -25,7 +26,7 @@ export default function MatrimonyPage() {
       <header className="matrimony-topbar">
         <Link className="brand" href="/" aria-label="NOOR home"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link>
         <nav aria-label="Matrimony navigation"><a href="#process">How it works</a><a href="#safety">Safety</a><Link href="/topics/matrimony">Marriage guide</Link></nav>
-        <Link className="topic-home-link" href="/">← All features</Link>
+        <aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="topic-home-link" href="/">← All features</Link></aside>
       </header>
 
       <section className="matrimony-hero">

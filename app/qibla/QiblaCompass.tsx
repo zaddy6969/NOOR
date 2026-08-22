@@ -39,6 +39,7 @@ function cardinalDirection(bearing: number) {
 
 export default function QiblaCompass() {
   const [location, setLocation] = useState<UserLocation | null>(null);
+  const [verifiedBearing, setVerifiedBearing] = useState<number | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
   const [locationState, setLocationState] = useState<"loading" | "ready" | "error">("loading");
   const [locationError, setLocationError] = useState("");
@@ -57,11 +58,20 @@ export default function QiblaCompass() {
     }
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setLocation({
+        const nextLocation = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
-        });
+        };
+        setLocation(nextLocation);
+        setVerifiedBearing(null);
+        fetch(`/api/qibla?latitude=${nextLocation.latitude}&longitude=${nextLocation.longitude}`)
+          .then((response) => response.ok ? response.json() : Promise.reject())
+          .then((payload: { direction?: number }) => {
+            const direction = Number(payload.direction);
+            if (Number.isFinite(direction)) setVerifiedBearing(normalize(direction));
+          })
+          .catch(() => undefined);
         setLocationState("ready");
       },
       (error) => {
@@ -113,10 +123,11 @@ export default function QiblaCompass() {
     };
   }, [orientationEnabled]);
 
-  const bearing = useMemo(
+  const calculatedBearing = useMemo(
     () => location ? qiblaBearing(location.latitude, location.longitude) : null,
     [location],
   );
+  const bearing = verifiedBearing ?? calculatedBearing;
   const qiblaRotation = bearing === null ? 0 : normalize(bearing - (heading ?? 0));
   const northRotation = heading === null ? 0 : -heading;
   const signedTurn = bearing === null || heading === null ? null : ((bearing - heading + 540) % 360) - 180;
@@ -154,7 +165,7 @@ export default function QiblaCompass() {
           <b className="qibla-cardinal qibla-w">W</b>
         </div>
         <span className="north-needle" style={{ transform: `translate(-50%, -50%) rotate(${northRotation}deg)` }} aria-hidden="true"><i /><i /></span>
-        {bearing !== null ? <span className="qibla-red-arrow" style={{ transform: `translate(-50%, -50%) rotate(${qiblaRotation}deg)` }} aria-hidden="true"><i /><b>▣</b></span> : null}
+        {bearing !== null ? <span className="qibla-red-arrow" style={{ transform: `translate(-50%, -50%) rotate(${qiblaRotation}deg)` }} aria-hidden="true"><i /><b role="img" aria-label="Kaaba">🕋</b></span> : null}
         <span className="qibla-pin" aria-hidden="true" />
       </div>
 

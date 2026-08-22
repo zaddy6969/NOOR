@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getMatrimonyProfile } from "@/db/matrimony";
 import { isClerkConfigured } from "@/lib/auth-config";
 import ProfileForm from "./ProfileForm";
+import { HeaderUtilities } from "../../site/SiteUtilities";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,7 @@ export default async function MatrimonyProfilePage() {
 
   return (
     <main className="profile-page">
-      <header className="matrimony-topbar"><Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><span className="profile-private-badge">● PRIVATE ACCOUNT</span><Link className="topic-home-link" href="/matrimony">← Matrimony</Link></header>
+      <header className="matrimony-topbar"><Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><span className="profile-private-badge">● PRIVATE ACCOUNT</span><aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="topic-home-link" href="/matrimony">← Matrimony</Link></aside></header>
       {databaseReady
         ? <ProfileForm profile={profile} />
         : <section className="profile-database-error"><span>DATABASE CONNECTION</span><h1>Neon is connected, but its environment variables are not available to this deployment yet.</h1><p>Redeploy the project after connecting Neon, then return here. No profile data has been submitted.</p><Link href="/matrimony">Return safely</Link></section>}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { HeaderUtilities } from "../../site/SiteUtilities";
 import NaatMediaButtons from "../NaatMediaButtons";
 import { naatEntries, naatMap } from "../naat-data";
 
@@ -30,7 +31,7 @@ export default async function NaatPage({ params }: PageProps) {
 
   return (
     <main className="naat-detail-compact">
-      <header className="quran-topbar compact-tool-topbar"><Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><div><strong>{entry.genre.toUpperCase()}</strong><span>Audio · Video · Reading notes</span></div><Link className="topic-home-link" href="/naat">← Library</Link></header>
+      <header className="quran-topbar compact-tool-topbar"><Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><div><strong>{entry.genre.toUpperCase()}</strong><span>Audio · Video · Reading notes</span></div><aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="topic-home-link" href="/naat">← Library</Link></aside></header>
 
       <section className="naat-detail-head">
         <p>{entry.genre}</p>
@@ -54,7 +55,7 @@ export default async function NaatPage({ params }: PageProps) {
         <article>
           <h2>Sources & rights</h2>
           <p>{entry.rights}</p>
-          <div className="naat-detail-sources"><a href={entry.media.sourceUrl} target="_blank" rel="noreferrer">Video source · {entry.media.channel} ↗</a>{entry.sources.map((source) => <a href={source.href} target="_blank" rel="noreferrer" key={source.href}>{source.label} ↗</a>)}</div>
+          <div className="naat-detail-sources"><div>Video credit · {entry.media.channel}</div>{entry.sources.map((source) => <div key={source.href}>{source.label}</div>)}</div>
         </article>
       </section>
     </main>

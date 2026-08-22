@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMediaPlayer } from "../media/MediaProvider";
 
 type SurahSummary = { number: number; name: string; englishName: string; englishNameTranslation: string; numberOfAyahs: number; revelationType: string };
@@ -17,10 +17,10 @@ const fallbackSurahs: SurahSummary[] = [
   { number: 112, name: "ٱلْإِخْلَاص", englishName: "Al-Ikhlaas", englishNameTranslation: "Sincerity", numberOfAyahs: 4, revelationType: "Meccan" },
 ];
 
-export default function QuranReader() {
+export default function QuranReader({ initialSurah = 1, initialAyah = null }: { initialSurah?: number; initialAyah?: number | null }) {
   const { current, play } = useMediaPlayer();
   const [surahs, setSurahs] = useState<SurahSummary[]>(fallbackSurahs);
-  const [selected, setSelected] = useState(1);
+  const [selected, setSelected] = useState(initialSurah);
   const [requestVersion, setRequestVersion] = useState(0);
   const [detail, setDetail] = useState<SurahDetail | null>(null);
   const [query, setQuery] = useState("");
@@ -30,6 +30,7 @@ export default function QuranReader() {
   const [arabicSize, setArabicSize] = useState(36);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
+  const initialScrollDone = useRef(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem("noor-quran-bookmarks-v1");
@@ -57,6 +58,18 @@ export default function QuranReader() {
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [selected, requestVersion]);
+
+  useEffect(() => {
+    if (!detail || !initialAyah || initialScrollDone.current) return;
+    const timer = window.setTimeout(() => {
+      const target = document.getElementById(`ayah-${initialAyah}`);
+      if (target) {
+        initialScrollDone.current = true;
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 120);
+    return () => window.clearTimeout(timer);
+  }, [detail, initialAyah]);
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -115,7 +128,7 @@ export default function QuranReader() {
               <span aria-hidden="true">▶</span>{current?.id === `quran-${detail.number}` ? "Playing in the bottom player" : "Play full Surah"}
             </button>
           </section>
-          <div className="quran-attribution"><span>Arabic Uthmani text</span><span>English meaning: Marmaduke Pickthall</span><span>Full audio: Mishary Rashid Alafasy</span><a href={`https://quran.com/${detail.number}`} target="_blank" rel="noreferrer">Open word-by-word and tafsir on Quran.com ↗</a></div>
+          <div className="quran-attribution"><span>Arabic Uthmani text</span><span>English meaning: Marmaduke Pickthall</span><span>Full audio: Mishary Rashid Alafasy</span><span>All reading and verse navigation stays inside NOOR</span></div>
           <div className="ayah-list">{detail.ayahs.map((ayah) => {
             const key = `${detail.number}:${ayah.number}`;
             const saved = bookmarks.includes(key);

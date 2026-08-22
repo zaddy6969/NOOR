@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { HeaderUtilities } from "../site/SiteUtilities";
 import QiblaCompass from "./QiblaCompass";
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export default function QiblaPage() {
   return (
     <main className="qibla-page" id="top">
-      <header className="quran-topbar compact-tool-topbar"><Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><div><strong>QIBLA COMPASS</strong><span>Live direction to the Kaaba</span></div><Link className="topic-home-link" href="/">← Home</Link></header>
+      <header className="quran-topbar compact-tool-topbar"><Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><div><strong>QIBLA COMPASS</strong><span>Live direction to the Kaaba</span></div><aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="topic-home-link" href="/">← Home</Link></aside></header>
       <QiblaCompass />
     </main>
   );

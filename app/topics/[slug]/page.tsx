@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { HeaderUtilities } from "../../site/SiteUtilities";
 import { topicMap, topics } from "../topic-data";
 
 type PageProps = { params: Promise<{ slug: string }> };
+
+function quranHref(reference: string, href?: string) {
+  const byReference = reference.match(/(?:Qur(?:’|')?an\s*)?(\d{1,3})\s*:\s*(\d{1,3})/i);
+  if (byReference) return `/quran?surah=${byReference[1]}&ayah=${byReference[2]}`;
+  const byUrl = href?.match(/quran\.com\/(?:[^/]+\/)?(\d{1,3})(?:\/(\d{1,3}))?/i);
+  return byUrl ? `/quran?surah=${byUrl[1]}${byUrl[2] ? `&ayah=${byUrl[2]}` : ""}` : null;
+}
 
 export function generateStaticParams() {
   return topics.map((topic) => ({ slug: topic.slug }));
@@ -39,7 +47,7 @@ export default async function TopicPage({ params }: PageProps) {
           <a href="#questions">Questions</a>
           <a href="#sources">Sources</a>
         </nav>
-        <Link className="topic-home-link" href="/">← All topics</Link>
+        <aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="topic-home-link" href="/">← All topics</Link></aside>
       </header>
 
       <section className="topic-hero">
@@ -56,7 +64,7 @@ export default async function TopicPage({ params }: PageProps) {
           <span>FOUNDATION</span>
           {topic.foundation.arabic && <blockquote lang="ar" dir="rtl">{topic.foundation.arabic}</blockquote>}
           <p>{topic.foundation.translation}</p>
-          <a href={topic.foundation.href} target="_blank" rel="noreferrer">{topic.foundation.reference} ↗</a>
+          <Link href={quranHref(topic.foundation.reference, topic.foundation.href) ?? `/topics/${topic.slug}#sources`}>{topic.foundation.reference} →</Link>
         </article>
       </section>
 
@@ -93,7 +101,9 @@ export default async function TopicPage({ params }: PageProps) {
                     <span>✦</span><h3>{item.title}</h3><p>{item.body}</p>
                     {item.href && (item.href.startsWith("/")
                       ? <Link href={item.href}>{item.linkLabel ?? "Read more"} →</Link>
-                      : <a href={item.href} target="_blank" rel="noreferrer">{item.linkLabel ?? "Open source"} ↗</a>)}
+                      : quranHref(item.linkLabel ?? "", item.href)
+                        ? <Link href={quranHref(item.linkLabel ?? "", item.href) ?? "/quran"}>{item.linkLabel ?? "Read the verse"} →</Link>
+                        : <span className="topic-contained-note">Complete summary included above</span>)}
                   </article>
                 ))}
               </div>
@@ -108,9 +118,13 @@ export default async function TopicPage({ params }: PageProps) {
           </section>
 
           <section className="topic-section topic-sources" id="sources">
-            <div className="topic-section-head"><span>S</span><div><p>PRIMARY READING</p><h2>Sources & references</h2><div>Open the original passage or collection. Descriptions on this page are concise educational summaries, not replacements for the source.</div></div></div>
+            <div className="topic-section-head"><span>S</span><div><p>PRIMARY READING</p><h2>Sources & references</h2><div>Source names remain visible for verification, while the full educational guide stays inside NOOR. Quran references open in the NOOR reader.</div></div></div>
             <div className="topic-source-list">
-              {topic.sources.map((source, index) => <a href={source.href} target="_blank" rel="noreferrer" key={`${source.label}-${source.href}`}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{source.label}</small><strong>{source.title}</strong></div><b>↗</b></a>)}
+              {topic.sources.map((source, index) => {
+                const internal = quranHref(source.label, source.href);
+                const content = <><span>{String(index + 1).padStart(2, "0")}</span><div><small>{source.label}</small><strong>{source.title}</strong></div><b>{internal ? "→" : "IN NOOR"}</b></>;
+                return internal ? <Link href={internal} key={`${source.label}-${source.href}`}>{content}</Link> : <article key={`${source.label}-${source.href}`}>{content}</article>;
+              })}
             </div>
             <div className="topic-review"><span>i</span><div><strong>Editorial responsibility</strong><p>{topic.reviewNote}</p></div></div>
           </section>
