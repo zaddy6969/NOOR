@@ -50,7 +50,9 @@ const dailyTools: Feature[] = [
   { title: "Prayer & Wudu", description: "Complete Salah and purification guide", href: "/namaz", category: "Daily", icon: "prayer" },
   { title: "Qibla Compass", description: "Live direction to the Kaaba", href: "/qibla", category: "Daily", icon: "compass" },
   { title: "Islamic Calendar", description: "Hijri dates and important occasions", href: "/islamic-calendar", category: "Daily", icon: "calendar" },
-  { title: "Dhikr & Durood", description: "Read and keep a simple daily count", href: "/topics/durood", category: "Daily", icon: "beads" },
+  { title: "Darood Sharif", description: "Read, save and count trusted Salawat", href: "/darood", category: "Daily", icon: "beads" },
+  { title: "Zakat Calculator", description: "Estimate Nisab and Zakat privately", href: "/zakat-calculator", category: "Daily", icon: "coins" },
+  { title: "Qaza Namaz", description: "Calculate missed prayers and make a plan", href: "/qaza-namaz", category: "Daily", icon: "prayer" },
   { title: "Naat & Salam", description: "Separate audio, video and reading pages", href: "/naat", category: "Naat", icon: "audio" },
 ];
 
@@ -69,7 +71,7 @@ const features: Feature[] = [
   { title: "Five Pillars", description: "Faith, Salah, Zakat, fasting and Hajj", href: "/topics/pillars", category: "Learn", icon: "pillars" },
   { title: "Tawheed", description: "Learn about the oneness of Allah", href: "/topics/tawheed", category: "Learn", icon: "mosque" },
   { title: "Roza", description: "Ramadan and voluntary fasting guidance", href: "/topics/roza", category: "Learn", icon: "moon" },
-  { title: "Zakat", description: "Nisab, assets and responsible giving", href: "/topics/zakat", category: "Learn", icon: "coins" },
+  { title: "Zakat Guide", description: "Nisab, assets and responsible giving", href: "/topics/zakat", category: "Learn", icon: "coins" },
   { title: "Hajj", description: "Rites, journey plan, duas and checklist", href: "/topics/hajj", category: "Learn", icon: "hajj" },
   { title: "Matrimony", description: "Private, family-aware introductions", href: "/matrimony", category: "Community", icon: "heart" },
   { title: "Institutes & Madrasas", description: "Find Islamic learning and admissions", href: "/topics/institutes", category: "Community", icon: "school" },

@@ -16,7 +16,9 @@ const features = [
   ["Prayer and Wudu", "Namaz timings, Rak‘ahs, purification and complete Salah guide", "/namaz"],
   ["Qibla Compass", "Live direction to the Kaaba", "/qibla"],
   ["Islamic Calendar", "Hijri dates, occasions and festivals", "/islamic-calendar"],
-  ["Dhikr and Durood", "Daily remembrance, salawat and recitation guide", "/topics/durood"],
+  ["Darood Sharif", "Various Salawat with Arabic, English meaning, sources, saving and private Tasbih count", "/darood"],
+  ["Zakat Calculator", "Private 2.5 percent Zakat estimate using gold or silver Nisab, assets and liabilities", "/zakat-calculator"],
+  ["Qaza Namaz Calculator", "Kaza missed Fajr Dhuhr Asr Maghrib Isha and Witr prayer planning", "/qaza-namaz"],
   ["Naat and Salam", "Audio, video, writers, reciters and reading pages", "/naat"],
   ["Family Tree", "Interactive lineage and sacred history", "/family-tree"],
   ["Matrimony", "Private family-aware matrimonial profiles", "/matrimony"],
@@ -33,6 +35,14 @@ const detailedGuides = [
   ["Travel, illness and missed prayers", "Qasr, Qada, chair prayer, disability, Tarawih, Eid and Janazah", "/namaz#special"],
   ["Islamic prayer questions", "Intention, doubts, Wudu differences, missed prayer and praying while sitting", "/namaz#faq"],
   ["Islamic occasions calendar", "Ramadan, Eid al-Fitr, Eid al-Adha, Ashura, Mawlid and Hijri dates", "/islamic-calendar"],
+  ["Zakat Nisab calculation", "Calculate cash, gold, silver, investments, business assets, receivables, liabilities, Hawl and a 2.5 percent estimate", "/zakat-calculator"],
+  ["Silver and gold Nisab", "Choose the 612.36 gram silver threshold, 87.48 gram gold threshold or a trusted custom Nisab amount", "/zakat-calculator"],
+  ["Qaza prayer date estimate", "Estimate missed prayers from a day count or inclusive date range and remove valid exemption days", "/qaza-namaz"],
+  ["Qaza Witr prayer plan", "Choose Fajr Dhuhr Asr Maghrib Isha and Hanafi Witr, then create a steady daily completion target", "/qaza-namaz"],
+  ["Darood Ibrahim", "Hadith-reported Salat al-Ibrahimiyyah in Arabic, Roman reading aid and English meaning", "/darood#ibrahimiyyah"],
+  ["Darood Tanjeena", "Traditional Salat al-Munjiyyah Arabic, Roman reading aid, English meaning and source status", "/darood#tanjeena"],
+  ["Darood Nariya", "Traditional Salat al-Tafrijiyyah Arabic, Roman reading aid, English meaning and source status", "/darood#nariya"],
+  ["Darood Taj", "Long traditional Salutation of the Crown in Arabic with English meaning and source status", "/darood#taj"],
 ] as const;
 
 function rank(text: string, query: string) {
