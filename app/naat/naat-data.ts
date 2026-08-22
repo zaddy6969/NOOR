@@ -6,6 +6,7 @@ export type NaatEntry = {
   genre: string;
   languages: string[];
   media: {
+    spotifyId: string;
     youtubeId: string;
     title: string;
     performer: string;
@@ -28,6 +29,7 @@ export const naatEntries: NaatEntry[] = [
     genre: "Naat",
     languages: ["Urdu", "Arabic phrases", "Persian phrases", "Roman Urdu"],
     media: {
+      spotifyId: "5LLj2d6woaK1GdfJFrJ65H",
       youtubeId: "HcwARQbsSPw",
       title: "Lamyati Nazeero Kafi Nazarin — official video",
       performer: "Owais Raza Qadri",
@@ -57,6 +59,7 @@ export const naatEntries: NaatEntry[] = [
     genre: "Salam",
     languages: ["Urdu", "Arabic phrases", "Persian phrases", "Roman Urdu"],
     media: {
+      spotifyId: "2ByCtWGGpjFnKMuaPPBC8f",
       youtubeId: "Ov71ngBLq7A",
       title: "Mustafa Jaan-e-Rehmat Pe Lakhon Salam — official video",
       performer: "Owais Raza Qadri",
@@ -86,6 +89,7 @@ export const naatEntries: NaatEntry[] = [
     genre: "Naat / Arabic praise",
     languages: ["Arabic", "Roman Arabic", "English meaning", "Urdu meaning"],
     media: {
+      spotifyId: "0z0RInybmQ84fGWFIley40",
       youtubeId: "QYYE2Tjanww",
       title: "Balaghal Ula Bi Kamaalihi",
       performer: "Qari Shahid Mahmood Qadri",
@@ -114,6 +118,7 @@ export const naatEntries: NaatEntry[] = [
     genre: "Salam",
     languages: ["Arabic", "Urdu adaptations", "Roman Arabic", "English meaning"],
     media: {
+      spotifyId: "2ODYTFQPPe24BEByNVxg4p",
       youtubeId: "q-CZ4IGxTI0",
       title: "Ya Nabi Salam Alaika",
       performer: "Atif Aslam",
@@ -142,6 +147,7 @@ export const naatEntries: NaatEntry[] = [
     genre: "Qawwali / devotional poetry",
     languages: ["Urdu", "Hindi", "Roman Urdu"],
     media: {
+      spotifyId: "75t9gI8hBgtWE6Df9JL0ZV",
       youtubeId: "ZkyiJBLKtvU",
       title: "Bhar Do Jholi Meri",
       performer: "Sabri Brothers",
@@ -170,6 +176,7 @@ export const naatEntries: NaatEntry[] = [
     genre: "Naat",
     languages: ["Urdu", "Roman Urdu", "Hindi", "English meaning"],
     media: {
+      spotifyId: "7ubo4woZ2npu3wBYYlefUm",
       youtubeId: "SNgyHh_Fsd8",
       title: "Sab Se Aula O Aala Hamara Nabi — official video",
       performer: "Owais Raza Qadri",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useMediaPlayer } from "../media/MediaProvider";
 
 type SurahSummary = { number: number; name: string; englishName: string; englishNameTranslation: string; numberOfAyahs: number; revelationType: string };
 type Ayah = { number: number; arabic: string; english: string; juz: number; page: number };
@@ -17,6 +18,7 @@ const fallbackSurahs: SurahSummary[] = [
 ];
 
 export default function QuranReader() {
+  const { current, play } = useMediaPlayer();
   const [surahs, setSurahs] = useState<SurahSummary[]>(fallbackSurahs);
   const [selected, setSelected] = useState(1);
   const [requestVersion, setRequestVersion] = useState(0);
@@ -28,7 +30,6 @@ export default function QuranReader() {
   const [arabicSize, setArabicSize] = useState(36);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
-  const [audioError, setAudioError] = useState("");
 
   useEffect(() => {
     const saved = window.localStorage.getItem("noor-quran-bookmarks-v1");
@@ -66,7 +67,6 @@ export default function QuranReader() {
   const chooseSurah = (number: number) => {
     setLoading(true);
     setError("");
-    setAudioError("");
     if (number === selected) setRequestVersion((value) => value + 1);
     else setSelected(number);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -111,8 +111,9 @@ export default function QuranReader() {
           <header className="quran-surah-hero"><p>SURAH {detail.number} · {detail.revelationType.toUpperCase()}</p><h1>{detail.englishName}</h1><span>{detail.meaning} · {detail.ayahs.length} Ayahs</span><b lang="ar" dir="rtl">{detail.name}</b></header>
           <section className="quran-surah-player" aria-label={`Full recitation of Surah ${detail.englishName}`}>
             <div><span>FULL SURAH RECITATION</span><strong>Play {detail.englishName} from beginning to end</strong><small>Mishary Rashid Alafasy · one continuous recording · all {detail.ayahs.length} Ayahs</small></div>
-            <audio key={detail.number} controls preload="metadata" src={`https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${detail.number}.mp3`} onError={() => setAudioError("The full Surah recording could not load. Please try again.")} aria-label={`Full Surah ${detail.englishName} recited by Mishary Rashid Alafasy`} />
-            {audioError && <p role="alert">{audioError}</p>}
+            <button type="button" onClick={() => play({ kind: "quran", id: `quran-${detail.number}`, title: `Surah ${detail.englishName}`, subtitle: "Mishary Rashid Alafasy · full Surah", src: `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${detail.number}.mp3` })}>
+              <span aria-hidden="true">▶</span>{current?.id === `quran-${detail.number}` ? "Playing in the bottom player" : "Play full Surah"}
+            </button>
           </section>
           <div className="quran-attribution"><span>Arabic Uthmani text</span><span>English meaning: Marmaduke Pickthall</span><span>Full audio: Mishary Rashid Alafasy</span><a href={`https://quran.com/${detail.number}`} target="_blank" rel="noreferrer">Open word-by-word and tafsir on Quran.com ↗</a></div>
           <div className="ayah-list">{detail.ayahs.map((ayah) => {

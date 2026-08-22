@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Noto_Naskh_Arabic } from "next/font/google";
 import { isClerkConfigured } from "@/lib/auth-config";
+import MediaProvider from "./media/MediaProvider";
 import "./globals.css";
 
 const geist = Geist({
@@ -33,9 +34,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const application = <MediaProvider>{children}</MediaProvider>;
   const content = isClerkConfigured()
-    ? <ClerkProvider dynamic>{children}</ClerkProvider>
-    : children;
+    ? <ClerkProvider dynamic>{application}</ClerkProvider>
+    : application;
 
   return (
     <html lang="en">
