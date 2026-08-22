@@ -84,6 +84,7 @@ const features: Feature[] = [
   { id: "reciters", title: "Naat by Reciter", subtitle: "Discover trusted Naat Khawans", category: "Naat", icon: "people", eyebrow: "RECITERS", description: "Reciter profiles group available recitations, languages and popular collections in one place.", points: ["Filter by language", "Audio-ready profiles", "Related kalam"] },
   { id: "waqiyahs", title: "Famous Waqiyahs", subtitle: "Meaningful stories with lessons", category: "Knowledge", icon: "sparkle", eyebrow: "STORIES", description: "Short, carefully sourced Islamic narratives presented with the lesson, context and reading time.", points: ["Five-minute reads", "Topic filters", "Source and review notes"] },
   { id: "festivals", title: "Islamic Festivals", subtitle: "Dates, meaning and preparation", category: "Knowledge", icon: "calendar", eyebrow: "CALENDAR", description: "A simple calendar for Ramadan, Eid, Milad, Muharram and other important occasions.", points: ["Hijri date view", "Preparation checklists", "Local event links"] },
+  { id: "qibla", title: "Qibla Compass", subtitle: "Find the Kaaba direction from your location", category: "Faith", icon: "compass", eyebrow: "DIRECTION", description: "A privacy-first Qibla tool that calculates the direction to the Kaaba and follows the live compass on supported phones.", points: ["Location-based bearing", "Live phone compass", "Private on-device calculation"] },
   { id: "quotes", title: "Quranic Quotes", subtitle: "Ayat for reflection and sharing", category: "Knowledge", icon: "quote", eyebrow: "QURAN", description: "A searchable collection of short Quranic reminders organized by hope, patience, gratitude and prayer.", points: ["Arabic and translation", "Surah and ayah reference", "Save to favourites"] },
   { id: "pillars", title: "Five Pillars of Islam", subtitle: "A guided essentials course", category: "Faith", icon: "institution", eyebrow: "ESSENTIALS", description: "Understand Shahadah, Salah, Zakat, Sawm and Hajj through short, connected lessons.", points: ["Step-by-step learning", "Progress markers", "FAQs in every lesson"] },
   { id: "tawheed", title: "Tawheed", subtitle: "The oneness of Allah", category: "Faith", icon: "sun", eyebrow: "BELIEF", description: "A carefully written introduction to Tawheed, worship, intention and reliance upon Allah.", points: ["Plain-language lessons", "Key terminology", "Scholar-reviewed references"] },
@@ -202,6 +203,8 @@ export default function Home() {
       "family-tree": "/family-tree",
       quotes: "/quran",
       matrimony: "/matrimony",
+      festivals: "/islamic-calendar",
+      qibla: "/qibla",
     };
     if (dedicatedRoutes[feature.id]) {
       window.location.assign(dedicatedRoutes[feature.id]);
@@ -263,6 +266,7 @@ export default function Home() {
         <button onClick={() => openFeature(features.find((feature) => feature.id === "quotes")!)}><span><Icon name="book"/></span><div><strong>Quran</strong><small>Read, reflect and save</small></div><Icon name="chevron" size={16}/></button>
         <button onClick={() => openFeature(features.find((feature) => feature.id === "durood")!)}><span><Icon name="tasbih"/></span><div><strong>Dhikr & Durood</strong><small>{dhikr} recitations today</small></div><Icon name="chevron" size={16}/></button>
         <button onClick={() => openFeature(features.find((feature) => feature.id === "festivals")!)}><span><Icon name="calendar"/></span><div><strong>Islamic Calendar</strong><small>Events and reminders</small></div><Icon name="chevron" size={16}/></button>
+        <button onClick={() => openFeature(features.find((feature) => feature.id === "qibla")!)}><span><Icon name="compass"/></span><div><strong>Qibla Compass</strong><small>Live direction from your location</small></div><Icon name="chevron" size={16}/></button>
       </section>
 
       <section className="content-section naat-section" id="naat-library">
@@ -298,7 +302,7 @@ export default function Home() {
       <section className="content-section explore-section">
         <div className="section-heading"><div><p className="eyebrow">EXPLORE NOOR</p><h2>Everything, without the clutter.</h2><p>Choose an area, then open only the detail you need.</p></div></div>
         <div className="category-tabs" role="group" aria-label="Feature categories">{["All", "Faith", "Naat", "Knowledge", "Community"].map((item) => <button className={category === item ? "active" : ""} type="button" onClick={() => setCategory(item)} key={item}>{item}<span>{item === "All" ? features.length : features.filter((feature) => feature.category === item).length}</span></button>)}</div>
-        <div className="feature-grid">{filteredFeatures.map((feature) => <button className="feature-card" type="button" onClick={() => openFeature(feature)} key={feature.id}><span className="feature-icon"><Icon name={feature.icon}/></span><span className="feature-category">{feature.eyebrow}</span><h3>{feature.title}</h3><p>{feature.subtitle}</p><span className="feature-link">{["namaz", "family-tree", "quotes", "matrimony"].includes(feature.id) ? "Open full experience" : "Open full guide"} <Icon name="arrow" size={15}/></span></button>)}</div>
+        <div className="feature-grid">{filteredFeatures.map((feature) => <button className="feature-card" type="button" onClick={() => openFeature(feature)} key={feature.id}><span className="feature-icon"><Icon name={feature.icon}/></span><span className="feature-category">{feature.eyebrow}</span><h3>{feature.title}</h3><p>{feature.subtitle}</p><span className="feature-link">{["namaz", "family-tree", "quotes", "matrimony", "festivals", "qibla"].includes(feature.id) ? "Open full experience" : "Open full guide"} <Icon name="arrow" size={15}/></span></button>)}</div>
       </section>
 
       <section className="content-section family-section">

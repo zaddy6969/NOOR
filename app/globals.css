@@ -81,7 +81,7 @@ kbd { font-family: inherit; color: var(--muted); background: var(--surface-soft)
 .prayer-list span { font-size: 7px; color: rgba(255,255,255,.43); }
 .prayer-list strong { font-size: 9px; font-weight: 570; }
 
-.quick-tools { width: min(1220px, calc(100% - 48px)); margin: -18px auto 0; display: grid; grid-template-columns: repeat(4,1fr); background: var(--surface); border: 1px solid var(--line); border-radius: 17px; padding: 10px; position: relative; z-index: 3; box-shadow: 0 14px 44px rgba(22,48,43,.07); }
+.quick-tools { width: min(1220px, calc(100% - 48px)); margin: -18px auto 0; display: grid; grid-template-columns: repeat(5,1fr); background: var(--surface); border: 1px solid var(--line); border-radius: 17px; padding: 10px; position: relative; z-index: 3; box-shadow: 0 14px 44px rgba(22,48,43,.07); }
 .quick-tools > button { min-height: 70px; border: 0; border-right: 1px solid var(--line); background: transparent; display: grid; grid-template-columns: auto 1fr auto; align-items: center; text-align: left; gap: 12px; padding: 10px 17px; cursor: pointer; }
 .quick-tools > button:last-child { border-right: 0; }
 .quick-tools > button > span { width: 37px; height: 37px; border-radius: 10px; background: var(--mint); color: var(--green); display: grid; place-items: center; }
@@ -304,8 +304,9 @@ footer { border-top: 1px solid var(--line); background: var(--surface); padding:
   .nav { gap: 20px; }
   .hero-shell { grid-template-columns: 1fr .82fr; gap: 35px; }
   .quick-tools { grid-template-columns: repeat(2,1fr); }
-  .quick-tools > button:nth-child(2) { border-right: 0; }
-  .quick-tools > button:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .quick-tools > button { border-right: 0; border-bottom: 1px solid var(--line); }
+  .quick-tools > button:nth-child(odd):not(:last-child) { border-right: 1px solid var(--line); }
+  .quick-tools > button:last-child { grid-column: 1 / -1; border-bottom: 0; }
   .naat-layout { grid-template-columns: 1fr 280px; }
   .feature-grid { grid-template-columns: repeat(3,1fr); }
   .service-grid { grid-template-columns: repeat(2,1fr); }
@@ -1129,4 +1130,139 @@ footer { border-top: 1px solid var(--line); background: var(--surface); padding:
   .ayah-toolbar small { width: 100%; text-align: right; }
   .ayah-meaning { font-size: 14px; }
   .family-page-hero h1 { font-size: 50px; }
+}
+
+/* Islamic calendar */
+.calendar-page, .qibla-page { min-height: 100vh; background: #f5f3ec; color: var(--ink); }
+.calendar-tool, .qibla-tool { width: min(1220px,calc(100% - 48px)); margin: 0 auto; padding: 70px 0 100px; }
+.calendar-intro { min-height: 330px; display: grid; grid-template-columns: 1fr 330px; gap: 75px; align-items: center; }
+.calendar-intro h1, .qibla-intro h1 { margin: 8px 0 20px; font-family: Georgia,serif; font-size: clamp(52px,7vw,82px); line-height: .96; letter-spacing: -.055em; font-weight: 500; }
+.calendar-intro h1 em, .qibla-intro h1 em { color: var(--green); font-weight: 500; }
+.calendar-intro > div > p:last-child, .qibla-intro > p:last-child { max-width: 680px; color: var(--muted); font-size: 10px; line-height: 1.8; }
+.calendar-today-card { min-height: 225px; padding: 32px; border-radius: 22px; background: linear-gradient(145deg,#0b6151,#07352f); color: #fff; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 18px 50px rgba(7,53,47,.15); position: relative; overflow: hidden; }
+.calendar-today-card::after { content: "☾"; position: absolute; right: -12px; top: -42px; font-size: 175px; opacity: .05; }
+.calendar-today-card > span { color: #dfc97f; font-size: 7px; font-weight: 750; letter-spacing: .18em; }
+.calendar-today-card > strong { margin-top: 18px; font-family: Georgia,serif; font-size: 31px; font-weight: 500; }
+.calendar-today-card > b { margin-top: 5px; color: rgba(255,255,255,.7); font-size: 10px; font-weight: 500; }
+.calendar-today-card > small { margin-top: 28px; color: rgba(255,255,255,.52); font-size: 7px; }
+.calendar-panel { border: 1px solid var(--line); background: var(--surface); border-radius: 22px; overflow: hidden; box-shadow: 0 16px 50px rgba(22,48,43,.05); }
+.calendar-controls { min-height: 92px; padding: 15px 18px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.calendar-nav { display: flex; align-items: center; gap: 16px; }
+.calendar-nav > button, .calendar-options > button { min-width: 39px; height: 39px; border: 1px solid var(--line); background: var(--surface-soft); color: var(--green); border-radius: 20px; cursor: pointer; }
+.calendar-nav > div { min-width: 235px; text-align: center; }
+.calendar-nav strong { display: block; font-family: Georgia,serif; font-size: 20px; font-weight: 520; }
+.calendar-nav span { display: block; margin-top: 5px; color: var(--muted); font-size: 7px; }
+.calendar-options { display: flex; align-items: center; gap: 9px; }
+.calendar-options > button { min-width: 65px; padding: 0 15px; background: var(--green); color: #fff; border-color: var(--green); font-size: 8px; }
+.calendar-options label { min-height: 43px; padding: 0 6px 0 13px; border: 1px solid var(--line); background: var(--surface-soft); border-radius: 22px; color: var(--muted); display: flex; align-items: center; gap: 10px; font-size: 7px; }
+.calendar-options select { height: 31px; border: 0; background: var(--surface); color: var(--ink); border-radius: 16px; padding: 0 9px; font-size: 7px; }
+.calendar-board { overflow-x: auto; }
+.calendar-grid { min-width: 760px; display: grid; grid-template-columns: repeat(7,1fr); }
+.calendar-weekdays { border-bottom: 1px solid var(--line); background: var(--surface-soft); }
+.calendar-weekdays span { min-height: 36px; display: grid; place-items: center; color: var(--muted); font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.calendar-days { padding: 8px; gap: 6px; }
+.calendar-day, .calendar-blank { min-height: 118px; }
+.calendar-day { padding: 12px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; display: flex; flex-direction: column; align-items: flex-start; }
+.calendar-day > div { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+.calendar-day > div strong { font-family: Georgia,serif; font-size: 20px; font-weight: 520; }
+.calendar-day > div span { padding: 4px 6px; border-radius: 9px; background: var(--green); color: #fff; font-size: 5.5px; font-weight: 750; letter-spacing: .08em; }
+.calendar-day p { margin: auto 0 7px; color: var(--green); font-size: 7px; line-height: 1.4; }
+.calendar-day small { max-width: 100%; padding: 4px 6px; border-radius: 6px; background: var(--gold-soft); color: #71581f; font-size: 5.7px; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.calendar-day.is-today { border-color: var(--green); background: var(--mint); box-shadow: inset 0 0 0 1px var(--green); }
+.calendar-day-loading { border: 0; background: linear-gradient(90deg,var(--surface-soft),#eceae1,var(--surface-soft)); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+.calendar-state { min-height: 470px; padding: 30px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.calendar-state strong { font-family: Georgia,serif; font-size: 27px; font-weight: 520; }
+.calendar-state p { color: var(--muted); font-size: 9px; }
+.calendar-state button { min-height: 38px; padding: 0 15px; border: 0; border-radius: 20px; background: var(--green); color: #fff; font-size: 8px; cursor: pointer; }
+.calendar-bottom-grid { margin-top: 12px; display: grid; grid-template-columns: 1.2fr .8fr; gap: 12px; }
+.calendar-events, .calendar-guidance { min-height: 300px; padding: 35px; border-radius: 20px; }
+.calendar-events { border: 1px solid var(--line); background: var(--surface); }
+.calendar-events h2, .calendar-guidance h2 { margin: 10px 0 20px; font-family: Georgia,serif; font-size: 31px; line-height: 1.1; font-weight: 520; }
+.calendar-events > div { display: grid; grid-template-columns: repeat(2,1fr); gap: 7px; }
+.calendar-events > div > span { min-height: 74px; padding: 12px; border: 1px solid var(--line); background: var(--surface-soft); border-radius: 11px; display: flex; align-items: center; gap: 11px; }
+.calendar-events > div > span > b { width: 34px; height: 34px; border-radius: 50%; background: var(--mint); color: var(--green); display: grid; place-items: center; font-family: Georgia,serif; font-size: 13px; font-weight: 520; }
+.calendar-events > div > span > span { display: flex; flex-direction: column; gap: 5px; }
+.calendar-events > div strong { font-family: Georgia,serif; font-size: 11px; font-weight: 520; }
+.calendar-events > div small, .calendar-muted { color: var(--muted); font-size: 7px; }
+.calendar-guidance { background: var(--green-deep); color: #fff; }
+.calendar-guidance > span, .calendar-source > span { color: var(--gold); font-size: 6.5px; font-weight: 750; letter-spacing: .16em; }
+.calendar-guidance p { color: rgba(255,255,255,.62); font-size: 9px; line-height: 1.75; }
+.calendar-guidance strong { display: block; margin: 20px 0; color: #e4d39f; font-family: Georgia,serif; font-size: 12px; line-height: 1.55; font-weight: 520; }
+.calendar-guidance a { color: #fff; font-size: 8px; font-weight: 700; }
+.calendar-source { min-height: 130px; padding: 32px max(4.5vw,calc((100% - 1220px)/2)); border-top: 1px solid var(--line); background: #ece8dd; display: grid; grid-template-columns: 160px 1fr auto; align-items: center; gap: 28px; }
+.calendar-source p { margin: 0; color: var(--muted); font-size: 8px; line-height: 1.7; }
+.calendar-source a { color: var(--green); font-size: 8px; font-weight: 700; }
+
+/* Location-based Qibla compass */
+.qibla-intro { max-width: 840px; margin: 0 auto 55px; text-align: center; }
+.qibla-intro > p:last-child { margin-left: auto; margin-right: auto; }
+.qibla-layout { display: grid; grid-template-columns: 1.05fr .95fr; gap: 12px; align-items: stretch; }
+.qibla-compass-card, .qibla-control-card { min-height: 590px; border-radius: 24px; }
+.qibla-compass-card { padding: 35px; background: linear-gradient(145deg,#0b6151,#07352f); color: #fff; display: grid; place-items: center; position: relative; overflow: hidden; }
+.qibla-compass-card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%,rgba(255,255,255,.12),transparent 43%); }
+.compass-face { width: min(390px,75vw); aspect-ratio: 1; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; position: relative; box-shadow: inset 0 0 0 14px rgba(255,255,255,.035),0 20px 60px rgba(0,0,0,.14); transition: box-shadow .25s ease; }
+.compass-face.is-aligned { box-shadow: inset 0 0 0 14px rgba(223,201,127,.1),0 0 45px rgba(223,201,127,.28); }
+.compass-ticks { position: absolute; inset: 12px; border-radius: 50%; background: repeating-conic-gradient(from 0deg,rgba(255,255,255,.38) 0deg 1deg,transparent 1deg 10deg); -webkit-mask: radial-gradient(circle,transparent 0 87%,#000 88% 100%); mask: radial-gradient(circle,transparent 0 87%,#000 88% 100%); }
+.cardinal { position: absolute; z-index: 3; color: rgba(255,255,255,.62); font-family: Georgia,serif; font-size: 11px; font-weight: 500; }
+.cardinal.north { top: 28px; left: 50%; transform: translateX(-50%); color: #e0c87a; }
+.cardinal.east { right: 31px; top: 50%; transform: translateY(-50%); }
+.cardinal.south { bottom: 28px; left: 50%; transform: translateX(-50%); }
+.cardinal.west { left: 31px; top: 50%; transform: translateY(-50%); }
+.qibla-needle { width: 100%; height: 100%; position: absolute; z-index: 4; left: 50%; top: 50%; transform-origin: 50% 50%; transition: transform .18s ease-out; pointer-events: none; }
+.qibla-needle i { width: 3px; height: 37%; position: absolute; left: calc(50% - 1.5px); top: 13%; background: linear-gradient(#e5ce81,#fff); border-radius: 3px; box-shadow: 0 0 18px rgba(229,206,129,.6); }
+.qibla-needle i::before { content: ""; position: absolute; left: 50%; top: -11px; transform: translateX(-50%); border-left: 7px solid transparent; border-right: 7px solid transparent; border-bottom: 14px solid #e5ce81; }
+.qibla-needle strong { position: absolute; left: 50%; top: 8%; transform: translate(-50%,-100%); color: #e5ce81; font-size: 6px; letter-spacing: .14em; }
+.compass-center { width: 37px; height: 37px; border: 7px solid rgba(255,255,255,.18); border-radius: 50%; background: #e3ca7c; color: var(--green-deep); display: grid; place-items: center; position: absolute; z-index: 5; left: 50%; top: 50%; transform: translate(-50%,-50%); font-size: 10px; }
+.qibla-primary-readout { position: relative; z-index: 5; text-align: center; }
+.qibla-primary-readout > span { color: #e2cb82; font-size: 6.5px; font-weight: 750; letter-spacing: .16em; }
+.qibla-primary-readout > strong { display: block; margin-top: 5px; font-family: Georgia,serif; font-size: 38px; font-weight: 500; }
+.qibla-primary-readout p { margin: 2px 0 0; color: rgba(255,255,255,.55); font-size: 7px; }
+.qibla-control-card { padding: 52px; border: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; justify-content: center; }
+.qibla-control-card > span { color: var(--gold); font-size: 6.5px; font-weight: 750; letter-spacing: .16em; }
+.qibla-control-card h2 { margin: 15px 0; font-family: Georgia,serif; font-size: clamp(34px,4vw,51px); line-height: 1.03; letter-spacing: -.035em; font-weight: 520; }
+.qibla-control-card > p { color: var(--muted); font-size: 9px; line-height: 1.75; }
+.qibla-control-card > button { min-height: 49px; margin-top: 20px; border: 0; border-radius: 25px; background: var(--green); color: #fff; font-size: 9px; font-weight: 700; cursor: pointer; }
+.qibla-control-card > button:disabled { opacity: .6; cursor: wait; }
+.qibla-control-card .qibla-error { padding: 11px; border-radius: 9px; background: #f5e2df; color: #7a3028; }
+.qibla-control-card .qibla-compass-message { color: var(--green); font-size: 7.5px; }
+.qibla-stats { margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--line); display: grid; gap: 12px; }
+.qibla-stats > span { display: flex; justify-content: space-between; gap: 20px; }
+.qibla-stats small { color: var(--muted); font-size: 6px; letter-spacing: .1em; }
+.qibla-stats strong { color: var(--ink); font-size: 8px; font-weight: 650; text-align: right; }
+.qibla-guidance-grid { margin-top: 12px; display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.qibla-guidance-grid article { min-height: 150px; padding: 25px; border: 1px solid var(--line); background: var(--surface); border-radius: 16px; display: flex; gap: 17px; }
+.qibla-guidance-grid article > span { width: 31px; height: 31px; flex: 0 0 auto; border-radius: 50%; background: var(--mint); color: var(--green); display: grid; place-items: center; font-size: 7px; font-weight: 700; }
+.qibla-guidance-grid strong { font-family: Georgia,serif; font-size: 15px; font-weight: 520; }
+.qibla-guidance-grid p { color: var(--muted); font-size: 8px; line-height: 1.7; }
+.qibla-accuracy-note { margin-top: 12px; padding: 22px 25px; border: 1px solid #ddcea2; background: #f2ecda; border-radius: 14px; display: flex; align-items: center; gap: 25px; }
+.qibla-accuracy-note strong { color: #604c20; font-family: Georgia,serif; font-size: 13px; white-space: nowrap; }
+.qibla-accuracy-note p { margin: 0; color: #695d43; font-size: 7.5px; line-height: 1.65; }
+
+@media (max-width: 900px) {
+  .calendar-intro { grid-template-columns: 1fr 280px; gap: 35px; }
+  .calendar-controls { align-items: stretch; flex-direction: column; }
+  .calendar-options { justify-content: center; }
+  .calendar-bottom-grid, .qibla-layout { grid-template-columns: 1fr; }
+  .qibla-control-card { min-height: 430px; }
+}
+
+@media (max-width: 680px) {
+  .calendar-tool, .qibla-tool { width: min(100% - 24px,560px); padding: 45px 0 75px; }
+  .calendar-intro { min-height: auto; grid-template-columns: 1fr; gap: 25px; margin-bottom: 30px; text-align: center; }
+  .calendar-intro h1, .qibla-intro h1 { font-size: 49px; }
+  .calendar-intro > div > p:last-child { margin-left: auto; margin-right: auto; }
+  .calendar-today-card { min-height: 190px; text-align: left; }
+  .calendar-nav { justify-content: space-between; }
+  .calendar-nav > div { min-width: 0; }
+  .calendar-options { flex-wrap: wrap; }
+  .calendar-options label { min-width: 100%; justify-content: space-between; }
+  .calendar-events, .calendar-guidance { padding: 26px; }
+  .calendar-events > div { grid-template-columns: 1fr; }
+  .calendar-source { grid-template-columns: 1fr; gap: 10px; padding: 30px 18px; }
+  .qibla-intro { margin-bottom: 35px; }
+  .qibla-compass-card { min-height: 500px; padding: 25px 15px; }
+  .qibla-control-card { min-height: auto; padding: 38px 27px; }
+  .qibla-guidance-grid { grid-template-columns: 1fr; }
+  .qibla-guidance-grid article { min-height: 120px; }
+  .qibla-accuracy-note { align-items: flex-start; flex-direction: column; gap: 8px; }
 }
