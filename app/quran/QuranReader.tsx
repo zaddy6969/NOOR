@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { useMediaPlayer } from "../media/MediaProvider";
 
 type SurahSummary = { number: number; name: string; englishName: string; englishNameTranslation: string; numberOfAyahs: number; revelationType: string };
 type Ayah = { number: number; arabic: string; english: string; juz: number; page: number };
-type SurahDetail = { number: number; name: string; englishName: string; meaning: string; revelationType: string; ayahs: Ayah[] };
+type VerseTiming = { number: number; from: number; to: number; duration: number };
+type SurahDetail = { number: number; name: string; englishName: string; meaning: string; revelationType: string; ayahs: Ayah[]; audio: { src: string; duration: number; verseTimings: VerseTiming[] } };
 
 const fallbackSurahs: SurahSummary[] = [
   { number: 1, name: "ٱلْفَاتِحَة", englishName: "Al-Faatiha", englishNameTranslation: "The Opening", numberOfAyahs: 7, revelationType: "Meccan" },
@@ -18,7 +20,7 @@ const fallbackSurahs: SurahSummary[] = [
 ];
 
 export default function QuranReader({ initialSurah = 1, initialAyah = null }: { initialSurah?: number; initialAyah?: number | null }) {
-  const { current, play } = useMediaPlayer();
+  const { current, play, quranPlayback } = useMediaPlayer();
   const [surahs, setSurahs] = useState<SurahSummary[]>(fallbackSurahs);
   const [selected, setSelected] = useState(initialSurah);
   const [requestVersion, setRequestVersion] = useState(0);
@@ -30,6 +32,7 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
   const [arabicSize, setArabicSize] = useState(36);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
+  const [autoFollow, setAutoFollow] = useState(true);
   const initialScrollDone = useRef(false);
 
   useEffect(() => {
@@ -70,6 +73,16 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
     }, 120);
     return () => window.clearTimeout(timer);
   }, [detail, initialAyah]);
+
+  const activeAyahNumber = current?.kind === "quran" && current.id === `quran-${detail?.number}` ? quranPlayback.activeVerseNumber : null;
+
+  useEffect(() => {
+    if (!activeAyahNumber || !autoFollow || !quranPlayback.isPlaying) return;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(`ayah-${activeAyahNumber}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeAyahNumber, autoFollow, quranPlayback.isPlaying]);
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -115,7 +128,7 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
         <div className="quran-reader-tools">
           <label><span>Jump to Ayah</span><select onChange={(event) => jumpToAyah(event.target.value)} defaultValue=""><option value="" disabled>Choose</option>{detail?.ayahs.map((ayah) => <option value={ayah.number} key={ayah.number}>{detail.number}:{ayah.number}</option>)}</select></label>
           <label><span>Arabic size</span><input type="range" min="27" max="54" value={arabicSize} onChange={(event) => setArabicSize(Number(event.target.value))} /></label>
-          <button className={showMeaning ? "active" : ""} type="button" onClick={() => setShowMeaning((value) => !value)}>{showMeaning ? "English meaning on" : "English meaning off"}</button>
+          <div className="quran-tool-actions"><button className={autoFollow ? "active" : ""} type="button" onClick={() => setAutoFollow((value) => !value)}>{autoFollow ? "Auto-follow on" : "Auto-follow off"}</button><button className={showMeaning ? "active" : ""} type="button" onClick={() => setShowMeaning((value) => !value)}>{showMeaning ? "English meaning on" : "English meaning off"}</button></div>
         </div>
 
         {loading && <div className="quran-loading"><span/><span/><span/></div>}
@@ -123,16 +136,18 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
         {!loading && !error && detail && <>
           <header className="quran-surah-hero"><p>SURAH {detail.number} · {detail.revelationType.toUpperCase()}</p><h1>{detail.englishName}</h1><span>{detail.meaning} · {detail.ayahs.length} Ayahs</span><b lang="ar" dir="rtl">{detail.name}</b></header>
           <section className="quran-surah-player" aria-label={`Full recitation of Surah ${detail.englishName}`}>
-            <div><span>FULL SURAH RECITATION</span><strong>Play {detail.englishName} from beginning to end</strong><small>Mishary Rashid Alafasy · one continuous recording · all {detail.ayahs.length} Ayahs</small></div>
-            <button type="button" onClick={() => play({ kind: "quran", id: `quran-${detail.number}`, title: `Surah ${detail.englishName}`, subtitle: "Mishary Rashid Alafasy · full Surah", src: `https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/${detail.number}.mp3` })}>
-              <span aria-hidden="true">▶</span>{current?.id === `quran-${detail.number}` ? "Playing in the bottom player" : "Play full Surah"}
+            <div><span>FULL SURAH RECITATION</span><strong>Play {detail.englishName} from beginning to end</strong><small>Mishary Rashid Alafasy · continuous recording · timed English meaning follows every Ayah</small></div>
+            <button type="button" onClick={() => play({ kind: "quran", id: `quran-${detail.number}`, title: `Surah ${detail.englishName}`, subtitle: "Mishary Rashid Alafasy · full Surah", src: detail.audio.src, surahNumber: detail.number, verseTimings: detail.audio.verseTimings, verses: detail.ayahs.map(({ number, arabic, english }) => ({ number, arabic, english })) })}>
+              <span aria-hidden="true">▶</span>{current?.id === `quran-${detail.number}` ? `Playing · Ayah ${activeAyahNumber ?? 1}` : "Play full Surah with auto-follow"}
             </button>
           </section>
           <div className="quran-attribution"><span>Arabic Uthmani text</span><span>English meaning: Marmaduke Pickthall</span><span>Full audio: Mishary Rashid Alafasy</span><span>All reading and verse navigation stays inside NOOR</span></div>
           <div className="ayah-list">{detail.ayahs.map((ayah) => {
             const key = `${detail.number}:${ayah.number}`;
             const saved = bookmarks.includes(key);
-            return <article className="ayah-card" id={`ayah-${ayah.number}`} key={ayah.number}>
+            const active = ayah.number === activeAyahNumber;
+            const progressStyle = active ? ({ "--ayah-progress": `${Math.round(quranPlayback.verseProgress * 100)}%` } as CSSProperties) : undefined;
+            return <article className={`ayah-card${active ? " is-playing" : ""}`} id={`ayah-${ayah.number}`} key={ayah.number} aria-current={active ? "true" : undefined} style={progressStyle}>
               <div className="ayah-toolbar"><span>{detail.number}:{ayah.number}</span><div><small>Juz {ayah.juz || "—"} · Page {ayah.page || "—"}</small><button type="button" onClick={() => copyAyah(ayah)} aria-label={`Copy verse ${key}`}>Copy</button><button className={saved ? "saved" : ""} type="button" onClick={() => toggleBookmark(ayah.number)} aria-label={`${saved ? "Remove" : "Save"} verse ${key}`}>{saved ? "Saved" : "Save"}</button></div></div>
               <p className="ayah-arabic" lang="ar" dir="rtl" style={{ fontSize: `${arabicSize}px` }}>{ayah.arabic}</p>
               {showMeaning && <p className="ayah-meaning"><span>{ayah.number}</span>{ayah.english}</p>}

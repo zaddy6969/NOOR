@@ -1,9 +1,12 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+
+export type QuranVerseTiming = { number: number; from: number; to: number; duration: number };
+export type QuranVerseText = { number: number; arabic: string; english: string };
 
 export type MediaItem =
-  | { kind: "quran"; id: string; title: string; subtitle: string; src: string }
+  | { kind: "quran"; id: string; title: string; subtitle: string; src: string; surahNumber: number; verseTimings: QuranVerseTiming[]; verses: QuranVerseText[] }
   | { kind: "spotify"; id: string; title: string; subtitle: string; spotifyId: string }
   | { kind: "video"; id: string; title: string; subtitle: string; youtubeId: string };
 
@@ -11,6 +14,14 @@ type MediaContextValue = {
   current: MediaItem | null;
   play: (item: MediaItem) => void;
   close: () => void;
+  quranPlayback: {
+    activeVerseNumber: number | null;
+    activeVerse: QuranVerseText | null;
+    currentTime: number;
+    duration: number;
+    verseProgress: number;
+    isPlaying: boolean;
+  };
 };
 
 const MediaContext = createContext<MediaContextValue | null>(null);
@@ -24,23 +35,46 @@ export function useMediaPlayer() {
 export default function MediaProvider({ children }: { children: React.ReactNode }) {
   const [current, setCurrent] = useState<MediaItem | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playVersion, setPlayVersion] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const play = useCallback((item: MediaItem) => {
+    audioRef.current?.pause();
+    setCurrentTime(0);
+    setDuration(0);
+    setIsPlaying(false);
+    setPlayVersion((version) => version + 1);
     setCurrent(item);
     setCollapsed(false);
   }, []);
 
   const close = useCallback(() => {
     audioRef.current?.pause();
+    setCurrentTime(0);
+    setDuration(0);
+    setIsPlaying(false);
     setCurrent(null);
   }, []);
+
+  const quranPlayback = useMemo(() => {
+    if (!current || current.kind !== "quran") return { activeVerseNumber: null, activeVerse: null, currentTime, duration, verseProgress: 0, isPlaying: false };
+    const milliseconds = currentTime * 1000;
+    const timing = current.verseTimings.find((item) => milliseconds >= item.from && milliseconds < item.to)
+      ?? (milliseconds >= (current.verseTimings.at(-1)?.to ?? Number.POSITIVE_INFINITY) ? current.verseTimings.at(-1) : current.verseTimings[0]);
+    const activeVerseNumber = timing?.number ?? null;
+    const activeVerse = current.verses.find((verse) => verse.number === activeVerseNumber) ?? null;
+    const verseProgress = timing ? Math.min(1, Math.max(0, (milliseconds - timing.from) / Math.max(1, timing.to - timing.from))) : 0;
+    return { activeVerseNumber, activeVerse, currentTime, duration, verseProgress, isPlaying };
+  }, [current, currentTime, duration, isPlaying]);
 
   useEffect(() => {
     if (!current || current.kind !== "quran" || !("mediaSession" in navigator)) return;
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: current.title,
-      artist: current.subtitle,
+      title: quranPlayback.activeVerseNumber ? `${current.title} · Ayah ${quranPlayback.activeVerseNumber}` : current.title,
+      artist: quranPlayback.activeVerse?.english ?? current.subtitle,
       album: "NOOR Quran",
     });
     navigator.mediaSession.setActionHandler("play", () => audioRef.current?.play());
@@ -49,10 +83,10 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
       navigator.mediaSession.setActionHandler("play", null);
       navigator.mediaSession.setActionHandler("pause", null);
     };
-  }, [current]);
+  }, [current, quranPlayback.activeVerse, quranPlayback.activeVerseNumber]);
 
   return (
-    <MediaContext.Provider value={{ current, play, close }}>
+    <MediaContext.Provider value={{ current, play, close, quranPlayback }}>
       {children}
       {current ? (
         <aside className={`media-dock media-dock-${current.kind}${collapsed ? " is-collapsed" : ""}`} aria-label="Persistent media player">
@@ -60,14 +94,33 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
             <button className="media-dock-info" type="button" onClick={() => setCollapsed((value) => !value)} aria-expanded={!collapsed}>
               <span>{current.kind === "video" ? "VIDEO" : current.kind === "spotify" ? "AUDIO" : "QURAN AUDIO"}</span>
               <strong>{current.title}</strong>
-              <small>{current.subtitle}</small>
+              <small>{current.kind === "quran" && quranPlayback.activeVerseNumber ? `Ayah ${current.surahNumber}:${quranPlayback.activeVerseNumber} · ${quranPlayback.activeVerse?.english ?? current.subtitle}` : current.subtitle}</small>
             </button>
             <button className="media-collapse" type="button" onClick={() => setCollapsed((value) => !value)} aria-label={collapsed ? "Expand player" : "Minimize player"}>{collapsed ? "⌃" : "⌄"}</button>
             <button className="media-close" type="button" onClick={close} aria-label="Close player">×</button>
           </header>
-          {!collapsed && current.kind === "quran" ? (
-            <audio ref={audioRef} key={current.id} controls autoPlay preload="metadata" src={current.src} aria-label={`${current.title}, ${current.subtitle}`} />
-          ) : null}
+          {current.kind === "quran" ? (<>
+            {!collapsed && quranPlayback.activeVerse ? <div className="media-quran-caption">
+              <span>NOW RECITING · {current.surahNumber}:{quranPlayback.activeVerse.number}</span>
+              <b lang="ar" dir="rtl">{quranPlayback.activeVerse.arabic}</b>
+              <p>{quranPlayback.activeVerse.english}</p>
+            </div> : null}
+            <audio
+              className={collapsed ? "media-audio-hidden" : ""}
+              ref={audioRef}
+              key={`${current.id}-${playVersion}`}
+              controls
+              autoPlay
+              preload="metadata"
+              src={current.src}
+              aria-label={`${current.title}, ${current.subtitle}`}
+              onLoadedMetadata={(event) => setDuration(event.currentTarget.duration || 0)}
+              onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => setIsPlaying(false)}
+            />
+          </>) : null}
           {!collapsed && current.kind === "spotify" ? (
             <iframe
               key={current.id}
