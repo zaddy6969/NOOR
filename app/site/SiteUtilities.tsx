@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 
 type SearchResult = {
   id: string;
-  type: "Feature" | "Topic" | "Guide" | "Naat" | "Quran";
+  type: "Feature" | "Topic" | "Guide" | "Naat" | "Quran" | "Dictionary" | "Place" | "Product";
   title: string;
   description: string;
   href: string;
@@ -49,10 +49,13 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("noor-theme-v2");
-    const initialDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDark(initialDark);
-    document.documentElement.classList.toggle("noor-dark", initialDark);
+    const frame = window.requestAnimationFrame(() => {
+      const stored = window.localStorage.getItem("noor-theme-v2");
+      const initialDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      setDark(initialDark);
+      document.documentElement.classList.toggle("noor-dark", initialDark);
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -120,8 +123,8 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
                 onKeyDown={(event) => {
                   if (event.key === "Enter" && results[0]) chooseResult(results[0]);
                 }}
-                placeholder="Search a topic, Naat, Surah or verse…"
-                aria-label="Search topics, features, Naats and Quran verses"
+                placeholder="Search a topic, word, place, Surah or verse…"
+                aria-label="Search topics, features, dictionary, destinations, Naats and Quran verses"
               />
               <button type="button" onClick={() => setSearchOpen(false)}>ESC</button>
             </div>
@@ -141,9 +144,9 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
                   <i aria-hidden="true">›</i>
                 </button>
               ))}
-              {!loading && query.trim() && results.length === 0 ? <p>No result found. Try a Surah name, verse reference such as 2:255, or a simpler keyword.</p> : null}
+              {!loading && query.trim() && results.length === 0 ? <p>No result found. Try a Surah name, verse reference such as 2:255, a city, product or a simpler spelling.</p> : null}
             </div>
-            <footer><span>Press Enter to open the first result</span><span>Quran search includes English verse meanings</span></footer>
+            <footer><span>Press Enter to open the first result</span><span>Quran, dictionary, places and every NOOR feature</span></footer>
           </section>
         </div>
       ) : null}

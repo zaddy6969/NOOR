@@ -7,7 +7,7 @@ import SiteFooter from "./site/SiteFooter";
 import { HeaderUtilities } from "./site/SiteUtilities";
 
 type Category = "All" | "Daily" | "Learn" | "Naat" | "Community";
-type IconName = "book" | "calendar" | "compass" | "prayer" | "beads" | "audio" | "mosque" | "tree" | "gift" | "pen" | "mic" | "help" | "story" | "pillars" | "moon" | "coins" | "hajj" | "heart" | "school" | "work" | "scholar" | "video";
+type IconName = "book" | "calendar" | "compass" | "prayer" | "beads" | "audio" | "mosque" | "tree" | "gift" | "pen" | "mic" | "help" | "story" | "pillars" | "moon" | "coins" | "hajj" | "heart" | "school" | "work" | "scholar" | "video" | "pin" | "bag" | "map";
 
 type Feature = {
   title: string;
@@ -41,6 +41,9 @@ function Icon({ name }: { name: IconName }) {
     work: <><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5h8v2M3 12h18"/></>,
     scholar: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0M8 3l4-2 4 2"/></>,
     video: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3Z"/></>,
+    pin: <><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,
+    bag: <><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></>,
+    map: <><path d="m3 6 5-3 8 3 5-3v15l-5 3-8-3-5 3V6Z"/><path d="M8 3v15m8-12v15"/></>,
   };
   return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
@@ -54,6 +57,7 @@ const dailyTools: Feature[] = [
   { title: "Zakat Calculator", description: "Estimate Nisab and Zakat privately", href: "/zakat-calculator", category: "Daily", icon: "coins" },
   { title: "Qaza Namaz", description: "Calculate missed prayers and make a plan", href: "/qaza-namaz", category: "Daily", icon: "prayer" },
   { title: "Naat & Salam", description: "Separate audio, video and reading pages", href: "/naat", category: "Naat", icon: "audio" },
+  { title: "Mosque Finder", description: "Find live nearby masjids by distance", href: "/mosque-finder", category: "Daily", icon: "pin" },
 ];
 
 const features: Feature[] = [
@@ -78,6 +82,10 @@ const features: Feature[] = [
   { title: "Jobs & Career", description: "Ethical roles and career resources", href: "/topics/jobs", category: "Community", icon: "work" },
   { title: "Islamic Scholars", description: "Profiles, works and verified channels", href: "/topics/scholars", category: "Learn", icon: "scholar" },
   { title: "Islamic Channels", description: "Curated lectures, recitation and learning", href: "/topics/channels", category: "Community", icon: "video" },
+  { title: "Firoz-ul-Lughat", description: "Urdu and Islamic words with clear meanings", href: "/firozul-lughat", category: "Learn", icon: "book" },
+  { title: "Shop by Category", description: "Prayer, books, gifts and pilgrimage essentials", href: "/shop", category: "Community", icon: "bag" },
+  { title: "Muslim Destinations", description: "Sacred, Sufi and Islamic heritage places", href: "/destinations", category: "Learn", icon: "map" },
+  { title: "Religious Tourism", description: "Plan a respectful journey and private checklist", href: "/religious-tourism", category: "Community", icon: "hajj" },
 ];
 
 export default function Home() {
@@ -85,7 +93,10 @@ export default function Home() {
   const [category, setCategory] = useState<Category>("All");
   const [today, setToday] = useState<Date | null>(null);
 
-  useEffect(() => setToday(new Date()), []);
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setToday(new Date()));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const filtered = useMemo(() => {
     const term = query.trim().toLowerCase();

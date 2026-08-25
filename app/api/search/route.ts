@@ -1,9 +1,12 @@
 import { naatEntries } from "../../naat/naat-data";
 import { topics } from "../../topics/topic-data";
+import { lughatEntries } from "../../firozul-lughat/lughat-data";
+import { destinations } from "../../destinations/destination-data";
+import { shopItems } from "../../shop/shop-data";
 
 type SearchResult = {
   id: string;
-  type: "Feature" | "Topic" | "Guide" | "Naat" | "Quran";
+  type: "Feature" | "Topic" | "Guide" | "Naat" | "Quran" | "Dictionary" | "Place" | "Product";
   title: string;
   description: string;
   href: string;
@@ -22,6 +25,11 @@ const features = [
   ["Naat and Salam", "Audio, video, writers, reciters and reading pages", "/naat"],
   ["Family Tree", "Interactive lineage and sacred history", "/family-tree"],
   ["Matrimony", "Private family-aware matrimonial profiles", "/matrimony"],
+  ["Firoz-ul-Lughat", "Firozul Feroz Firuz Urdu Islamic dictionary Roman meanings and saved words", "/firozul-lughat"],
+  ["Shop by Category", "Islamic shop store Quran books prayer mats attar modest wear gifts Hajj Umrah children", "/shop"],
+  ["Mosque Finder", "Mousque mosque masjid finder live nearby prayer place distance directions", "/mosque-finder"],
+  ["Famous Muslim Destinations", "Sacred cities Islamic heritage Sufi places Makkah Madinah Ajmer tourism", "/destinations"],
+  ["Muslim Religious Tourism", "Ziyarat pilgrimage travel planner private checklist etiquette documents", "/religious-tourism"],
 ] as const;
 
 const detailedGuides = [
@@ -89,6 +97,21 @@ function staticResults(query: string) {
     if (score) results.push({ id: `naat-${entry.slug}`, type: "Naat", title: entry.title, description: `${entry.genre} · ${entry.media.performer} · ${entry.writer}`, href: `/naat/${entry.slug}`, score });
   }
 
+  for (const entry of lughatEntries) {
+    const score = rank(`${entry.term} ${entry.urdu} ${entry.roman} ${entry.meaning} ${entry.use} ${entry.category}`, query);
+    if (score) results.push({ id: `lughat-${entry.id}`, type: "Dictionary", title: `${entry.term} · ${entry.urdu}`, description: entry.meaning, href: `/firozul-lughat#${entry.id}`, score: score + 4 });
+  }
+
+  for (const place of destinations) {
+    const score = rank(`${place.name} ${place.country} ${place.region} ${place.category} ${place.summary} ${place.significance} ${place.places.join(" ")}`, query);
+    if (score) results.push({ id: `place-${place.slug}`, type: "Place", title: place.name, description: `${place.country} · ${place.summary}`, href: `/destinations#${place.slug}`, arabic: place.arabic, score: score + 3 });
+  }
+
+  for (const item of shopItems) {
+    const score = rank(`${item.name} ${item.category} ${item.description} ${item.options}`, query);
+    if (score) results.push({ id: `product-${item.id}`, type: "Product", title: item.name, description: `${item.category} · ${item.description}`, href: `/shop#${item.id}`, score });
+  }
+
   return results;
 }
 
@@ -140,7 +163,10 @@ export async function GET(request: Request) {
     if (seen.has(item.href)) return false;
     seen.add(item.href);
     return true;
-  }).slice(0, 14).map(({ score: _score, ...item }) => item);
+  }).slice(0, 14).map(({ score, ...item }) => {
+    void score;
+    return item;
+  });
 
   return Response.json({ results }, { headers: { "Cache-Control": "no-store" } });
 }

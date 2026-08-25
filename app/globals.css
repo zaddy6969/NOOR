@@ -1795,3 +1795,187 @@ body { transition: background .2s ease,color .2s ease; }
   .darood-counter > div { width: 100%; }
   .darood-counter button { flex: 1; }
 }
+
+/* Compact dictionary, catalogue, mosque and Muslim travel tools */
+.directory-tool-page { min-height: 100vh; background: var(--ivory); color: var(--ink); }
+.compact-directory-intro { width: min(1180px,calc(100% - 48px)); min-height: 205px; margin: 0 auto; padding: 40px 0 28px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1.08fr .78fr; gap: 55px; align-items: end; }
+.compact-directory-intro > div > p { margin: 0 0 9px; color: var(--gold); font-size: 11px; font-weight: 760; letter-spacing: .15em; }
+.compact-directory-intro h1 { margin: 0; font-family: Georgia,serif; font-size: clamp(36px,4.6vw,54px); font-weight: 500; letter-spacing: -.04em; line-height: 1.02; }
+.compact-directory-intro h1 em { color: var(--green); font-weight: 400; }
+.compact-directory-intro > p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.72; }
+.compact-directory-library { width: min(1180px,calc(100% - 48px)); margin: 22px auto 46px; }
+.directory-toolbar { min-height: 65px; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); display: grid; grid-template-columns: 250px 1fr auto; gap: 10px; align-items: center; }
+.directory-toolbar input { width: 100%; height: 42px; padding: 0 13px; border: 1px solid var(--line); border-radius: 10px; outline: 0; background: var(--surface-soft); color: var(--ink); font-size: 13px; }
+.directory-toolbar > div { display: flex; gap: 6px; overflow-x: auto; }
+.directory-toolbar button { min-height: 34px; padding: 0 11px; border: 1px solid var(--line); border-radius: 18px; background: transparent; color: var(--muted); font-size: 11px; white-space: nowrap; cursor: pointer; }
+.directory-toolbar button.active { border-color: var(--green); background: var(--green); color: #fff; }
+.directory-toolbar > span { padding-right: 4px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.internal-source-note { width: min(1180px,calc(100% - 48px)); margin: -23px auto 46px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+.internal-source-note strong { font-size: 13px; }
+.internal-source-note p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+.lughat-grid { margin-top: 11px; display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; }
+.lughat-grid article { min-height: 300px; padding: 19px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); scroll-margin-top: 95px; display: flex; flex-direction: column; }
+.lughat-grid article:target, .shop-item-grid article:target { border-color: var(--green); box-shadow: 0 0 0 3px color-mix(in srgb,var(--green) 13%,transparent); }
+.lughat-grid header { min-height: 38px; display: flex; justify-content: space-between; align-items: center; gap: 15px; }
+.lughat-grid header span { color: var(--gold); font-size: 9px; font-weight: 760; letter-spacing: .12em; text-transform: uppercase; }
+.lughat-grid header b { color: var(--green); font-family: var(--font-arabic),serif; font-size: 27px; font-weight: 500; }
+.lughat-grid h2 { margin: 12px 0 2px; font-family: Georgia,serif; font-size: 25px; font-weight: 520; }
+.lughat-grid > article > small { color: var(--green); font-size: 12px; }
+.lughat-grid > article > p { margin: 12px 0 15px; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.lughat-grid article > div { margin-top: auto; padding: 11px; border-radius: 9px; background: var(--surface-soft); }
+.lughat-grid article > div strong { color: var(--gold); font-size: 8px; letter-spacing: .12em; }
+.lughat-grid article > div p { margin: 5px 0 0; font-size: 12px; line-height: 1.55; }
+.lughat-grid footer { margin-top: 13px; display: flex; gap: 6px; }
+.lughat-grid footer button { flex: 1; min-height: 35px; border: 1px solid var(--line); border-radius: 18px; background: transparent; color: var(--green); font-size: 11px; font-weight: 700; cursor: pointer; }
+.lughat-grid footer button.saved { border-color: var(--green); background: var(--green); color: #fff; }
+
+.shop-working-area { width: min(1180px,calc(100% - 48px)); margin: 22px auto 48px; display: grid; grid-template-columns: minmax(0,1fr) 285px; gap: 14px; align-items: start; }
+.shop-toolbar { grid-template-columns: 230px 1fr auto; }
+.shop-item-grid { margin-top: 11px; display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; }
+.shop-item-grid article { min-height: 306px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); scroll-margin-top: 95px; display: flex; flex-direction: column; }
+.shop-item-grid article > span { width: 46px; height: 46px; margin-bottom: 17px; border-radius: 12px; background: var(--mint); color: var(--green); display: grid; place-items: center; font-family: Georgia,var(--font-arabic),serif; font-size: 18px; }
+.shop-item-grid article > small { color: var(--gold); font-size: 9px; font-weight: 760; letter-spacing: .11em; text-transform: uppercase; }
+.shop-item-grid h2 { margin: 7px 0 8px; font-family: Georgia,serif; font-size: 20px; font-weight: 520; }
+.shop-item-grid article > p { margin: 0 0 12px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.shop-item-grid article > div { margin-top: auto; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.shop-item-grid article > div b { margin-bottom: 3px; display: block; color: var(--gold); font-size: 8px; letter-spacing: .12em; }
+.shop-item-grid article > button { min-height: 38px; margin-top: 14px; border: 1px solid var(--green); border-radius: 20px; background: transparent; color: var(--green); font-size: 11px; font-weight: 700; cursor: pointer; }
+.shop-item-grid article > button.selected { background: var(--green); color: #fff; }
+.shop-request-card { padding: 19px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); position: sticky; top: 92px; }
+.shop-request-card > span { color: var(--gold); font-size: 9px; font-weight: 760; letter-spacing: .13em; }
+.shop-request-card > strong { margin: 6px 0 12px; display: block; font-family: Georgia,serif; font-size: 25px; font-weight: 520; }
+.shop-request-card > p { color: var(--muted); font-size: 12px; line-height: 1.6; }
+.shop-request-card > div { border-top: 1px solid var(--line); }
+.shop-request-card > div > button { width: 100%; min-height: 55px; padding: 9px 0; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left; cursor: pointer; }
+.shop-request-card button span { display: flex; flex-direction: column; gap: 3px; }
+.shop-request-card button b { font-size: 11px; }
+.shop-request-card button small { color: var(--muted); font-size: 9px; }
+.shop-request-card button i { color: var(--muted); font-size: 18px; font-style: normal; }
+.shop-request-card footer { margin-top: 15px; padding: 12px; border-radius: 10px; background: var(--surface-soft); }
+.shop-request-card footer b { font-size: 11px; }
+.shop-request-card footer p { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
+
+.mosque-finder-working { width: min(1000px,calc(100% - 48px)); margin: 22px auto 47px; display: grid; grid-template-columns: 350px minmax(0,1fr); gap: 13px; align-items: start; }
+.mosque-control-card, .mosque-results { border: 1px solid var(--line); border-radius: 15px; background: var(--surface); overflow: hidden; }
+.mosque-control-card { padding: 18px; position: sticky; top: 92px; }
+.mosque-locate-row { display: flex; gap: 7px; align-items: stretch; }
+.mosque-locate-row > button { flex: 1; min-height: 46px; border: 0; border-radius: 23px; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
+.mosque-locate-row > button:disabled { opacity: .6; }
+.mosque-locate-row > button span { margin-right: 6px; font-size: 16px; }
+.mosque-locate-row label { width: 86px; padding: 5px 7px; border: 1px solid var(--line); border-radius: 10px; color: var(--muted); font-size: 8px; display: flex; flex-direction: column; gap: 2px; }
+.mosque-locate-row select { border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 12px; }
+.mosque-city-row { margin-top: 17px; }
+.mosque-city-row > span { color: var(--gold); font-size: 8px; font-weight: 760; letter-spacing: .12em; }
+.mosque-city-row > div { margin-top: 7px; display: flex; flex-wrap: wrap; gap: 5px; }
+.mosque-city-row button { min-height: 31px; padding: 0 9px; border: 1px solid var(--line); border-radius: 16px; background: transparent; color: var(--green); font-size: 10px; cursor: pointer; }
+.mosque-status { min-height: 38px; margin: 15px 0 0; padding: 10px; border-radius: 9px; background: var(--surface-soft); color: var(--muted); font-size: 11px; line-height: 1.55; }
+.mosque-nearest { margin-top: 12px; padding: 14px; border-radius: 11px; background: var(--green-deep); color: #fff; }
+.mosque-nearest > span { color: var(--gold); font-size: 8px; font-weight: 760; letter-spacing: .12em; }
+.mosque-nearest strong { margin-top: 6px; display: block; font-family: Georgia,serif; font-size: 18px; font-weight: 520; }
+.mosque-nearest p { margin: 5px 0 12px; color: rgba(255,255,255,.64); font-size: 10px; line-height: 1.5; }
+.mosque-nearest a { color: #fff; font-size: 11px; font-weight: 700; }
+.mosque-results article { min-height: 89px; padding: 13px 15px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 33px 1fr auto; gap: 12px; align-items: center; }
+.mosque-results article:last-child { border-bottom: 0; }
+.mosque-results article > span { width: 32px; height: 32px; border-radius: 50%; background: var(--mint); color: var(--green); display: grid; place-items: center; font-size: 9px; font-weight: 760; }
+.mosque-results h2 { margin: 0 0 4px; font-family: Georgia,serif; font-size: 17px; font-weight: 520; }
+.mosque-results p { margin: 0 0 4px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.mosque-results small { color: var(--green); font-size: 10px; }
+.mosque-results article > a { min-height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 18px; color: var(--green); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; }
+.mosque-empty { min-height: 350px; padding: 35px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.mosque-empty > span { width: 58px; height: 58px; margin-bottom: 15px; border-radius: 50%; background: var(--mint); color: var(--green); display: grid; place-items: center; font-size: 26px; }
+.mosque-empty strong { font-family: Georgia,serif; font-size: 19px; font-weight: 520; }
+.mosque-empty p { max-width: 300px; margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+.destination-list { margin-top: 11px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); overflow: hidden; }
+.destination-list details { border-bottom: 1px solid var(--line); scroll-margin-top: 95px; }
+.destination-list details:last-child { border-bottom: 0; }
+.destination-list summary { min-height: 96px; padding: 14px 17px; list-style: none; display: grid; grid-template-columns: 36px 1fr minmax(100px,.35fr) 20px; gap: 14px; align-items: center; cursor: pointer; }
+.destination-list summary::-webkit-details-marker { display: none; }
+.destination-list summary:hover { background: color-mix(in srgb,var(--mint) 23%,var(--surface)); }
+.destination-list summary > span { width: 34px; height: 34px; border-radius: 50%; background: var(--surface-soft); color: var(--green); display: grid; place-items: center; font-size: 9px; font-weight: 760; }
+.destination-list summary small { color: var(--gold); font-size: 9px; font-weight: 760; letter-spacing: .09em; text-transform: uppercase; }
+.destination-list summary strong { margin: 4px 0; display: block; font-family: Georgia,serif; font-size: 20px; font-weight: 520; }
+.destination-list summary p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.destination-list summary > b { color: var(--green); font-family: var(--font-arabic),serif; font-size: 22px; font-weight: 500; text-align: right; }
+.destination-list summary > i { font-size: 21px; font-style: normal; transition: transform .2s ease; }
+.destination-list details[open] summary > i { transform: rotate(45deg); }
+.destination-list details:target summary { background: color-mix(in srgb,var(--mint) 38%,var(--surface)); }
+.destination-details { padding: 20px 24px; border-top: 1px solid var(--line); background: color-mix(in srgb,var(--surface-soft) 45%,var(--surface)); display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.destination-details section { padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.destination-details section > span { color: var(--gold); font-size: 8px; font-weight: 760; letter-spacing: .12em; }
+.destination-details p, .destination-details li { color: var(--muted); font-size: 12px; line-height: 1.65; }
+.destination-details p { margin: 6px 0 0; }
+.destination-details ul { margin: 6px 0 0; padding-left: 18px; }
+.destination-details footer { grid-column: 1/-1; color: var(--muted); font-size: 9px; }
+
+.travel-planner { width: min(1080px,calc(100% - 48px)); margin: 22px auto 48px; display: grid; grid-template-columns: minmax(0,1.1fr) minmax(330px,.72fr); gap: 14px; align-items: start; }
+.travel-plan-card, .travel-checklist { border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+.travel-plan-card { padding: 20px; }
+.travel-fields { display: grid; grid-template-columns: 1fr 130px; gap: 9px; }
+.travel-fields label { min-height: 60px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-soft); position: relative; display: flex; flex-direction: column; gap: 5px; }
+.travel-fields label > span { color: var(--gold); font-size: 8px; font-weight: 760; letter-spacing: .12em; }
+.travel-fields select, .travel-fields input { width: 100%; height: 27px; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 13px; }
+.travel-fields label small { position: absolute; right: 12px; bottom: 15px; color: var(--muted); font-size: 10px; }
+.travel-plan-card > article { margin-top: 13px; padding: 19px; border-radius: 12px; background: var(--green-deep); color: #fff; }
+.travel-plan-card article > span { color: var(--gold); font-size: 8px; font-weight: 760; letter-spacing: .13em; }
+.travel-plan-card h2 { margin: 7px 0 8px; font-family: Georgia,serif; font-size: 29px; font-weight: 520; }
+.travel-plan-card article > p { margin: 0; color: rgba(255,255,255,.72); font-size: 13px; line-height: 1.65; }
+.travel-plan-card article > div { margin-top: 16px; padding: 12px; border: 1px solid rgba(255,255,255,.13); border-radius: 9px; background: rgba(255,255,255,.05); }
+.travel-plan-card article > div strong { font-size: 11px; }
+.travel-plan-card article > div p { margin: 4px 0 0; color: rgba(255,255,255,.65); font-size: 11px; line-height: 1.55; }
+.travel-plan-card article ul { margin: 15px 0; padding-left: 19px; }
+.travel-plan-card article li { margin: 5px 0; color: rgba(255,255,255,.72); font-size: 11px; }
+.travel-plan-card article footer { padding-top: 13px; border-top: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.62); font-size: 10px; line-height: 1.65; }
+.travel-plan-card article footer b { color: #fff; }
+.travel-checklist { padding: 18px; }
+.travel-checklist header { padding-bottom: 13px; border-bottom: 1px solid var(--line); }
+.travel-checklist header > div { margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.travel-checklist header span { color: var(--gold); font-size: 8px; font-weight: 760; letter-spacing: .13em; }
+.travel-checklist header strong { font-family: Georgia,serif; font-size: 18px; font-weight: 520; }
+.travel-checklist progress { width: 100%; height: 7px; border: 0; accent-color: var(--green); }
+.travel-checklist > label { min-height: 60px; padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; align-items: flex-start; gap: 9px; cursor: pointer; }
+.travel-checklist > label input { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--green); }
+.travel-checklist > label span { display: flex; flex-direction: column; gap: 3px; }
+.travel-checklist > label strong { font-size: 12px; }
+.travel-checklist > label small { color: var(--muted); font-size: 10px; line-height: 1.45; }
+.travel-checklist > label.checked strong { color: var(--green); }
+.travel-checklist > p { margin: 12px 0 0; color: var(--muted); font-size: 9px; text-align: center; }
+
+.professional-footer-main { grid-template-columns: 1.45fr repeat(4,1fr); gap: 34px; }
+html.noor-dark .directory-tool-page { background: var(--ivory); color: var(--ink); }
+
+@media (max-width: 1000px) {
+  .lughat-grid { grid-template-columns: repeat(2,1fr); }
+  .shop-working-area { grid-template-columns: 1fr; }
+  .shop-request-card { position: static; }
+  .professional-footer-main { grid-template-columns: 1.3fr repeat(2,1fr); }
+  .professional-footer-main > div:nth-child(n+4) { grid-column: auto; }
+}
+
+@media (max-width: 780px) {
+  .compact-directory-intro { grid-template-columns: 1fr; gap: 14px; }
+  .directory-toolbar, .shop-toolbar { grid-template-columns: 1fr; }
+  .directory-toolbar > span { padding-left: 2px; }
+  .shop-item-grid { grid-template-columns: repeat(2,1fr); }
+  .mosque-finder-working, .travel-planner { grid-template-columns: 1fr; }
+  .mosque-control-card { position: static; }
+}
+
+@media (max-width: 650px) {
+  .compact-directory-intro, .compact-directory-library, .shop-working-area, .mosque-finder-working, .travel-planner, .internal-source-note { width: min(100% - 32px,560px); }
+  .compact-directory-intro { min-height: 0; padding: 30px 0 22px; }
+  .compact-directory-intro h1 { font-size: 36px; }
+  .compact-directory-intro > p { font-size: 14px; }
+  .lughat-grid, .shop-item-grid { grid-template-columns: 1fr; }
+  .lughat-grid article, .shop-item-grid article { min-height: 0; }
+  .destination-list summary { grid-template-columns: 34px 1fr 18px; gap: 10px; }
+  .destination-list summary > b { grid-column: 2/4; font-size: 19px; text-align: left; }
+  .destination-list summary > i { grid-column: 3; grid-row: 1; }
+  .destination-details { padding: 14px; grid-template-columns: 1fr; }
+  .destination-details footer { grid-column: auto; }
+  .mosque-results article { grid-template-columns: 32px 1fr; }
+  .mosque-results article > a { grid-column: 2; justify-self: start; }
+  .travel-fields { grid-template-columns: 1fr; }
+  .professional-footer-main { grid-template-columns: 1fr 1fr; }
+}
