@@ -25,13 +25,16 @@ export default function PrayerTimesStrip() {
   };
 
   useEffect(() => {
-    load(BENGALURU.latitude, BENGALURU.longitude, BENGALURU.label);
-    if (!("geolocation" in navigator)) return;
-    navigator.geolocation.getCurrentPosition(
-      (position) => load(position.coords.latitude, position.coords.longitude, "Your location"),
-      () => undefined,
-      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 },
-    );
+    const frame = window.requestAnimationFrame(() => {
+      load(BENGALURU.latitude, BENGALURU.longitude, BENGALURU.label);
+      if (!("geolocation" in navigator)) return;
+      navigator.geolocation.getCurrentPosition(
+        (position) => load(position.coords.latitude, position.coords.longitude, "Your location"),
+        () => undefined,
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 },
+      );
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   return (

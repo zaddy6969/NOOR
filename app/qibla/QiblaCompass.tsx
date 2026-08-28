@@ -85,11 +85,14 @@ export default function QiblaCompass() {
   }, []);
 
   useEffect(() => {
-    findLocation();
-    if (!("DeviceOrientationEvent" in window)) return;
-    const OrientationEvent = window.DeviceOrientationEvent as PermissionedOrientationEvent;
-    if (typeof OrientationEvent.requestPermission === "function") setNeedsPermission(true);
-    else setOrientationEnabled(true);
+    const frame = window.requestAnimationFrame(() => {
+      findLocation();
+      if (!("DeviceOrientationEvent" in window)) return;
+      const OrientationEvent = window.DeviceOrientationEvent as PermissionedOrientationEvent;
+      if (typeof OrientationEvent.requestPermission === "function") setNeedsPermission(true);
+      else setOrientationEnabled(true);
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, [findLocation]);
 
   useEffect(() => {
