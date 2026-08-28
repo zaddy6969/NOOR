@@ -53,15 +53,14 @@ const dailyTools: Feature[] = [
   { title: "Prayer & Wudu", description: "Complete Salah and purification guide", href: "/namaz", category: "Daily", icon: "prayer" },
   { title: "Qibla Compass", description: "Live direction to the Kaaba", href: "/qibla", category: "Daily", icon: "compass" },
   { title: "Islamic Calendar", description: "Hijri dates and important occasions", href: "/islamic-calendar", category: "Daily", icon: "calendar" },
-  { title: "Darood Sharif", description: "Read, save and count trusted Salawat", href: "/darood", category: "Daily", icon: "beads" },
-  { title: "Zakat Calculator", description: "Estimate Nisab and Zakat privately", href: "/zakat-calculator", category: "Daily", icon: "coins" },
-  { title: "Qaza Namaz", description: "Calculate missed prayers and make a plan", href: "/qaza-namaz", category: "Daily", icon: "prayer" },
-  { title: "Naat & Salam", description: "Separate audio, video and reading pages", href: "/naat", category: "Naat", icon: "audio" },
   { title: "Mosque Finder", description: "Find live nearby masjids by distance", href: "/mosque-finder", category: "Daily", icon: "pin" },
+  { title: "Darood Sharif", description: "Read, save and count trusted Salawat", href: "/darood", category: "Daily", icon: "beads" },
 ];
 
 const features: Feature[] = [
-  ...dailyTools,
+  { title: "Zakat Calculator", description: "Estimate Nisab and Zakat privately", href: "/zakat-calculator", category: "Daily", icon: "coins" },
+  { title: "Qaza Namaz", description: "Calculate missed prayers and make a plan", href: "/qaza-namaz", category: "Daily", icon: "prayer" },
+  { title: "Naat & Salam", description: "Separate audio, video and reading pages", href: "/naat", category: "Naat", icon: "audio" },
   { title: "Ahle Sunnat wal Jamaat", description: "Belief, tradition and respectful learning", href: "/topics/ahle-sunnat", category: "Learn", icon: "mosque" },
   { title: "Family Tree", description: "Open an interactive lineage tree", href: "/family-tree", category: "Learn", icon: "tree" },
   { title: "Naat Lyrics", description: "Kalam library with writer and reciter credits", href: "/naat", category: "Naat", icon: "book" },
@@ -77,13 +76,13 @@ const features: Feature[] = [
   { title: "Roza", description: "Ramadan and voluntary fasting guidance", href: "/topics/roza", category: "Learn", icon: "moon" },
   { title: "Zakat Guide", description: "Nisab, assets and responsible giving", href: "/topics/zakat", category: "Learn", icon: "coins" },
   { title: "Hajj", description: "Rites, journey plan, duas and checklist", href: "/topics/hajj", category: "Learn", icon: "hajj" },
-  { title: "Matrimony", description: "Private, family-aware introductions", href: "/matrimony", category: "Community", icon: "heart" },
+  { title: "Matrimony Preview", description: "Private profile foundation · public matching closed", href: "/matrimony", category: "Community", icon: "heart" },
   { title: "Institutes & Madrasas", description: "Find Islamic learning and admissions", href: "/topics/institutes", category: "Community", icon: "school" },
   { title: "Jobs & Career", description: "Ethical roles and career resources", href: "/topics/jobs", category: "Community", icon: "work" },
   { title: "Islamic Scholars", description: "Profiles, works and verified channels", href: "/topics/scholars", category: "Learn", icon: "scholar" },
   { title: "Islamic Channels", description: "Curated lectures, recitation and learning", href: "/topics/channels", category: "Community", icon: "video" },
-  { title: "Firoz-ul-Lughat", description: "Urdu and Islamic words with clear meanings", href: "/firozul-lughat", category: "Learn", icon: "book" },
-  { title: "Shop by Category", description: "Prayer, books, gifts and pilgrimage essentials", href: "/shop", category: "Community", icon: "bag" },
+  { title: "Islamic Urdu Glossary", description: "Original concise terms in Urdu, Roman and English", href: "/glossary", category: "Learn", icon: "book" },
+  { title: "Product Request Catalogue", description: "Save useful items without an inactive checkout", href: "/shop", category: "Community", icon: "bag" },
   { title: "Muslim Destinations", description: "Sacred, Sufi and Islamic heritage places", href: "/destinations", category: "Learn", icon: "map" },
   { title: "Religious Tourism", description: "Plan a respectful journey and private checklist", href: "/religious-tourism", category: "Community", icon: "hajj" },
 ];
@@ -92,6 +91,7 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("All");
   const [today, setToday] = useState<Date | null>(null);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => setToday(new Date()));
@@ -134,10 +134,15 @@ export default function Home() {
       </section>
 
       <section className="all-features-compact" aria-labelledby="all-features-title">
-        <div className="compact-section-title"><div><span>ALL FEATURES</span><h2 id="all-features-title">Find a feature</h2></div><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search features" aria-label="Search all features" /></div>
-        <div className="compact-category-tabs" role="group" aria-label="Feature categories">{(["All", "Daily", "Learn", "Naat", "Community"] as Category[]).map((item) => <button className={category === item ? "active" : ""} type="button" onClick={() => setCategory(item)} key={item}>{item}</button>)}</div>
-        <div className="compact-feature-grid">{filtered.map((feature) => <Link href={feature.href} key={`${feature.title}-${feature.href}`}><span className="compact-feature-icon"><Icon name={feature.icon}/></span><div><strong>{feature.title}</strong><small>{feature.description}</small></div></Link>)}</div>
-        {filtered.length === 0 ? <p className="compact-empty">No feature matched your search.</p> : null}
+        <details className="home-more-features" open={moreOpen} onToggle={(event) => setMoreOpen(event.currentTarget.open)}>
+          <summary><div><span>MORE FEATURES</span><h2 id="all-features-title">Learning, community and planning</h2></div><b>{moreOpen ? "Close" : `View ${features.length} tools`} <i aria-hidden="true">⌄</i></b></summary>
+          <div className="home-more-body">
+            <div className="compact-section-title"><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Filter these features" aria-label="Filter more features" /></div>
+            <div className="compact-category-tabs" role="group" aria-label="Feature categories">{(["All", "Daily", "Learn", "Naat", "Community"] as Category[]).map((item) => <button className={category === item ? "active" : ""} type="button" onClick={() => setCategory(item)} key={item}>{item}</button>)}</div>
+            <div className="compact-feature-grid">{filtered.map((feature) => <Link href={feature.href} key={`${feature.title}-${feature.href}`}><span className="compact-feature-icon"><Icon name={feature.icon}/></span><div><strong>{feature.title}</strong><small>{feature.description}</small></div></Link>)}</div>
+            {filtered.length === 0 ? <p className="compact-empty">No feature matched your search. Use the header search for topics, Quran verses and exact entries.</p> : null}
+          </div>
+        </details>
       </section>
 
       <SiteFooter />

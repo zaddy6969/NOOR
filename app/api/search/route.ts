@@ -6,7 +6,7 @@ import { shopItems } from "../../shop/shop-data";
 
 type SearchResult = {
   id: string;
-  type: "Feature" | "Topic" | "Guide" | "Naat" | "Quran" | "Dictionary" | "Place" | "Product";
+  type: "Feature" | "Topic" | "Guide" | "Naat" | "Quran" | "Glossary" | "Place" | "Product";
   title: string;
   description: string;
   href: string;
@@ -25,12 +25,66 @@ const features = [
   ["Naat and Salam", "Audio, video, writers, reciters and reading pages", "/naat"],
   ["Family Tree", "Interactive lineage and sacred history", "/family-tree"],
   ["Matrimony", "Private family-aware matrimonial profiles", "/matrimony"],
-  ["Firoz-ul-Lughat", "Firozul Feroz Firuz Urdu Islamic dictionary Roman meanings and saved words", "/firozul-lughat"],
-  ["Shop by Category", "Islamic shop store Quran books prayer mats attar modest wear gifts Hajj Umrah children", "/shop"],
+  ["Islamic Urdu Glossary", "Firozul Feroz Firuz Urdu Islamic glossary Roman meanings and saved words", "/glossary"],
+  ["Product Request Catalogue", "Browse Quran books prayer mats attar modest wear gifts Hajj Umrah children without an inactive checkout", "/shop"],
   ["Mosque Finder", "Mousque mosque masjid finder live nearby prayer place distance directions", "/mosque-finder"],
   ["Famous Muslim Destinations", "Sacred cities Islamic heritage Sufi places Makkah Madinah Ajmer tourism", "/destinations"],
   ["Muslim Religious Tourism", "Ziyarat pilgrimage travel planner private checklist etiquette documents", "/religious-tourism"],
+  ["About NOOR", "Purpose, accuracy, limits and product status", "/about"],
+  ["Privacy", "Location, local storage, accounts and external service data", "/privacy"],
+  ["Editorial Policy", "Sources, review status, differences of opinion and corrections", "/editorial-policy"],
 ] as const;
+
+const intentAliases: Array<{ terms: string[]; result: SearchResult }> = [
+  {
+    terms: ["ayat ul kursi", "ayatul kursi", "ayat al kursi", "verse of the throne", "kursi", "allah there is no deity", "allah no deity except him"],
+    result: { id: "intent-ayat-ul-kursi", type: "Quran", title: "Ayat al-Kursi · Quran 2:255", description: "Open the Verse of the Throne in the NOOR Quran reader", href: "/quran?surah=2&ayah=255", score: 180 },
+  },
+  {
+    terms: ["surah fatiha", "al fatiha", "fatiha"],
+    result: { id: "intent-fatiha", type: "Quran", title: "Surah Al-Fatihah", description: "Open Surah 1 with Arabic, English meaning and full audio", href: "/quran?surah=1", score: 175 },
+  },
+  {
+    terms: ["surah yaseen", "surah yasin", "yaseen", "yasin"],
+    result: { id: "intent-yaseen", type: "Quran", title: "Surah Ya-Sin", description: "Open Surah 36 with Arabic, English meaning and full audio", href: "/quran?surah=36", score: 175 },
+  },
+  {
+    terms: ["surah rahman", "ar rahman", "rehman"],
+    result: { id: "intent-rahman", type: "Quran", title: "Surah Ar-Rahman", description: "Open Surah 55 with Arabic, English meaning and full audio", href: "/quran?surah=55", score: 175 },
+  },
+  {
+    terms: ["surah waqiah", "surah waqia", "al waqiah", "waqiah"],
+    result: { id: "intent-waqiah", type: "Quran", title: "Surah Al-Waqi‘ah", description: "Open Surah 56 with Arabic, English meaning and full audio", href: "/quran?surah=56", score: 175 },
+  },
+  {
+    terms: ["surah mulk", "al mulk", "mulk"],
+    result: { id: "intent-mulk", type: "Quran", title: "Surah Al-Mulk", description: "Open Surah 67 with Arabic, English meaning and full audio", href: "/quran?surah=67", score: 175 },
+  },
+  {
+    terms: ["surah ikhlas", "al ikhlas", "qul huwallah"],
+    result: { id: "intent-ikhlas", type: "Quran", title: "Surah Al-Ikhlas", description: "Open Surah 112 with Arabic, English meaning and full audio", href: "/quran?surah=112", score: 175 },
+  },
+  {
+    terms: ["last two ayat baqarah", "last 2 ayat baqarah", "amanar rasulu", "aamana rasool"],
+    result: { id: "intent-baqarah-ending", type: "Quran", title: "Last two Ayahs of Al-Baqarah", description: "Open Quran 2:285 and continue to 2:286", href: "/quran?surah=2&ayah=285", score: 180 },
+  },
+  {
+    terms: ["mosque near me", "masjid near me", "nearby mosque", "nearby masjid", "mousque near me", "find mosque", "find masjid"],
+    result: { id: "intent-mosque", type: "Feature", title: "Mosque Finder", description: "Use your location or choose a city to find nearby masjids", href: "/mosque-finder", score: 180 },
+  },
+  {
+    terms: ["prayer time", "prayer times", "namaz time", "namaz timing", "salah time", "salah times"],
+    result: { id: "intent-prayer-times", type: "Feature", title: "Today’s Prayer Times", description: "Open the compact prayer schedule and location settings", href: "/#prayer-times", score: 180 },
+  },
+  {
+    terms: ["qibla direction", "qibla compass", "kaaba direction", "quibla", "quibla compass"],
+    result: { id: "intent-qibla", type: "Feature", title: "Qibla Compass", description: "Find the Kaaba direction using a city or live location", href: "/qibla", score: 180 },
+  },
+  {
+    terms: ["firozul", "firoz ul lughat", "feroz ul lughat", "urdu dictionary", "islamic dictionary", "islamic glossary"],
+    result: { id: "intent-glossary", type: "Glossary", title: "Islamic Urdu Glossary", description: "Urdu script, Roman reading help, meanings and usage", href: "/glossary", score: 180 },
+  },
+];
 
 const detailedGuides = [
   ["Wudu step by step", "Purification, four Fard acts, washing hands face arms head and feet, invalidators and water barriers", "/namaz#purity"],
@@ -64,6 +118,10 @@ function rank(text: string, query: string) {
 
 function staticResults(query: string) {
   const results: SearchResult[] = [];
+
+  for (const alias of intentAliases) {
+    if (alias.terms.some((term) => query === term || query.includes(term))) results.push(alias.result);
+  }
 
   for (const [title, description, href] of features) {
     const score = rank(`${title} ${description}`, query);
@@ -99,7 +157,7 @@ function staticResults(query: string) {
 
   for (const entry of lughatEntries) {
     const score = rank(`${entry.term} ${entry.urdu} ${entry.roman} ${entry.meaning} ${entry.use} ${entry.category}`, query);
-    if (score) results.push({ id: `lughat-${entry.id}`, type: "Dictionary", title: `${entry.term} · ${entry.urdu}`, description: entry.meaning, href: `/firozul-lughat#${entry.id}`, score: score + 4 });
+    if (score) results.push({ id: `lughat-${entry.id}`, type: "Glossary", title: `${entry.term} · ${entry.urdu}`, description: entry.meaning, href: `/glossary#${entry.id}`, score: score + 4 });
   }
 
   for (const place of destinations) {
@@ -125,14 +183,26 @@ async function quranResults(query: string): Promise<SearchResult[]> {
     }
   }
 
+  const alias = intentAliases.find((item) => item.result.type === "Quran" && item.terms.some((term) => query === term || query.includes(term)));
+  if (alias) return [alias.result];
   if (query.length < 3) return [];
   try {
-    const response = await fetch(`https://api.alquran.cloud/v1/search/${encodeURIComponent(query)}/all/en.pickthall`, { headers: { Accept: "application/json" } });
-    if (!response.ok) return [];
-    const payload = await response.json() as { data?: { matches?: Array<{ numberInSurah?: number; text?: string; surah?: { number?: number; englishName?: string; name?: string } }> } };
-    const matches = payload.data?.matches;
-    if (!Array.isArray(matches)) return [];
-    return matches.slice(0, 8).map((match, index) => {
+    const editions = ["en.sahih", "en.pickthall"];
+    const responses = await Promise.all(editions.map((edition) => fetch(
+      `https://api.alquran.cloud/v1/search/${encodeURIComponent(query)}/all/${edition}`,
+      { headers: { Accept: "application/json" } },
+    ).catch(() => null)));
+    const payloads = await Promise.all(responses.map(async (response) => response?.ok
+      ? response.json() as Promise<{ data?: { matches?: Array<{ numberInSurah?: number; text?: string; surah?: { number?: number; englishName?: string; name?: string } }> } }>
+      : null));
+    const seen = new Set<string>();
+    const matches = payloads.flatMap((payload) => payload?.data?.matches ?? []).filter((match) => {
+      const key = `${match.surah?.number}:${match.numberInSurah}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+    return matches.slice(0, 10).map((match, index) => {
       const surahNumber = Number(match.surah?.number ?? 0);
       const ayahNumber = Number(match.numberInSurah ?? 0);
       return {
@@ -142,7 +212,7 @@ async function quranResults(query: string): Promise<SearchResult[]> {
         description: String(match.text ?? "").trim(),
         href: `/quran?surah=${surahNumber}&ayah=${ayahNumber}`,
         arabic: match.surah?.name,
-        score: 55 - index,
+        score: 95 - index,
       };
     });
   } catch {

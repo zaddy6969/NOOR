@@ -6,6 +6,7 @@ import QuranReader from "./QuranReader";
 export const metadata: Metadata = {
   title: "Read the Quran — Arabic, English Meaning & Audio | NOOR",
   description: "Browse all 114 Surahs and read every Ayah in Arabic with English meaning, audio recitation and verse navigation.",
+  alternates: { canonical: "/quran" },
   openGraph: { title: "Read the Quran | NOOR", description: "All 114 Surahs with Arabic, English meaning and audio.", images: [] },
   twitter: { card: "summary", title: "Read the Quran | NOOR", description: "All 114 Surahs with Arabic, English meaning and audio.", images: [] },
 };

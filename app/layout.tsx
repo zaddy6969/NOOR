@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Noto_Naskh_Arabic } from "next/font/google";
 import { isClerkConfigured } from "@/lib/auth-config";
 import MediaProvider from "./media/MediaProvider";
 import SiteUtilitiesProvider from "./site/SiteUtilities";
+import PwaRegister from "./site/PwaRegister";
 import "./globals.css";
 
 const geist = Geist({
@@ -17,9 +18,13 @@ const notoArabic = Noto_Naskh_Arabic({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://noor-daily-companion.amused-snail-8449.chatgpt.site"),
-  title: "NOOR — Daily Muslim Companion",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://noor-daily-muslim.vercel.app"),
+  applicationName: "NOOR Daily Muslim",
+  title: { default: "NOOR — Daily Muslim Companion", template: "%s · NOOR" },
   description: "Prayer, Quran, Naat, Islamic learning and trusted community resources—organized simply for everyday use.",
+  keywords: ["Quran", "prayer times", "Qibla compass", "Islamic calendar", "Darood", "Muslim daily app"],
+  manifest: "/manifest.webmanifest",
+  robots: { index: true, follow: true },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
     title: "NOOR — Daily Muslim Companion",
@@ -34,6 +39,16 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f3e9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f1d19" },
+  ],
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const application = <SiteUtilitiesProvider><MediaProvider>{children}</MediaProvider></SiteUtilitiesProvider>;
   const content = isClerkConfigured()
@@ -42,7 +57,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="en">
-      <body className={`${geist.variable} ${notoArabic.variable}`}>{content}</body>
+      <body className={`${geist.variable} ${notoArabic.variable}`}>{content}<PwaRegister /></body>
     </html>
   );
 }

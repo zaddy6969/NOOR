@@ -4,17 +4,18 @@ import ToolHeader from "../site/ToolHeader";
 import ShopCatalog from "./ShopCatalog";
 
 export const metadata: Metadata = {
-  title: "Islamic Shop by Category | NOOR",
-  description: "Browse Quran books, prayer essentials, modest wear, attar, Hajj and Umrah kits, gifts and children’s learning items.",
+  title: "Islamic Product Request Catalogue | NOOR",
+  description: "Browse Islamic products by category and save a private request list. Checkout, pricing and ordering are not active.",
+  alternates: { canonical: "/shop" },
 };
 
 export default function ShopPage() {
   return (
     <main className="directory-tool-page">
-      <ToolHeader title="SHOP BY CATEGORY" subtitle="Useful · Clear · Seller-ready" />
+      <ToolHeader title="PRODUCT REQUEST CATALOGUE" subtitle="Browse · Save · No checkout" />
       <section className="compact-directory-intro">
-        <div><p>ISLAMIC CATALOGUE</p><h1>Useful things,<br/><em>easy to find.</em></h1></div>
-        <p>Browse by need, compare options and save a request list. NOOR will enable ordering only after approved sellers, stock and secure payment are connected.</p>
+        <div><p>ISLAMIC PRODUCT IDEAS</p><h1>Browse by need.<br/><em>Save a private list.</em></h1></div>
+        <p>This is a request catalogue, not a live shop. Browse product ideas and save a list on this device; there are no prices, sellers, orders or payment collection.</p>
       </section>
       <ShopCatalog />
       <SiteFooter />

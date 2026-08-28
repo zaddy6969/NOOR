@@ -46,8 +46,8 @@ export default function LughatLibrary() {
   return (
     <section className="compact-directory-library">
       <div className="directory-toolbar">
-        <input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Search Allah, wuzu, نماز…" aria-label="Search the Urdu and Islamic dictionary" />
-        <div role="group" aria-label="Dictionary categories">{(["All", "Faith", "Worship", "Character", "Learning", "Community", "Saved"] as Filter[]).map((item) => <button className={filter === item ? "active" : ""} type="button" onClick={() => setFilter(item)} key={item}>{item}</button>)}</div>
+        <input value={query} onChange={(event) => setQuery(event.target.value)} type="search" placeholder="Search Allah, wuzu, نماز…" aria-label="Search the Islamic Urdu glossary" />
+        <div role="group" aria-label="Glossary categories">{(["All", "Faith", "Worship", "Character", "Learning", "Community", "Saved"] as Filter[]).map((item) => <button className={filter === item ? "active" : ""} type="button" onClick={() => setFilter(item)} key={item}>{item}</button>)}</div>
         <span>{visible.length} words</span>
       </div>
       <div className="lughat-grid">

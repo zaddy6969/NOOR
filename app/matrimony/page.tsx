@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { isClerkConfigured } from "@/lib/auth-config";
+import { isClerkConfigured, isClerkProductionConfigured } from "@/lib/auth-config";
 import MatrimonyAccountActions from "./_components/MatrimonyAccountActions";
 import { HeaderUtilities } from "../site/SiteUtilities";
 
 export const metadata: Metadata = {
   title: "Private Islamic Matrimony | NOOR",
   description: "A privacy-first, family-aware Islamic matrimony account and profile flow with moderation safeguards.",
+  alternates: { canonical: "/matrimony" },
   openGraph: { title: "Private Islamic Matrimony | NOOR", description: "Private profiles, family involvement and careful moderation.", images: [] },
   twitter: { card: "summary", title: "Private Islamic Matrimony | NOOR", description: "Private profiles, family involvement and careful moderation.", images: [] },
 };
@@ -20,6 +21,7 @@ const steps = [
 
 export default function MatrimonyPage() {
   const clerkConfigured = isClerkConfigured();
+  const productionReady = isClerkProductionConfigured();
 
   return (
     <main className="matrimony-page" id="top">
@@ -37,6 +39,7 @@ export default function MatrimonyPage() {
           {clerkConfigured
             ? <MatrimonyAccountActions />
             : <div className="matrimony-setup-note"><strong>Private accounts are available on the connected Vercel production deployment.</strong><span>This alternate preview has no Clerk keys, so account controls are safely disabled here.</span></div>}
+          {!productionReady ? <div className="matrimony-launch-state"><strong>Preview status: public matching is closed.</strong><span>Production Clerk keys, a verified domain, staffed moderation and a tested reporting process are still required before introductions open.</span></div> : null}
         </div>
         <aside className="matrimony-privacy-card">
           <span>PRIVACY STATUS</span>
@@ -58,6 +61,8 @@ export default function MatrimonyPage() {
         <div><p className="eyebrow">NON-NEGOTIABLE SAFETY</p><h2>No public profiles in this release.</h2><p>Identity verification, age checks, moderation staffing, report handling, family/guardian options, emergency resources and a clear deletion process must be tested before introductions are enabled.</p></div>
         <div className="matrimony-safety-list"><span>✓ Adults only</span><span>✓ Exact location hidden</span><span>✓ No contact details in profiles</span><span>✓ Ownership checked server-side</span><span>✓ Every edit returns to draft</span><span>✓ No payment or messaging yet</span></div>
       </section>
+
+      <nav className="matrimony-policy-links" aria-label="Matrimony policies"><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/editorial-policy">Safety & editorial policy</Link></nav>
 
       <footer className="topic-footer"><div><Link className="brand footer-brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><p>Private foundations first. Public introductions only after safeguarding.</p></div><div><Link href="/topics/matrimony">Read marriage guide</Link><a href="#top">Back to top ↑</a></div></footer>
     </main>

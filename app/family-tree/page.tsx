@@ -6,6 +6,7 @@ import FamilyTreeExplorer from "./FamilyTreeExplorer";
 export const metadata: Metadata = {
   title: "Interactive Family Tree of Prophet Muhammad ﷺ | NOOR",
   description: "Explore a respectful, text-only interactive family tree covering the Prophet’s parents, household, children and close descendants.",
+  alternates: { canonical: "/family-tree" },
   openGraph: { title: "Interactive Family Tree | NOOR", description: "A respectful text-only lineage explorer.", images: [] },
   twitter: { card: "summary", title: "Interactive Family Tree | NOOR", description: "A respectful text-only lineage explorer.", images: [] },
 };

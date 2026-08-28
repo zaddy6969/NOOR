@@ -5,7 +5,8 @@ import MosqueFinder from "./MosqueFinder";
 
 export const metadata: Metadata = {
   title: "Mosque Finder — Nearby Masjids | NOOR",
-  description: "Use your location to find nearby mosques, see distance and address, and open directions.",
+  description: "Find nearby mosques on a live map, filter mosques and dargahs, see distance and open directions.",
+  alternates: { canonical: "/mosque-finder" },
 };
 
 export default function MosqueFinderPage() {
@@ -14,7 +15,7 @@ export default function MosqueFinderPage() {
       <ToolHeader title="MOSQUE FINDER" subtitle="Live nearby masjids" />
       <section className="compact-directory-intro mosque-intro">
         <div><p>NEARBY PRAYER</p><h1>Find a masjid<br/><em>close to you.</em></h1></div>
-        <p>Allow location once, select a search radius and NOOR will list the nearest mapped mosques. Your coordinates are used only for this request.</p>
+        <p>Choose a city or allow location after tapping the button. View nearby mosques on the embedded map, with dargahs clearly separated by filter.</p>
       </section>
       <MosqueFinder />
       <section className="internal-source-note"><strong>Live community map</strong><p>Place data comes from OpenStreetMap through its read-only Overpass API and may be incomplete. Confirm prayer and Jumu‘ah times directly with the mosque.</p></section>

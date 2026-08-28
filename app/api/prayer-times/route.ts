@@ -10,13 +10,17 @@ export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const latitude = Number(params.get("latitude"));
   const longitude = Number(params.get("longitude"));
+  const requestedMethod = Number(params.get("method") ?? 1);
+  const requestedSchool = Number(params.get("school") ?? 1);
+  const method = new Set([1, 3, 4, 5]).has(requestedMethod) ? requestedMethod : 1;
+  const school = requestedSchool === 0 ? 0 : 1;
   if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 || !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
     return Response.json({ error: "Valid latitude and longitude are required." }, { status: 400 });
   }
 
   try {
     const date = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date()).replaceAll("/", "-");
-    const url = `https://api.aladhan.com/v1/timings/${date}?latitude=${latitude}&longitude=${longitude}&method=1&school=1`;
+    const url = `https://api.aladhan.com/v1/timings/${date}?latitude=${latitude}&longitude=${longitude}&method=${method}&school=${school}`;
     const response = await fetch(url, { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error("Prayer service unavailable");
     const payload = await response.json() as PrayerPayload;
@@ -36,6 +40,8 @@ export async function GET(request: Request) {
       hijri: payload.data?.date?.hijri ? `${payload.data.date.hijri.day} ${payload.data.date.hijri.month?.en} ${payload.data.date.hijri.year} AH` : null,
       timezone: payload.data?.meta?.timezone,
       method: payload.data?.meta?.method?.name,
+      methodId: method,
+      school,
     }, { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=900" } });
   } catch {
     return Response.json({ error: "Prayer timings are temporarily unavailable." }, { status: 502 });

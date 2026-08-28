@@ -7,6 +7,7 @@ import DaroodLibrary from "./DaroodLibrary";
 export const metadata: Metadata = {
   title: "Darood Sharif Library — Arabic, Roman & Meaning | NOOR",
   description: "Read several Darood and Salawat in Arabic with Roman reading help, meanings, source labels, copy, save and Tasbih counting.",
+  alternates: { canonical: "/darood" },
   openGraph: { title: "Darood Sharif Library | NOOR", description: "Prophetic and traditional Salawat in a focused reader.", images: [] },
   twitter: { card: "summary", title: "Darood Sharif Library | NOOR", description: "Read, save and count Darood Sharif.", images: [] },
 };

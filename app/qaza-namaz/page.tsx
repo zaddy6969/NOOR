@@ -7,6 +7,7 @@ import QazaCalculator from "./QazaCalculator";
 export const metadata: Metadata = {
   title: "Qaza Namaz Calculator — Missed Prayer Plan | NOOR",
   description: "Estimate missed Fajr, Dhuhr, Asr, Maghrib, Isha and Hanafi Witr prayers, then create a practical completion target.",
+  alternates: { canonical: "/qaza-namaz" },
   openGraph: { title: "Qaza Namaz Calculator | NOOR", description: "A private missed-prayer estimate and completion plan.", images: [] },
   twitter: { card: "summary", title: "Qaza Namaz Calculator | NOOR", description: "Count and plan missed prayers privately.", images: [] },
 };

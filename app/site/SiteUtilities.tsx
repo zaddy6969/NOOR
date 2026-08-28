@@ -5,7 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 
 type SearchResult = {
   id: string;
-  type: "Feature" | "Topic" | "Guide" | "Naat" | "Quran" | "Dictionary" | "Place" | "Product";
+  type: "Feature" | "Topic" | "Guide" | "Naat" | "Quran" | "Glossary" | "Place" | "Product";
   title: string;
   description: string;
   href: string;
@@ -123,7 +123,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
                 onKeyDown={(event) => {
                   if (event.key === "Enter" && results[0]) chooseResult(results[0]);
                 }}
-                placeholder="Search a topic, word, place, Surah or verse…"
+                placeholder="Try ‘Ayat ul Kursi’, ‘mosque near me’ or 2:255…"
                 aria-label="Search topics, features, dictionary, destinations, Naats and Quran verses"
               />
               <button type="button" onClick={() => setSearchOpen(false)}>ESC</button>
@@ -146,7 +146,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
               ))}
               {!loading && query.trim() && results.length === 0 ? <p>No result found. Try a Surah name, verse reference such as 2:255, a city, product or a simpler spelling.</p> : null}
             </div>
-            <footer><span>Press Enter to open the first result</span><span>Quran, dictionary, places and every NOOR feature</span></footer>
+            <footer><span>Press Enter to open the first result</span><span>Quran, glossary, places and every NOOR feature</span></footer>
           </section>
         </div>
       ) : null}

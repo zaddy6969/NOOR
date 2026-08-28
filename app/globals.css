@@ -2078,3 +2078,170 @@ html.noor-dark .directory-tool-page { background: var(--ivory); color: var(--ink
   .tool-page-intro, .compact-directory-intro { padding: 25px 0 18px; gap: 13px; }
   .tool-page-intro h1, .compact-directory-intro h1 { font-size: 35px; }
 }
+
+/* August 2026 usability pass: compact hierarchy, readable labels and honest tool states */
+.brand small { font-size: 10px; letter-spacing: .16em; }
+kbd { font-size: 10px; }
+.eyebrow { font-size: 11px; letter-spacing: .15em; }
+
+.home-more-features { border: 1px solid var(--line); border-radius: 16px; background: var(--surface); overflow: hidden; }
+.home-more-features > summary { min-height: 82px; padding: 15px 18px; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 20px; cursor: pointer; }
+.home-more-features > summary::-webkit-details-marker { display: none; }
+.home-more-features > summary span { color: var(--gold); font-size: 11px; font-weight: 760; letter-spacing: .13em; }
+.home-more-features > summary h2 { margin: 4px 0 0; font-family: Georgia,serif; font-size: 23px; font-weight: 520; }
+.home-more-features > summary > b { color: var(--green); font-size: 13px; white-space: nowrap; }
+.home-more-features > summary i { display: inline-block; margin-left: 5px; font-style: normal; transition: transform .2s ease; }
+.home-more-features[open] > summary i { transform: rotate(180deg); }
+.home-more-body { padding: 15px; border-top: 1px solid var(--line); }
+.home-more-body .compact-section-title { justify-content: flex-start; }
+.home-more-body .compact-section-title input { width: min(340px,100%); height: 42px; padding: 0 13px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-soft); color: var(--ink); font-size: 13px; }
+
+.home-prayer-strip { grid-template-columns: 150px minmax(400px,1fr) 90px auto; gap: 13px; }
+.home-prayer-times > div.is-next { border-radius: 10px; background: var(--mint); }
+.home-prayer-next { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+.home-prayer-next > span { color: var(--gold); font-size: 10px; font-weight: 760; letter-spacing: .12em; }
+.home-prayer-next strong { font-size: 14px; }
+.home-prayer-next small { color: var(--muted); font-size: 11px; }
+.home-prayer-actions { display: flex; gap: 6px; }
+.home-prayer-actions button { min-height: 38px; padding: 0 12px; border: 1px solid var(--green); border-radius: 20px; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.home-prayer-actions button.secondary { background: transparent; color: var(--green); }
+.home-prayer-error { grid-column: 1/-1; margin: -2px 0 0; color: #964539; font-size: 12px; }
+.home-prayer-settings { grid-column: 1/-1; padding: 12px; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3,minmax(150px,1fr)) 1.25fr; gap: 9px; align-items: end; }
+.home-prayer-settings label { min-height: 48px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-soft); display: flex; flex-direction: column; gap: 3px; }
+.home-prayer-settings label span { color: var(--gold); font-size: 10px; font-weight: 700; }
+.home-prayer-settings select { min-height: 26px; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 12px; }
+.home-prayer-settings > small { color: var(--muted); font-size: 11px; line-height: 1.5; }
+
+.topic-hero { min-height: 340px; padding-top: 42px; padding-bottom: 42px; gap: 36px; }
+.topic-hero-copy h1 { font-size: clamp(36px,4.4vw,52px); }
+.namaz-hero { min-height: 390px; padding-top: 42px; padding-bottom: 42px; gap: 38px; }
+.namaz-hero-copy h1 { font-size: clamp(40px,5vw,58px); }
+.namaz-hero-card { min-height: 300px; }
+.matrimony-hero { min-height: 380px; padding-top: 42px; padding-bottom: 42px; gap: 38px; }
+.matrimony-hero h1 { font-size: clamp(38px,4.7vw,54px); }
+.calendar-intro { min-height: 190px; gap: 32px; }
+.tool-page-intro, .compact-directory-intro { padding-top: 25px; min-height: 150px; }
+
+.topic-item p, .topic-faq details > p, .topic-review p, .topic-aside > div p { font-size: 13px; }
+.topic-item a, .topic-foundation a, .topic-chapter-bar a, .topic-aside > a, .topic-footer a { font-size: 12px; }
+.topic-section-head p, .topic-aside > p, .topic-source-list small, .topic-foundation > span { font-size: 10px; }
+.namaz-section-head div > div, .condition-grid p, .tracker-copy p, .wudu-reference p, .step-list p,
+.rule-card li, .breakers-panel li, .congregation-cards li, .difference-note > p, .ghusl-grid article > p,
+.time-row span, .rakah-row span, .prohibited-times p, .table-footnote, .rakats-explainer p,
+.recitation-body .roman, .recitation-body .meaning, .qunut-card p, .mistake-grid p, .sahw-method li,
+.sahw-method > p, .jumuah-card div > span, .special-grid p, .namaz-faq details > p { font-size: 13px; }
+.namaz-chapter-bar a, .namaz-aside > a, .wudu-reference > a, .hadith-strip a, .special-prayer-links a,
+.namaz-hero-actions a, .namaz-footer a { font-size: 12px; }
+.namaz-section-head p, .hero-card-kicker, .condition-grid span, .tracker-copy > span, .wudu-reference span,
+.rule-card > span, .breakers-panel > div > p, .difference-note > span, .ghusl-grid article > span,
+.time-head span, .rakah-head span, .prohibited-times span, .hadith-strip span, .rakats-explainer span,
+.recitation-body p > span, .qunut-card > span, .mistake-grid span, .sahw-method span,
+.congregation-cards span, .jumuah-card p, .special-prayer-links > span, .special-grid article > span { font-size: 10px; }
+
+.quran-sidebar-head > span, .quran-surah-hero p, .quran-surah-player > div > span { font-size: 10px; }
+.quran-sidebar-head input, .quran-reader-tools label, .quran-reader-tools select, .quran-tool-actions button,
+.quran-attribution span, .ayah-toolbar small, .ayah-toolbar button, .ayah-toolbar > span { font-size: 11px; }
+.quran-surah-list small, .quran-surah-player > div > small { font-size: 12px; }
+.ayah-meaning span { font-size: 11px; }
+.ayah-card.is-playing { background: linear-gradient(to left,color-mix(in srgb,var(--mint) 62%,var(--surface)) 0 var(--ayah-progress),var(--surface) var(--ayah-progress) 100%); }
+
+.matrimony-step-grid p, .matrimony-privacy-card p, .matrimony-safety-list span, .matrimony-setup-note span { font-size: 13px; }
+.matrimony-primary-action, .matrimony-secondary-action, .matrimony-topbar nav a { font-size: 12px; }
+.matrimony-launch-state { max-width: 690px; margin-top: 13px; padding: 13px 15px; border: 1px solid #dfc884; border-radius: 11px; background: #fbf4dd; color: #5f512c; display: flex; flex-direction: column; gap: 4px; }
+.matrimony-launch-state strong { font-size: 13px; }
+.matrimony-launch-state span { font-size: 12px; line-height: 1.55; }
+.matrimony-policy-links { width: min(1180px,calc(100% - 48px)); margin: 0 auto 38px; padding: 14px 0; border-top: 1px solid var(--line); display: flex; gap: 18px; flex-wrap: wrap; }
+.matrimony-policy-links a { color: var(--green); font-size: 13px; font-weight: 650; }
+html.noor-dark .matrimony-launch-state { border-color: #5c5132; background: #2d281b; color: #e7d9a9; }
+.profile-form-head > div > p:last-child, .profile-form-section > div:first-child p { font-size: 13px; }
+.profile-form-head > span, .profile-field-grid label, .profile-field-grid label > small, .profile-submit-row span { font-size: 11px; }
+.profile-form-head b { font-size: 10px; }
+.profile-field-grid input, .profile-field-grid select, .profile-field-grid textarea { font-size: 14px; }
+
+.qibla-location-controls { width: min(390px,100%); margin-bottom: 15px; display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.qibla-location-controls label { min-height: 46px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--muted); font-size: 10px; display: flex; flex-direction: column; gap: 2px; }
+.qibla-location-controls select { border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 13px; }
+.qibla-location-controls button { min-height: 46px; padding: 0 14px; border: 0; border-radius: 23px; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
+.qibla-location-controls button:disabled { opacity: .6; }
+.qibla-compact-actions { max-width: 390px; align-items: center; justify-content: center; }
+.qibla-compact-actions > span { color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; }
+.qibla-red-arrow b.kaaba-marker { width: 42px; height: 42px; top: 4%; border: 3px solid #d7b456; border-radius: 4px; background: #171714; box-shadow: inset 0 -7px 0 #25241f,0 4px 8px rgba(0,0,0,.25); filter: none; }
+.kaaba-marker::before { content: ""; width: 100%; height: 7px; background: #c9a64f; position: absolute; left: 0; top: 9px; }
+.kaaba-marker span { width: 7px; height: 11px; border: 1px solid #c9a64f; position: absolute; left: 50%; bottom: 3px; transform: translateX(-50%); }
+
+.mosque-kind-filter { margin-top: 12px; display: flex; gap: 5px; }
+.mosque-kind-filter button { min-height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 17px; background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; }
+.mosque-kind-filter button.active { border-color: var(--green); background: var(--green); color: #fff; }
+.mosque-map { height: 190px; margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface-soft); }
+.mosque-map iframe { width: 100%; height: 100%; border: 0; }
+.mosque-results article.active { background: color-mix(in srgb,var(--mint) 30%,var(--surface)); box-shadow: inset 3px 0 0 var(--green); }
+.mosque-results small.mosque-kind { margin-bottom: 3px; color: var(--gold); font-size: 10px; font-weight: 760; letter-spacing: .1em; text-transform: uppercase; display: block; }
+.mosque-result-actions { display: flex; flex-direction: column; gap: 5px; }
+.mosque-result-actions button, .mosque-result-actions a { min-height: 32px; padding: 0 9px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); color: var(--green); font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; white-space: nowrap; }
+.mosque-result-actions button { border-color: var(--green); background: var(--green); color: #fff; }
+.mosque-locate-row label, .mosque-city-row > span, .mosque-nearest > span { font-size: 10px; }
+.mosque-nearest p, .mosque-results p, .mosque-results small { font-size: 12px; }
+
+.calendar-day { appearance: none; color: var(--ink); font-family: inherit; text-align: left; cursor: pointer; }
+.calendar-day.is-selected { outline: 2px solid var(--green); outline-offset: -2px; }
+.calendar-selected-day { margin: 15px 0 12px; padding: 13px; border-radius: 11px; background: var(--surface-soft); display: flex; flex-direction: column; gap: 4px; }
+.calendar-selected-day > span { color: var(--gold); font-size: 10px; font-weight: 760; letter-spacing: .12em; }
+.calendar-selected-day strong { font-family: Georgia,serif; font-size: 17px; font-weight: 520; }
+.calendar-selected-day b { color: var(--green); font-size: 13px; }
+.calendar-selected-day small { color: var(--muted); font-size: 12px; }
+.calendar-event-filter { margin-bottom: 11px; display: flex; gap: 5px; }
+.calendar-event-filter button { min-height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 17px; background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; }
+.calendar-event-filter button.active { border-color: var(--green); background: var(--green); color: #fff; }
+.calendar-nav span, .calendar-options label, .calendar-options select, .calendar-weekdays span, .calendar-day p,
+.calendar-events > div small, .calendar-muted, .calendar-guidance p, .calendar-guidance a { font-size: 11px; }
+.calendar-guidance > span, .calendar-source > span { font-size: 10px; }
+
+.family-view-tabs button, .family-detail-panel a { font-size: 12px; }
+.family-person-node span, .family-detail-panel > span, .family-card-view header span, .family-sources a span { font-size: 10px; }
+.family-detail-panel > p, .family-card-view header p, .family-sources > div:first-child > p:last-child { font-size: 13px; }
+.family-detail-panel small { font-size: 12px; }
+
+.lughat-grid header span, .lughat-grid article > div strong, .shop-item-grid article > small,
+.shop-item-grid article > div b, .shop-request-card > span, .destination-list summary small,
+.destination-details section > span, .travel-fields label > span, .travel-plan-card article > span,
+.travel-checklist header span { font-size: 10px; }
+.shop-item-grid article > p, .shop-request-card footer p, .destination-list summary p,
+.destination-details p, .destination-details li, .travel-plan-card article > div p,
+.travel-plan-card article li, .travel-plan-card article footer, .travel-checklist > label small,
+.travel-checklist > p { font-size: 12px; }
+
+.trust-page { min-height: 100vh; background: var(--ivory); color: var(--ink); }
+.trust-hero, .trust-sections { width: min(900px,calc(100% - 48px)); margin-inline: auto; }
+.trust-hero { padding: 42px 0 28px; border-bottom: 1px solid var(--line); }
+.trust-hero > p { margin: 0 0 9px; color: var(--gold); font-size: 11px; font-weight: 760; letter-spacing: .14em; }
+.trust-hero h1 { margin: 0; font-family: Georgia,serif; font-size: clamp(36px,5vw,54px); font-weight: 520; }
+.trust-hero > span { max-width: 720px; margin-top: 14px; color: var(--muted); font-size: 15px; line-height: 1.7; display: block; }
+.trust-hero > small { margin-top: 14px; color: var(--green); font-size: 11px; display: block; }
+.trust-sections { padding: 10px 0 48px; }
+.trust-sections article { padding: 24px 0; border-bottom: 1px solid var(--line); }
+.trust-sections h2 { margin: 0 0 11px; font-family: Georgia,serif; font-size: 24px; font-weight: 520; }
+.trust-sections p, .trust-sections li { color: var(--muted); font-size: 14px; line-height: 1.75; }
+.trust-sections p { margin: 8px 0; }
+.trust-sections ul { margin: 8px 0 0; padding-left: 20px; }
+
+.professional-footer { padding: 0; }
+.professional-footer-main { grid-template-columns: 1.45fr repeat(5,1fr); gap: 28px; }
+
+@media (max-width: 1050px) {
+  .home-prayer-strip { grid-template-columns: 140px 1fr auto; }
+  .home-prayer-next { display: none; }
+  .home-prayer-actions { grid-column: 1/-1; }
+  .professional-footer-main { grid-template-columns: 1.3fr repeat(3,1fr); }
+}
+
+@media (max-width: 700px) {
+  .home-more-features > summary { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .home-prayer-strip { grid-template-columns: 1fr; }
+  .home-prayer-actions { grid-column: auto; }
+  .home-prayer-settings { grid-column: auto; grid-template-columns: 1fr; }
+  .qibla-compact-face { width: min(340px,86vw); }
+  .mosque-result-actions { grid-column: 2; flex-direction: row; justify-self: start; }
+  .trust-hero, .trust-sections { width: min(100% - 32px,560px); }
+  .professional-footer-main { grid-template-columns: 1fr 1fr; }
+  .professional-footer-main > .footer-identity { grid-column: 1/-1; }
+}

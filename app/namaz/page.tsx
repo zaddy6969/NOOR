@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Namaz & Wudu — Complete Hanafi Prayer Guide | NOOR",
   description:
     "A structured Sunni Hanafi guide to Wudu, Ghusl, Tayammum, five daily prayers, rakahs, recitations, congregation, travel and missed Salah.",
+  alternates: { canonical: "/namaz" },
   openGraph: {
     title: "Namaz & Wudu — Complete Prayer Guide | NOOR",
     description: "Learn purification and Salah step by step with visible Qur’an, hadith and Hanafi references.",

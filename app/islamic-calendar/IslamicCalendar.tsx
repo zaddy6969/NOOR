@@ -44,6 +44,8 @@ export default function IslamicCalendar() {
   const [todayKey, setTodayKey] = useState(() => apiDate(new Date()));
   const [todayLabel] = useState(() => FULL_DATE_FORMATTER.format(new Date()));
   const [adjustment, setAdjustment] = useState(0);
+  const [eventMode, setEventMode] = useState<"Major" | "All">("Major");
+  const [selectedDate, setSelectedDate] = useState("");
   const [retryNonce, setRetryNonce] = useState(0);
   const requestKey = `${view.year}-${view.month}-${adjustment}-${retryNonce}`;
   const [result, setResult] = useState<{ key: string; calendar: CalendarResponse | null; error: string }>({ key: "", calendar: null, error: "" });
@@ -82,7 +84,12 @@ export default function IslamicCalendar() {
     return months.join(" – ");
   }, [calendar]);
 
-  const events = useMemo(() => calendar?.days.flatMap((day) => day.holidays.map((holiday) => ({ day, holiday }))) ?? [], [calendar]);
+  const events = useMemo(() => {
+    const all = calendar?.days.flatMap((day) => day.holidays.map((holiday) => ({ day, holiday }))) ?? [];
+    if (eventMode === "All") return all;
+    return all.filter(({ holiday }) => /ramadan|eid|fitr|adha|ashura|arafah|mawlid|isra|miraj|laylat|qadr|new year/i.test(holiday));
+  }, [calendar, eventMode]);
+  const selectedDay = calendar?.days.find((day) => day.gregorianDate === selectedDate) ?? today ?? calendar?.days[0];
 
   function changeMonth(delta: number) {
     setView((current) => {
@@ -147,11 +154,11 @@ export default function IslamicCalendar() {
               {loading
                 ? Array.from({ length: 28 }, (_, index) => <span className="calendar-day calendar-day-loading" aria-hidden="true" key={`loading-${index}`}/>)
                 : calendar?.days.map((day) => (
-                  <article className={day.gregorianDate === todayKey ? "calendar-day is-today" : "calendar-day"} role="gridcell" key={day.gregorianDate} aria-label={`${day.weekday}, Gregorian ${day.gregorianDay}; Hijri ${day.hijriDay} ${day.hijriMonth} ${day.hijriYear}`}>
+                  <button type="button" onClick={() => setSelectedDate(day.gregorianDate)} className={`${day.gregorianDate === todayKey ? "calendar-day is-today" : "calendar-day"}${day.gregorianDate === selectedDay?.gregorianDate ? " is-selected" : ""}`} role="gridcell" key={day.gregorianDate} aria-label={`${day.weekday}, Gregorian ${day.gregorianDay}; Hijri ${day.hijriDay} ${day.hijriMonth} ${day.hijriYear}`}>
                     <div><strong>{day.gregorianDay}</strong>{day.gregorianDate === todayKey ? <span>TODAY</span> : null}</div>
                     <p>{day.hijriDay} {day.hijriMonth}</p>
                     {day.holidays.slice(0, 1).map((holiday) => <small key={holiday}>{holiday}</small>)}
-                  </article>
+                  </button>
                 ))}
             </div>
           </div>
@@ -162,6 +169,8 @@ export default function IslamicCalendar() {
         <article className="calendar-events">
           <p className="eyebrow">IMPORTANT DATES THIS MONTH</p>
           <h2>Occasions and observances</h2>
+          {selectedDay ? <div className="calendar-selected-day"><span>SELECTED DAY</span><strong>{selectedDay.weekday}, {selectedDay.gregorianDay} {MONTH_FORMATTER.format(new Date(view.year, view.month - 1, 1)).replace(String(view.year), "").trim()}</strong><b>{selectedDay.hijriDay} {selectedDay.hijriMonth} {selectedDay.hijriYear} AH</b>{selectedDay.holidays.length ? <small>{selectedDay.holidays.join(" · ")}</small> : <small>No provider-listed observance</small>}</div> : null}
+          <div className="calendar-event-filter" role="group" aria-label="Calendar event filter"><button className={eventMode === "Major" ? "active" : ""} type="button" onClick={() => setEventMode("Major")}>Major dates</button><button className={eventMode === "All" ? "active" : ""} type="button" onClick={() => setEventMode("All")}>All observances</button></div>
           {loading ? <p className="calendar-muted">Checking this month…</p> : events.length ? <div>{events.map(({ day, holiday }) => <span key={`${day.gregorianDate}-${holiday}`}><b>{day.gregorianDay}</b><span><strong>{holiday}</strong><small>{day.hijriDay} {day.hijriMonth} {day.hijriYear} AH</small></span></span>)}</div> : <p className="calendar-muted">No provider-listed observances for this Gregorian month.</p>}
         </article>
         <aside className="calendar-guidance">
