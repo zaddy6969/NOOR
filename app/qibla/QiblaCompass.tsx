@@ -15,6 +15,7 @@ const CITY_PRESETS = [
 type UserLocation = { latitude: number; longitude: number; accuracy: number | null; label: string };
 type CompassEvent = DeviceOrientationEvent & { webkitCompassHeading?: number; webkitCompassAccuracy?: number };
 type PermissionedOrientationEvent = typeof DeviceOrientationEvent & { requestPermission?: () => Promise<"granted" | "denied"> };
+type SensorMode = "idle" | "waiting" | "absolute" | "relative" | "blocked" | "unavailable";
 
 function toRadians(value: number) { return value * Math.PI / 180; }
 function toDegrees(value: number) { return value * 180 / Math.PI; }
@@ -50,7 +51,14 @@ export default function QiblaCompass() {
   const [orientationEnabled, setOrientationEnabled] = useState(false);
   const [needsPermission, setNeedsPermission] = useState(false);
   const [sensorAccuracy, setSensorAccuracy] = useState<number | null>(null);
+  const [sensorMode, setSensorMode] = useState<SensorMode>("idle");
+  const [sensorAttempt, setSensorAttempt] = useState(0);
+  const [relativeCalibrated, setRelativeCalibrated] = useState(false);
   const headingRef = useRef<number | null>(null);
+  const latestRelativeRef = useRef<number | null>(null);
+  const calibrationOffsetRef = useRef(0);
+  const hasAbsoluteRef = useRef(false);
+  const gotReadingRef = useRef(false);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -63,7 +71,10 @@ export default function QiblaCompass() {
       if (!("DeviceOrientationEvent" in window)) return;
       const OrientationEvent = window.DeviceOrientationEvent as PermissionedOrientationEvent;
       if (typeof OrientationEvent.requestPermission === "function") setNeedsPermission(true);
-      else setOrientationEnabled(true);
+      else {
+        setSensorMode("waiting");
+        setOrientationEnabled(true);
+      }
     });
     return () => window.cancelAnimationFrame(frame);
   }, []);
@@ -107,16 +118,35 @@ export default function QiblaCompass() {
 
   useEffect(() => {
     if (!orientationEnabled) return;
+    gotReadingRef.current = false;
+    const readingTimeout = window.setTimeout(() => {
+      if (!gotReadingRef.current) setSensorMode("unavailable");
+    }, 3500);
     const handleOrientation = (rawEvent: Event) => {
       const event = rawEvent as CompassEvent;
       let next: number | null = null;
       if (typeof event.webkitCompassHeading === "number") {
-        next = normalize(event.webkitCompassHeading);
+        next = normalize(event.webkitCompassHeading + screenAngle());
+        hasAbsoluteRef.current = true;
+        setSensorMode("absolute");
         if (typeof event.webkitCompassAccuracy === "number") setSensorAccuracy(event.webkitCompassAccuracy);
-      } else if (event.absolute && typeof event.alpha === "number") {
-        next = normalize(360 - event.alpha + screenAngle());
+      } else if (typeof event.alpha === "number") {
+        const rawHeading = normalize(360 - event.alpha + screenAngle());
+        const isAbsolute = event.absolute || rawEvent.type === "deviceorientationabsolute";
+        if (isAbsolute) {
+          next = rawHeading;
+          hasAbsoluteRef.current = true;
+          setSensorMode("absolute");
+        } else {
+          if (hasAbsoluteRef.current) return;
+          latestRelativeRef.current = rawHeading;
+          next = normalize(rawHeading + calibrationOffsetRef.current);
+          setSensorMode("relative");
+        }
       }
       if (next === null) return;
+      gotReadingRef.current = true;
+      window.clearTimeout(readingTimeout);
       const previous = headingRef.current;
       const smoothed = previous === null ? next : normalize(previous + ((((next - previous + 540) % 360) - 180) * 0.22));
       headingRef.current = smoothed;
@@ -125,10 +155,11 @@ export default function QiblaCompass() {
     window.addEventListener("deviceorientationabsolute", handleOrientation, true);
     window.addEventListener("deviceorientation", handleOrientation, true);
     return () => {
+      window.clearTimeout(readingTimeout);
       window.removeEventListener("deviceorientationabsolute", handleOrientation, true);
       window.removeEventListener("deviceorientation", handleOrientation, true);
     };
-  }, [orientationEnabled]);
+  }, [orientationEnabled, sensorAttempt]);
 
   const calculatedBearing = useMemo(() => qiblaBearing(location.latitude, location.longitude), [location.latitude, location.longitude]);
   const bearing = verifiedBearing ?? calculatedBearing;
@@ -140,14 +171,35 @@ export default function QiblaCompass() {
 
   async function enableCompass() {
     try {
+      setSensorMode("waiting");
+      setHeading(null);
+      headingRef.current = null;
+      latestRelativeRef.current = null;
+      calibrationOffsetRef.current = 0;
+      hasAbsoluteRef.current = false;
+      setRelativeCalibrated(false);
       const OrientationEvent = window.DeviceOrientationEvent as PermissionedOrientationEvent;
       const permission = await OrientationEvent.requestPermission?.();
-      if (permission === "denied") return;
+      if (permission === "denied") {
+        setSensorMode("blocked");
+        return;
+      }
       setNeedsPermission(false);
       setOrientationEnabled(true);
+      setSensorAttempt((attempt) => attempt + 1);
     } catch {
       setNeedsPermission(false);
+      setSensorMode("blocked");
     }
+  }
+
+  function calibrateNorth() {
+    const rawHeading = latestRelativeRef.current;
+    if (rawHeading === null) return;
+    calibrationOffsetRef.current = normalize(-rawHeading);
+    headingRef.current = 0;
+    setHeading(0);
+    setRelativeCalibrated(true);
   }
 
   function chooseCity(id: string) {
@@ -160,7 +212,9 @@ export default function QiblaCompass() {
     window.localStorage.setItem("noor-qibla-city-v1", city.id);
   }
 
-  const status = heading === null
+  const status = sensorMode === "relative" && !relativeCalibrated
+    ? "Point phone north, then calibrate"
+    : heading === null
     ? `${Math.round(bearing)}° ${cardinalDirection(bearing)} from true north`
     : aligned
       ? "Qibla aligned"
@@ -186,14 +240,20 @@ export default function QiblaCompass() {
       <div className="qibla-compact-readout" role="status">
         <strong>{status}</strong>
         <span>{location.label} · Qibla {Math.round(bearing)}° {cardinalDirection(bearing)}{heading === null ? " · bearing mode" : ` · phone heading ${Math.round(heading)}°`}</span>
+        {sensorMode === "absolute" ? <small className="qibla-sensor-ok">Live compass · true-north sensor</small> : null}
+        {sensorMode === "relative" && relativeCalibrated ? <small className="qibla-sensor-ok">Live compass · north calibrated</small> : null}
+        {sensorMode === "relative" && !relativeCalibrated ? <small>Phone movement detected. Face the top of the phone north, then tap Calibrate north.</small> : null}
+        {sensorMode === "waiting" ? <small>Starting phone compass…</small> : null}
+        {sensorMode === "blocked" ? <small>Motion access is blocked. Allow motion/orientation in browser settings, then retry.</small> : null}
+        {sensorMode === "unavailable" ? <small>No sensor reading received. Retry in Chrome/Safari on a phone with compass access.</small> : null}
         {location.accuracy ? <small>Location accuracy ±{Math.round(location.accuracy)} m</small> : null}
         {weakSensor ? <small>Low compass accuracy — move the phone in a figure eight.</small> : null}
         {locationError ? <small>{locationError}</small> : null}
       </div>
 
       <div className="qibla-compact-actions">
-        {needsPermission ? <button type="button" onClick={enableCompass}>Enable live compass</button> : null}
-        {!needsPermission && heading === null ? <span>Live turning is unavailable on this device; use the degree bearing from true north.</span> : null}
+        <button type="button" onClick={enableCompass}>{needsPermission ? "Enable live compass" : heading === null ? "Start live compass" : "Restart compass"}</button>
+        {sensorMode === "relative" && !relativeCalibrated ? <button type="button" className="qibla-calibrate" onClick={calibrateNorth}>Calibrate north</button> : null}
       </div>
       <p className="qibla-one-line">Hold the phone flat. Keep it away from magnets and recalibrate after rotating the screen.</p>
     </section>
