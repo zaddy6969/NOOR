@@ -1,0 +1,371 @@
+/* MakeMyTrip-inspired homepage composition for NOOR.
+   Keeps NOOR branding/functionality while matching the reference geometry:
+   dark top stage, compact utility header, floating feature rail, and one large
+   white workspace card that fits comfortably in the first desktop viewport. */
+
+@media (min-width: 901px) {
+  .noor-tabbed-home {
+    min-height: 100vh;
+    background: #f6f5f1;
+  }
+
+  .noor-tabbed-home .noor-shell-header {
+    height: 68px;
+    padding-inline: max(34px, calc((100% - 1510px) / 2));
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    background: #083e35;
+    box-shadow: none;
+    grid-template-columns: 225px minmax(470px,1fr) minmax(360px,500px);
+    gap: 20px;
+    position: relative;
+    top: auto;
+    z-index: 130;
+  }
+
+  .noor-tabbed-home .noor-shell-header .reference-brand {
+    min-width: 0;
+    transform: translateY(-1px);
+  }
+
+  .noor-tabbed-home .noor-shell-header .reference-brand strong {
+    font-size: 20px;
+    letter-spacing: .05em;
+  }
+
+  .noor-tabbed-home .noor-shell-header .reference-brand small {
+    opacity: .76;
+  }
+
+  .noor-tabbed-home .noor-main-nav {
+    justify-content: flex-start;
+    gap: 0;
+    height: 100%;
+  }
+
+  .noor-tabbed-home .noor-main-nav a,
+  .noor-tabbed-home .noor-main-nav button {
+    min-height: 52px;
+    padding: 0 17px;
+    border-left: 1px solid rgba(255,255,255,.09);
+    color: rgba(255,255,255,.92);
+    font-size: 12px;
+    font-weight: 620;
+  }
+
+  .noor-tabbed-home .noor-main-nav a:last-child {
+    border-right: 1px solid rgba(255,255,255,.09);
+  }
+
+  .noor-tabbed-home .noor-main-nav .active::after {
+    left: 17px;
+    right: 17px;
+    bottom: 6px;
+  }
+
+  .noor-tabbed-home .noor-header-actions {
+    gap: 7px;
+  }
+
+  .noor-tabbed-home .noor-shell-header .header-global-search {
+    width: min(240px, 18vw);
+    height: 40px;
+    border-radius: 7px;
+    background: rgba(255,255,255,.07);
+  }
+
+  .noor-tabbed-home .noor-shell-header .theme-toggle,
+  .noor-tabbed-home .noor-language,
+  .noor-tabbed-home .noor-profile {
+    width: 40px;
+    height: 40px;
+    border-radius: 7px;
+    background: rgba(255,255,255,.07);
+  }
+
+  .noor-tabbed-home .noor-fixed-hero {
+    height: 236px;
+    padding: 0;
+    display: block;
+    background:
+      linear-gradient(180deg, rgba(6,35,31,.16), rgba(4,28,25,.72)),
+      radial-gradient(circle at 22% 38%, rgba(210,180,111,.13) 0 1px, transparent 1.6px),
+      radial-gradient(circle at 76% 62%, rgba(255,255,255,.07) 0 1px, transparent 1.5px),
+      linear-gradient(125deg, #174e44 0%, #0d3d35 48%, #092f2a 100%);
+    background-size: auto, 34px 34px, 42px 42px, auto;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .noor-tabbed-home .noor-fixed-hero::before,
+  .noor-tabbed-home .noor-fixed-hero::after {
+    content: "";
+    position: absolute;
+    bottom: -115px;
+    width: 440px;
+    height: 320px;
+    border: 1px solid rgba(213,180,101,.18);
+    border-radius: 50% 50% 0 0;
+    transform: rotate(18deg);
+  }
+
+  .noor-tabbed-home .noor-fixed-hero::before { left: -120px; }
+  .noor-tabbed-home .noor-fixed-hero::after { right: -120px; transform: scaleX(-1) rotate(18deg); }
+
+  .noor-tabbed-home .noor-hero-inner,
+  .noor-tabbed-home .noor-pattern {
+    display: none;
+  }
+
+  .noor-tabbed-home .noor-feature-shell {
+    width: min(1500px, calc(100% - 72px));
+    margin: -202px auto 0;
+    padding-bottom: 30px;
+    z-index: 30;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs {
+    width: min(1395px, calc(100% - 96px));
+    min-height: 116px;
+    margin: 0 auto;
+    padding: 9px 14px 7px;
+    border: 1px solid rgba(228,226,220,.95);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 25px rgba(9,35,31,.16);
+    grid-template-columns: repeat(12, minmax(74px,1fr));
+    overflow: visible;
+    position: relative;
+    z-index: 5;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs > button {
+    min-height: 98px;
+    padding: 8px 4px 7px;
+    border-radius: 10px;
+    gap: 7px;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs > button:hover {
+    background: #f7f8f5;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs > button.active {
+    background: transparent;
+    color: #0a6657;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs > button.active::after {
+    height: 3px;
+    left: 22%;
+    right: 22%;
+    bottom: -1px;
+    background: #2b8c78;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs svg {
+    width: 31px;
+    height: 31px;
+    color: #163f38;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs > button.active svg {
+    color: #0b7a67;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs span {
+    max-width: 105px;
+    font-family: var(--font-geist), Arial, sans-serif;
+    font-size: 11.5px;
+    line-height: 1.14;
+    font-weight: 560;
+  }
+
+  .noor-tabbed-home .noor-dynamic-workspace {
+    min-height: 500px;
+    margin-top: -56px;
+    padding-top: 62px;
+    border: 0;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 10px 32px rgba(11,39,34,.17);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .noor-tabbed-home .workspace-heading {
+    min-height: 58px;
+    padding: 10px 24px;
+    border-bottom: 1px solid #ecebe7;
+  }
+
+  .noor-tabbed-home .workspace-heading span {
+    font-size: 8.5px;
+  }
+
+  .noor-tabbed-home .workspace-heading h2 {
+    font-size: clamp(20px, 1.8vw, 25px);
+  }
+
+  .noor-tabbed-home .workspace-heading p {
+    font-size: 11.5px;
+  }
+
+  .noor-tabbed-home .workspace-heading > a {
+    min-height: 36px;
+    border-radius: 8px;
+  }
+
+  .noor-tabbed-home .home-quran-reader {
+    grid-template-columns: minmax(0,1.55fr) minmax(250px,.45fr);
+  }
+
+  .noor-tabbed-home .home-quran-toolbar {
+    min-height: 43px;
+    padding: 4px 18px;
+  }
+
+  .noor-tabbed-home .home-quran-toolbar label,
+  .noor-tabbed-home .home-quran-toolbar button {
+    height: 35px;
+    min-height: 35px;
+    border-radius: 7px;
+  }
+
+  .noor-tabbed-home .home-quran-verses {
+    max-height: 305px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .noor-tabbed-home .home-quran-verses > div {
+    min-height: 96px;
+    padding: 10px 18px;
+  }
+
+  .noor-tabbed-home .home-quran-audio {
+    min-height: 305px;
+    padding: 15px 20px;
+    top: 0;
+  }
+
+  .noor-tabbed-home .workspace-prayer,
+  .noor-tabbed-home .workspace-qibla,
+  .noor-tabbed-home .workspace-calendar,
+  .noor-tabbed-home .workspace-mosque,
+  .noor-tabbed-home .workspace-duas,
+  .noor-tabbed-home .workspace-darood,
+  .noor-tabbed-home .workspace-zakat,
+  .noor-tabbed-home .workspace-kaza,
+  .noor-tabbed-home .workspace-lughat,
+  .noor-tabbed-home .workspace-names,
+  .noor-tabbed-home .workspace-destinations {
+    max-height: 370px;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+
+  .noor-tabbed-home .noor-more-features {
+    width: 100%;
+    margin-top: 18px;
+    padding: 17px 20px 20px;
+    border: 1px solid #e3e1da;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(14,43,37,.06);
+  }
+
+  .noor-tabbed-home .noor-more-features > header {
+    margin-bottom: 11px;
+  }
+
+  .noor-tabbed-home .noor-more-features > header h2 {
+    font-size: 22px;
+  }
+
+  .noor-tabbed-home .noor-more-features > div {
+    gap: 9px;
+  }
+
+  .noor-tabbed-home .noor-more-features > div > a {
+    min-height: 66px;
+  }
+
+  .noor-tabbed-home .noor-mobile-nav {
+    display: none;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1250px) {
+  .noor-tabbed-home .noor-shell-header {
+    grid-template-columns: 190px 1fr 320px;
+    padding-inline: 22px;
+  }
+
+  .noor-tabbed-home .noor-main-nav a,
+  .noor-tabbed-home .noor-main-nav button {
+    padding-inline: 10px;
+    font-size: 11px;
+  }
+
+  .noor-tabbed-home .noor-feature-shell {
+    width: calc(100% - 32px);
+  }
+
+  .noor-tabbed-home .noor-feature-tabs {
+    width: calc(100% - 32px);
+    grid-template-columns: repeat(12, minmax(62px,1fr));
+  }
+
+  .noor-tabbed-home .noor-feature-tabs span {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .noor-tabbed-home .noor-shell-header {
+    height: 58px;
+  }
+
+  .noor-tabbed-home .noor-fixed-hero {
+    height: 250px;
+    padding-bottom: 70px;
+  }
+
+  .noor-tabbed-home .noor-hero-inner h1 {
+    font-size: clamp(31px, 9vw, 43px);
+  }
+
+  .noor-tabbed-home .noor-feature-shell {
+    width: calc(100% - 20px);
+    margin-top: -52px;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs {
+    width: 100%;
+    min-height: 92px;
+    padding: 7px;
+    grid-auto-columns: 84px;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .noor-tabbed-home .noor-feature-tabs::-webkit-scrollbar { display: none; }
+
+  .noor-tabbed-home .noor-feature-tabs > button {
+    min-height: 76px;
+  }
+
+  .noor-tabbed-home .noor-dynamic-workspace {
+    margin-top: 10px;
+    border-radius: 14px;
+  }
+
+  .noor-tabbed-home .home-quran-verses {
+    max-height: 420px;
+    overflow-y: auto;
+  }
+}
