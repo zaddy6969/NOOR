@@ -5,6 +5,7 @@ import { isClerkConfigured } from "@/lib/auth-config";
 import MediaProvider from "./media/MediaProvider";
 import SiteUtilitiesProvider from "./site/SiteUtilities";
 import PwaRegister from "./site/PwaRegister";
+import HomeStatusStrip from "./home/HomeStatusStrip";
 import "./globals.css";
 import "./home/mmt-home.css";
 
@@ -51,7 +52,7 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const application = <SiteUtilitiesProvider><MediaProvider>{children}</MediaProvider></SiteUtilitiesProvider>;
+  const application = <SiteUtilitiesProvider><MediaProvider>{children}<HomeStatusStrip /></MediaProvider></SiteUtilitiesProvider>;
   const content = isClerkConfigured()
     ? <ClerkProvider dynamic>{application}</ClerkProvider>
     : application;
