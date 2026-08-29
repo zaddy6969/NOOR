@@ -12,6 +12,7 @@ import "./home/quran-scroll-fix.css";
 import "./home/navy-reference-preview.css";
 import "./home/navy-inline-compact.css";
 import "./home/navy-generated-visuals.css";
+import "./home/navy-feature-photo-overrides.css";
 
 const geist = Geist({
   variable: "--font-geist",
