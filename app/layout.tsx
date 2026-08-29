@@ -8,6 +8,7 @@ import PwaRegister from "./site/PwaRegister";
 import HomeStatusStrip from "./home/HomeStatusStrip";
 import "./globals.css";
 import "./home/mmt-home.css";
+import "./home/view-page-label.css";
 
 const geist = Geist({
   variable: "--font-geist",
