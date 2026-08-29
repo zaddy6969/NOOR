@@ -175,7 +175,7 @@ function MosqueWorkspace() {
       } catch (error) { setState("error"); setMessage(error instanceof Error ? error.message : "The mosque service is unavailable."); }
     }, () => { setState("error"); setMessage("Location permission was denied. Allow location and try again."); }, { enableHighAccuracy: true, timeout: 10000 });
   };
-  return <><WorkspaceHeader feature="mosque-finder" title="Mosque Finder" description="Nearby mosques from your location, shown as an internal NOOR list." href="/mosque-finder" /><div className="workspace-mosques"><aside><span aria-hidden="true">⌖</span><strong>Find a mosque near you</strong><p>Your coordinates are used only for this search and are not saved.</p><button type="button" onClick={locate} disabled={state === "locating" || state === "loading"}>{state === "locating" ? "Getting location…" : state === "loading" ? "Searching map…" : "Use current location"}</button><small role="status">{message}</small></aside><section>{mosques.slice(0, 5).map((mosque) => <article key={mosque.id}><div><span>{mosque.kind}</span><strong>{mosque.name}</strong><small>{mosque.address}</small></div><b>{mosque.distanceKm.toFixed(1)} km</b></article>)}{state === "idle" ? <div className="workspace-empty">Nearby mosque results will appear here.</div> : null}</section></div></>;
+  return <><WorkspaceHeader feature="mosque-finder" title="Mosque Finder" description="Nearby mosques from your location, shown as an internal NOOR list." href="/mosque-finder" /><div className="workspace-mosques"><aside><span aria-hidden="true">⌖</span><strong>Find a mosque near you</strong><p>Your coordinates are used only for this search and are not saved.</p><button type="button" onClick={locate} disabled={state === "locating" || state === "loading"}>{state === "locating" ? "Getting location…" : state === "loading" ? "Searching map…" : "Use current location"}</button><small role="status">{message}</small></aside><section>{mosques.map((mosque) => <article key={mosque.id}><div><span>{mosque.kind}</span><strong>{mosque.name}</strong><small>{mosque.address}</small></div><b>{mosque.distanceKm.toFixed(1)} km</b></article>)}{state === "idle" ? <div className="workspace-empty">Nearby mosque results will appear here.</div> : null}</section></div></>;
 }
 
 function DuasWorkspace() {
@@ -208,7 +208,7 @@ function KazaWorkspace() {
 
 function LughatWorkspace() {
   const [query, setQuery] = useState("");
-  const matches = lughatEntries.filter((entry) => [entry.term,entry.urdu,entry.roman,entry.meaning].join(" ").toLowerCase().includes(query.toLowerCase())).slice(0, 8);
+  const matches = lughatEntries.filter((entry) => [entry.term,entry.urdu,entry.roman,entry.meaning].join(" ").toLowerCase().includes(query.toLowerCase()));
   return <><WorkspaceHeader feature="lughat" title="Firoz-ul-Lughat" description="Arabic, Urdu, Roman and English Islamic vocabulary—without leaving NOOR." href="/firozul-lughat" /><div className="workspace-lughat"><div><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search Allah, Salah, Wudu, Zakat…" aria-label="Search Firoz-ul-Lughat"/><span>{lughatEntries.length} reviewed terms</span></div><section>{matches.map((entry) => <article key={entry.id}><span>{entry.category}</span><strong>{entry.term}</strong><b lang="ur" dir="rtl">{entry.urdu}</b><small>{entry.roman}</small><p>{entry.meaning}</p><em>{entry.use}</em></article>)}{!matches.length ? <div className="workspace-empty">No word found. Try a shorter spelling.</div> : null}</section></div></>;
 }
 
