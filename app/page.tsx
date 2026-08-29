@@ -62,7 +62,17 @@ const MORE_FEATURES: Array<{ label: string; description: string; icon: IconName;
   { label: "Religious Tourism", description: "Plan meaningful journeys", icon: "pin", href: "/religious-tourism" },
   { label: "Five Pillars", description: "Learn the foundations", icon: "learn", href: "/topics/pillars" },
   { label: "Ahle Sunnat", description: "Beliefs and guidance", icon: "book", href: "/topics/ahle-sunnat" },
+  { label: "Tawheed", description: "Understand the oneness of Allah", icon: "names", href: "/topics/tawheed" },
+  { label: "Ramadan & Roza", description: "Fasting guidance", icon: "calendar", href: "/topics/roza" },
+  { label: "Hajj Guide", description: "Rites, preparation and etiquette", icon: "pin", href: "/topics/hajj" },
+  { label: "Waqiyahs", description: "Read Islamic accounts inside NOOR", icon: "learn", href: "/topics/waqiyahs" },
+  { label: "Islamic Festivals", description: "Dates, meaning and practice", icon: "calendar", href: "/topics/festivals" },
+  { label: "Islamic Quotes", description: "Sourced reminders and reflections", icon: "dua", href: "/topics/quotes" },
   { label: "Scholars", description: "Read trusted profiles", icon: "profile", href: "/topics/scholars" },
+  { label: "Institutes", description: "Islamic learning directory", icon: "mosque", href: "/topics/institutes" },
+  { label: "Jobs & Careers", description: "Faith-conscious work guidance", icon: "community", href: "/topics/jobs" },
+  { label: "Islamic FAQs", description: "Clear answers to common questions", icon: "info", href: "/topics/faqs" },
+  { label: "Islamic Glossary", description: "Arabic and Urdu terms", icon: "dictionary", href: "/glossary" },
   { label: "About NOOR", description: "Purpose and standards", icon: "info", href: "/about" },
 ];
 
