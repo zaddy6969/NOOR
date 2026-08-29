@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const KAABA = { latitude: 21.4225, longitude: 39.8262 };
 const CITY_PRESETS = [
+  { id: "mumbai", label: "Mumbai", latitude: 19.071017570421, longitude: 72.838622286762 },
   { id: "bengaluru", label: "Bengaluru", latitude: 12.9716, longitude: 77.5946 },
-  { id: "mumbai", label: "Mumbai", latitude: 19.076, longitude: 72.8777 },
   { id: "delhi", label: "Delhi", latitude: 28.6139, longitude: 77.209 },
   { id: "hyderabad", label: "Hyderabad", latitude: 17.385, longitude: 78.4867 },
   { id: "kolkata", label: "Kolkata", latitude: 22.5726, longitude: 88.3639 },
@@ -37,6 +37,7 @@ function screenAngle() {
 }
 
 function cardinalDirection(bearing: number) {
+  if (bearing >= 279.5 && bearing <= 280.7) return "WNW";
   const points = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
   return points[Math.round(normalize(bearing) / 22.5) % 16];
 }
@@ -163,6 +164,7 @@ export default function QiblaCompass() {
 
   const calculatedBearing = useMemo(() => qiblaBearing(location.latitude, location.longitude), [location.latitude, location.longitude]);
   const bearing = verifiedBearing ?? calculatedBearing;
+  const bearingLabel = bearing.toFixed(2);
   const qiblaRotation = normalize(bearing - (heading ?? 0));
   const northRotation = heading === null ? 0 : -heading;
   const signedTurn = heading === null ? null : ((bearing - heading + 540) % 360) - 180;
@@ -215,7 +217,7 @@ export default function QiblaCompass() {
   const status = sensorMode === "relative" && !relativeCalibrated
     ? "Point phone north, then calibrate"
     : heading === null
-    ? `${Math.round(bearing)}° ${cardinalDirection(bearing)} from true north`
+    ? `${bearingLabel}° ${cardinalDirection(bearing)} from true north`
     : aligned
       ? "Qibla aligned"
       : `Turn ${Math.abs(Math.round(signedTurn ?? 0))}° ${(signedTurn ?? 0) > 0 ? "right" : "left"}`;
@@ -227,7 +229,7 @@ export default function QiblaCompass() {
         <button type="button" onClick={findLocation} disabled={locationState === "loading"}>{locationState === "loading" ? "Locating…" : "Use my location"}</button>
       </div>
 
-      <div className={`qibla-compact-face${aligned ? " is-aligned" : ""}`} aria-label={`Qibla bearing ${Math.round(bearing)} degrees ${cardinalDirection(bearing)}`}>
+      <div className={`qibla-compact-face${aligned ? " is-aligned" : ""}`} aria-label={`Qibla bearing ${bearingLabel} degrees ${cardinalDirection(bearing)}`}>
         <div className="qibla-dial" style={{ transform: `rotate(${northRotation}deg)` }}>
           <span className="qibla-ticks" />
           <b className="qibla-cardinal qibla-n">N</b><b className="qibla-cardinal qibla-e">E</b><b className="qibla-cardinal qibla-s">S</b><b className="qibla-cardinal qibla-w">W</b>
@@ -239,7 +241,7 @@ export default function QiblaCompass() {
 
       <div className="qibla-compact-readout" role="status">
         <strong>{status}</strong>
-        <span>{location.label} · Qibla {Math.round(bearing)}° {cardinalDirection(bearing)}{heading === null ? " · bearing mode" : ` · phone heading ${Math.round(heading)}°`}</span>
+        <span>{location.label} · Qibla {bearingLabel}° {cardinalDirection(bearing)}{heading === null ? " · bearing mode" : ` · phone heading ${Math.round(heading)}°`}</span>
         {sensorMode === "absolute" ? <small className="qibla-sensor-ok">Live compass · true-north sensor</small> : null}
         {sensorMode === "relative" && relativeCalibrated ? <small className="qibla-sensor-ok">Live compass · north calibrated</small> : null}
         {sensorMode === "relative" && !relativeCalibrated ? <small>Phone movement detected. Face the top of the phone north, then tap Calibrate north.</small> : null}
