@@ -1,97 +1,129 @@
-/* MakeMyTrip-inspired homepage composition for NOOR.
-   Keeps NOOR branding/functionality while matching the reference geometry:
-   dark top stage, compact utility header, floating feature rail, and one large
-   white workspace card that fits comfortably in the first desktop viewport. */
+/* Compact premium NOOR homepage.
+   The desktop composition intentionally behaves like a centered floating dashboard:
+   brand utilities on the emerald stage, a slim feature rail, a compact tool preview,
+   then live Islamic quick information before the deeper feature directory. */
 
 @media (min-width: 901px) {
   .noor-tabbed-home {
     min-height: 100vh;
-    background: #f6f5f1;
+    overflow-x: clip;
+    background:
+      linear-gradient(180deg, transparent 0 760px, #f4f3ef 760px 100%),
+      radial-gradient(circle at 14% 23%, rgba(220,185,105,.12) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 78% 34%, rgba(255,255,255,.06) 0 1px, transparent 1.5px),
+      linear-gradient(132deg, #0a5044 0%, #073f37 46%, #052f2b 100%);
+    background-size: auto, 35px 35px, 44px 44px, auto;
+    color: #173b35;
   }
 
   .noor-tabbed-home .noor-shell-header {
-    height: 68px;
-    padding-inline: max(34px, calc((100% - 1510px) / 2));
-    border-bottom: 1px solid rgba(255,255,255,.08);
-    background: #083e35;
+    width: min(1510px, calc(100% - 72px));
+    height: 88px;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #fff;
     box-shadow: none;
-    grid-template-columns: 225px minmax(470px,1fr) minmax(360px,500px);
-    gap: 20px;
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) auto;
+    align-items: center;
+    gap: 24px;
     position: relative;
     top: auto;
-    z-index: 130;
+    z-index: 140;
   }
 
   .noor-tabbed-home .noor-shell-header .reference-brand {
-    min-width: 0;
-    transform: translateY(-1px);
+    width: max-content;
+    color: #fffdf8;
   }
 
   .noor-tabbed-home .noor-shell-header .reference-brand strong {
-    font-size: 20px;
-    letter-spacing: .05em;
+    color: #f3d487;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 27px;
+    font-weight: 560;
+    letter-spacing: .07em;
   }
 
   .noor-tabbed-home .noor-shell-header .reference-brand small {
-    opacity: .76;
+    margin-top: 1px;
+    color: rgba(255,255,255,.72);
+    font-size: 9px;
+    letter-spacing: .12em;
+  }
+
+  .noor-tabbed-home .noor-shell-header .reference-logo {
+    width: 45px;
+    height: 45px;
+    border-color: rgba(231,194,109,.78);
   }
 
   .noor-tabbed-home .noor-main-nav {
-    justify-content: flex-start;
-    gap: 0;
-    height: 100%;
-  }
-
-  .noor-tabbed-home .noor-main-nav a,
-  .noor-tabbed-home .noor-main-nav button {
-    min-height: 52px;
-    padding: 0 17px;
-    border-left: 1px solid rgba(255,255,255,.09);
-    color: rgba(255,255,255,.92);
-    font-size: 12px;
-    font-weight: 620;
-  }
-
-  .noor-tabbed-home .noor-main-nav a:last-child {
-    border-right: 1px solid rgba(255,255,255,.09);
-  }
-
-  .noor-tabbed-home .noor-main-nav .active::after {
-    left: 17px;
-    right: 17px;
-    bottom: 6px;
+    display: none;
   }
 
   .noor-tabbed-home .noor-header-actions {
-    gap: 7px;
+    min-width: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .noor-tabbed-home .noor-shell-header .site-utilities {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   .noor-tabbed-home .noor-shell-header .header-global-search {
-    width: min(240px, 18vw);
-    height: 40px;
-    border-radius: 7px;
-    background: rgba(255,255,255,.07);
+    width: 210px;
+    height: 38px;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 999px;
+    background: rgba(255,255,255,.045);
+    color: #fff;
+    box-shadow: none;
+  }
+
+  .noor-tabbed-home .noor-shell-header .header-global-search svg,
+  .noor-tabbed-home .noor-shell-header .theme-toggle svg {
+    color: #fff;
+  }
+
+  .noor-tabbed-home .noor-shell-header .header-global-search kbd,
+  .noor-tabbed-home .noor-shell-header .header-theme-select {
+    display: none;
   }
 
   .noor-tabbed-home .noor-shell-header .theme-toggle,
   .noor-tabbed-home .noor-language,
   .noor-tabbed-home .noor-profile {
-    width: 40px;
-    height: 40px;
-    border-radius: 7px;
-    background: rgba(255,255,255,.07);
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 50%;
+    background: rgba(255,255,255,.055);
+    color: #fff;
+  }
+
+  .noor-tabbed-home .noor-language {
+    border-radius: 999px;
+    width: 48px;
+  }
+
+  .noor-tabbed-home .noor-language select {
+    color: #fff;
+    font-size: 10px;
   }
 
   .noor-tabbed-home .noor-fixed-hero {
-    height: 236px;
+    height: 660px;
     padding: 0;
+    background: transparent;
     display: block;
-    background:
-      linear-gradient(180deg, rgba(6,35,31,.16), rgba(4,28,25,.72)),
-      radial-gradient(circle at 22% 38%, rgba(210,180,111,.13) 0 1px, transparent 1.6px),
-      radial-gradient(circle at 76% 62%, rgba(255,255,255,.07) 0 1px, transparent 1.5px),
-      linear-gradient(125deg, #174e44 0%, #0d3d35 48%, #092f2a 100%);
-    background-size: auto, 34px 34px, 42px 42px, auto;
     overflow: hidden;
     position: relative;
   }
@@ -100,16 +132,17 @@
   .noor-tabbed-home .noor-fixed-hero::after {
     content: "";
     position: absolute;
-    bottom: -115px;
-    width: 440px;
-    height: 320px;
-    border: 1px solid rgba(213,180,101,.18);
+    width: 560px;
+    height: 520px;
+    bottom: -214px;
+    border: 1px solid rgba(216,181,98,.16);
     border-radius: 50% 50% 0 0;
-    transform: rotate(18deg);
+    transform: rotate(22deg);
+    pointer-events: none;
   }
 
-  .noor-tabbed-home .noor-fixed-hero::before { left: -120px; }
-  .noor-tabbed-home .noor-fixed-hero::after { right: -120px; transform: scaleX(-1) rotate(18deg); }
+  .noor-tabbed-home .noor-fixed-hero::before { left: -225px; }
+  .noor-tabbed-home .noor-fixed-hero::after { right: -225px; transform: scaleX(-1) rotate(22deg); }
 
   .noor-tabbed-home .noor-hero-inner,
   .noor-tabbed-home .noor-pattern {
@@ -117,137 +150,264 @@
   }
 
   .noor-tabbed-home .noor-feature-shell {
-    width: min(1500px, calc(100% - 72px));
-    margin: -202px auto 0;
-    padding-bottom: 30px;
+    width: min(1320px, calc(100% - 64px));
+    margin: -610px auto 0;
+    padding: 0 0 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
     z-index: 30;
   }
 
   .noor-tabbed-home .noor-feature-tabs {
-    width: min(1395px, calc(100% - 96px));
-    min-height: 116px;
+    order: 1;
+    width: min(1240px, 100%);
+    min-height: 92px;
     margin: 0 auto;
-    padding: 9px 14px 7px;
-    border: 1px solid rgba(228,226,220,.95);
-    border-radius: 14px;
-    background: #fff;
-    box-shadow: 0 8px 25px rgba(9,35,31,.16);
-    grid-template-columns: repeat(12, minmax(74px,1fr));
-    overflow: visible;
-    position: relative;
-    z-index: 5;
+    padding: 7px 10px 6px;
+    border: 1px solid rgba(226,223,214,.9);
+    border-radius: 17px;
+    background: rgba(255,255,255,.985);
+    box-shadow: 0 15px 38px rgba(3,29,25,.22);
+    display: grid;
+    grid-template-columns: repeat(12, minmax(68px,1fr));
+    align-items: stretch;
+    overflow: hidden;
   }
 
   .noor-tabbed-home .noor-feature-tabs > button {
-    min-height: 98px;
-    padding: 8px 4px 7px;
-    border-radius: 10px;
-    gap: 7px;
+    min-width: 0;
+    min-height: 78px;
+    padding: 6px 3px 5px;
+    border: 0;
+    border-radius: 11px;
+    background: transparent;
+    color: #173d36;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    position: relative;
   }
 
   .noor-tabbed-home .noor-feature-tabs > button:hover {
-    background: #f7f8f5;
+    background: #f3f7f4;
   }
 
   .noor-tabbed-home .noor-feature-tabs > button.active {
-    background: transparent;
-    color: #0a6657;
+    background: #eef5f1;
+    color: #08705e;
   }
 
   .noor-tabbed-home .noor-feature-tabs > button.active::after {
+    content: "";
     height: 3px;
+    border-radius: 99px;
+    background: #188975;
+    position: absolute;
     left: 22%;
     right: 22%;
-    bottom: -1px;
-    background: #2b8c78;
+    bottom: 0;
   }
 
   .noor-tabbed-home .noor-feature-tabs svg {
-    width: 31px;
-    height: 31px;
-    color: #163f38;
+    width: 26px;
+    height: 26px;
+    flex: 0 0 auto;
+    color: #17443c;
   }
 
   .noor-tabbed-home .noor-feature-tabs > button.active svg {
-    color: #0b7a67;
+    color: #087662;
   }
 
   .noor-tabbed-home .noor-feature-tabs span {
-    max-width: 105px;
+    max-width: 96px;
+    color: inherit;
     font-family: var(--font-geist), Arial, sans-serif;
-    font-size: 11.5px;
-    line-height: 1.14;
-    font-weight: 560;
+    font-size: 10px;
+    line-height: 1.12;
+    font-weight: 610;
   }
 
   .noor-tabbed-home .noor-dynamic-workspace {
-    min-height: 500px;
-    margin-top: -56px;
-    padding-top: 62px;
-    border: 0;
-    border-radius: 14px;
-    background: #fff;
-    box-shadow: 0 10px 32px rgba(11,39,34,.17);
+    order: 2;
+    width: min(1190px, calc(100% - 50px));
+    min-height: 0;
+    margin: 32px auto 0;
+    padding: 0;
+    border: 1px solid rgba(225,218,202,.92);
+    border-radius: 16px;
+    outline: 0;
+    background: #fffefa;
+    box-shadow: 0 17px 40px rgba(4,31,27,.20);
     overflow: hidden;
-    position: relative;
-    z-index: 1;
   }
 
   .noor-tabbed-home .workspace-heading {
-    min-height: 58px;
-    padding: 10px 24px;
-    border-bottom: 1px solid #ecebe7;
+    min-height: 76px;
+    padding: 13px 24px 12px;
+    border-bottom: 1px solid #ebe7dc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background: linear-gradient(180deg,#fffefa,#fffdf8);
+  }
+
+  .noor-tabbed-home .workspace-heading > div {
+    min-width: 0;
   }
 
   .noor-tabbed-home .workspace-heading span {
-    font-size: 8.5px;
+    color: #af8736;
+    font-size: 8px;
+    font-weight: 780;
+    letter-spacing: .16em;
   }
 
   .noor-tabbed-home .workspace-heading h2 {
-    font-size: clamp(20px, 1.8vw, 25px);
+    margin: 3px 0 0;
+    color: #0c574a;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(22px,1.9vw,27px);
+    line-height: 1.02;
+    font-weight: 520;
   }
 
   .noor-tabbed-home .workspace-heading p {
-    font-size: 11.5px;
+    margin: 4px 0 0;
+    color: #737b77;
+    font-size: 11px;
   }
 
   .noor-tabbed-home .workspace-heading > a {
     min-height: 36px;
-    border-radius: 8px;
+    padding: 0 14px;
+    border: 1px solid #ddd5c5;
+    border-radius: 9px;
+    background: #fffefa;
+    color: #0b6555;
+    font-size: 11px;
+    box-shadow: 0 2px 8px rgba(30,53,47,.03);
   }
 
   .noor-tabbed-home .home-quran-reader {
-    grid-template-columns: minmax(0,1.55fr) minmax(250px,.45fr);
+    display: grid;
+    grid-template-columns: minmax(0,1.72fr) minmax(270px,.55fr);
+    background: #fffefa;
   }
 
   .noor-tabbed-home .home-quran-toolbar {
-    min-height: 43px;
-    padding: 4px 18px;
+    min-height: 46px;
+    padding: 5px 16px;
+    border-bottom: 1px solid #eae5d9;
+    grid-column: 1/-1;
+    display: flex;
+    align-items: center;
+    gap: 7px;
   }
 
-  .noor-tabbed-home .home-quran-toolbar label,
-  .noor-tabbed-home .home-quran-toolbar button {
+  .noor-tabbed-home .home-quran-toolbar label {
+    min-width: 220px;
     height: 35px;
+    padding: 0 10px;
+    border: 1px solid #ded7c9;
+    border-radius: 8px;
+    background: #fffefa;
+  }
+
+  .noor-tabbed-home .home-quran-toolbar button {
     min-height: 35px;
-    border-radius: 7px;
+    height: 35px;
+    padding: 0 11px;
+    border-color: #ded7c9;
+    border-radius: 8px;
+    background: #fffefa;
+    font-size: 10.5px;
   }
 
   .noor-tabbed-home .home-quran-verses {
-    max-height: 305px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
+    max-height: none;
+    overflow: hidden;
   }
 
   .noor-tabbed-home .home-quran-verses > div {
-    min-height: 96px;
-    padding: 10px 18px;
+    min-height: 101px;
+    padding: 11px 17px;
+    border-bottom: 1px solid #ebe7df;
+    grid-template-columns: 35px minmax(255px,1.08fr) minmax(225px,.8fr);
+    gap: 13px;
+  }
+
+  .noor-tabbed-home .home-quran-verses > div:nth-child(n+3) {
+    display: none;
+  }
+
+  .noor-tabbed-home .ayah-number {
+    width: 29px;
+    height: 29px;
+    font-size: 10px;
+  }
+
+  .noor-tabbed-home .ayah-arabic {
+    font-size: clamp(23px,1.8vw,29px);
+    line-height: 1.55;
+  }
+
+  .noor-tabbed-home .ayah-translation {
+    font-size: 13px;
+    line-height: 1.5;
   }
 
   .noor-tabbed-home .home-quran-audio {
-    min-height: 305px;
-    padding: 15px 20px;
+    min-height: 202px;
+    padding: 15px 18px;
+    border-left: 1px solid #e8e2d7;
+    align-self: stretch;
+    position: relative;
     top: 0;
+    justify-content: center;
+    background: linear-gradient(145deg,#fffefa,#fbfaf5);
+  }
+
+  .noor-tabbed-home .home-quran-audio > span {
+    font-size: 8px;
+    letter-spacing: .15em;
+  }
+
+  .noor-tabbed-home .home-quran-audio > strong {
+    margin-top: 7px;
+    font-size: 17px;
+  }
+
+  .noor-tabbed-home .home-quran-audio > p {
+    min-height: 32px;
+    margin: 6px 0 10px;
+    font-size: 10.5px;
+    line-height: 1.45;
+  }
+
+  .noor-tabbed-home .home-quran-audio > button {
+    min-height: 39px;
+    border-radius: 9px;
+    background: linear-gradient(135deg,#08715e,#075848);
+    box-shadow: 0 7px 15px rgba(5,89,73,.14);
+    font-size: 11px;
+  }
+
+  .noor-tabbed-home .home-quran-audio > a {
+    min-height: 34px;
+    margin-top: 9px;
+    border-radius: 8px;
+    font-size: 10.5px;
+  }
+
+  .noor-tabbed-home .home-quran-progress {
+    margin-top: 9px;
   }
 
   .noor-tabbed-home .workspace-prayer,
@@ -261,19 +421,121 @@
   .noor-tabbed-home .workspace-lughat,
   .noor-tabbed-home .workspace-names,
   .noor-tabbed-home .workspace-destinations {
-    max-height: 370px;
+    max-height: 350px;
     overflow: auto;
     overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .noor-home-status {
+    order: 3;
+    width: min(950px, calc(100% - 150px));
+    min-height: 80px;
+    margin: 21px auto 0;
+    border: 1px solid rgba(222,216,202,.94);
+    border-radius: 14px;
+    background: rgba(255,254,250,.985);
+    box-shadow: 0 12px 30px rgba(4,31,27,.16);
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    overflow: hidden;
+  }
+
+  .noor-home-status > button {
+    min-width: 0;
+    min-height: 80px;
+    padding: 12px 17px;
+    border: 0;
+    border-right: 1px solid #e6e0d5;
+    background: transparent;
+    color: #153d35;
+    display: grid;
+    grid-template-columns: 43px minmax(0,1fr) 12px;
+    gap: 11px;
+    align-items: center;
+    text-align: left;
+    cursor: pointer;
+    transition: background .18s ease;
+  }
+
+  .noor-home-status > button:last-child {
+    border-right: 0;
+  }
+
+  .noor-home-status > button:hover {
+    background: #f6f8f4;
+  }
+
+  .noor-home-status .status-icon {
+    width: 43px;
+    height: 43px;
+    border-radius: 11px;
+    background: #eaf3ef;
+    color: #0a6b59;
+    display: grid;
+    place-items: center;
+  }
+
+  .noor-home-status .status-icon.gold {
+    background: #f5edd9;
+    color: #a47d29;
+  }
+
+  .noor-home-status .status-icon svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .noor-home-status button > span:nth-child(2) {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .noor-home-status small {
+    color: #747c78;
+    font-size: 9.5px;
+    line-height: 1.15;
+  }
+
+  .noor-home-status strong {
+    margin-top: 4px;
+    overflow: hidden;
+    color: #123e36;
+    font-size: 13px;
+    line-height: 1.22;
+    font-weight: 680;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .noor-home-status em {
+    margin-top: 2px;
+    color: #8a8f8c;
+    font-size: 8.5px;
+    font-style: normal;
+  }
+
+  .noor-home-status b {
+    color: #a1813d;
+    font-size: 19px;
+    font-weight: 400;
   }
 
   .noor-tabbed-home .noor-more-features {
-    width: 100%;
-    margin-top: 18px;
+    order: 4;
+    width: min(1190px, calc(100% - 50px));
+    margin: 38px auto 0;
     padding: 17px 20px 20px;
-    border: 1px solid #e3e1da;
-    border-radius: 14px;
-    background: #fff;
-    box-shadow: 0 5px 18px rgba(14,43,37,.06);
+    border: 1px solid #e2dfd6;
+    border-radius: 15px;
+    background: #fffefa;
+    box-shadow: 0 6px 22px rgba(15,43,37,.07);
   }
 
   .noor-tabbed-home .noor-more-features > header {
@@ -281,45 +543,63 @@
   }
 
   .noor-tabbed-home .noor-more-features > header h2 {
-    font-size: 22px;
+    font-size: 21px;
   }
 
   .noor-tabbed-home .noor-more-features > div {
-    gap: 9px;
+    gap: 8px;
   }
 
   .noor-tabbed-home .noor-more-features > div > a {
-    min-height: 66px;
+    min-height: 62px;
   }
 
   .noor-tabbed-home .noor-mobile-nav {
+    display: none;
+  }
+
+  .noor-tabbed-home + .noor-home-status {
     display: none;
   }
 }
 
 @media (min-width: 901px) and (max-width: 1250px) {
   .noor-tabbed-home .noor-shell-header {
-    grid-template-columns: 190px 1fr 320px;
-    padding-inline: 22px;
+    width: calc(100% - 38px);
   }
 
-  .noor-tabbed-home .noor-main-nav a,
-  .noor-tabbed-home .noor-main-nav button {
-    padding-inline: 10px;
-    font-size: 11px;
+  .noor-tabbed-home .noor-shell-header .header-global-search {
+    width: 170px;
   }
 
   .noor-tabbed-home .noor-feature-shell {
-    width: calc(100% - 32px);
+    width: calc(100% - 28px);
   }
 
   .noor-tabbed-home .noor-feature-tabs {
-    width: calc(100% - 32px);
-    grid-template-columns: repeat(12, minmax(62px,1fr));
+    width: 100%;
+    grid-template-columns: repeat(12,minmax(58px,1fr));
   }
 
   .noor-tabbed-home .noor-feature-tabs span {
-    font-size: 10px;
+    font-size: 9px;
+  }
+
+  .noor-tabbed-home .noor-dynamic-workspace,
+  .noor-tabbed-home .noor-more-features {
+    width: calc(100% - 30px);
+  }
+
+  .noor-home-status {
+    width: calc(100% - 120px);
+  }
+
+  .noor-tabbed-home .home-quran-reader {
+    grid-template-columns: minmax(0,1.55fr) minmax(245px,.5fr);
+  }
+
+  .noor-tabbed-home .home-quran-verses > div {
+    grid-template-columns: 32px minmax(220px,1fr) minmax(180px,.72fr);
   }
 }
 
@@ -329,24 +609,23 @@
   }
 
   .noor-tabbed-home .noor-fixed-hero {
-    height: 250px;
-    padding-bottom: 70px;
-  }
-
-  .noor-tabbed-home .noor-hero-inner h1 {
-    font-size: clamp(31px, 9vw, 43px);
+    height: 238px;
+    padding-bottom: 64px;
   }
 
   .noor-tabbed-home .noor-feature-shell {
-    width: calc(100% - 20px);
-    margin-top: -52px;
+    width: calc(100% - 18px);
+    margin-top: -48px;
+    display: flex;
+    flex-direction: column;
   }
 
   .noor-tabbed-home .noor-feature-tabs {
+    order: 1;
     width: 100%;
-    min-height: 92px;
-    padding: 7px;
-    grid-auto-columns: 84px;
+    min-height: 86px;
+    padding: 6px;
+    grid-auto-columns: 80px;
     grid-template-columns: none;
     grid-auto-flow: column;
     overflow-x: auto;
@@ -356,16 +635,63 @@
   .noor-tabbed-home .noor-feature-tabs::-webkit-scrollbar { display: none; }
 
   .noor-tabbed-home .noor-feature-tabs > button {
-    min-height: 76px;
+    min-height: 72px;
   }
 
   .noor-tabbed-home .noor-dynamic-workspace {
+    order: 2;
+    width: 100%;
     margin-top: 10px;
     border-radius: 14px;
   }
 
+  .noor-home-status {
+    order: 3;
+    width: 100%;
+    margin-top: 10px;
+    border: 1px solid #dedbd2;
+    border-radius: 13px;
+    background: #fffefa;
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: hidden;
+  }
+
+  .noor-home-status > button {
+    min-height: 68px;
+    padding: 10px 13px;
+    border: 0;
+    border-bottom: 1px solid #e7e2d8;
+    background: transparent;
+    color: #153d35;
+    display: grid;
+    grid-template-columns: 39px 1fr 12px;
+    gap: 10px;
+    align-items: center;
+    text-align: left;
+  }
+
+  .noor-home-status > button:last-child { border-bottom: 0; }
+  .noor-home-status .status-icon { width: 39px; height: 39px; border-radius: 10px; background: #edf4f0; color: #0a6b59; display: grid; place-items: center; }
+  .noor-home-status .status-icon.gold { background: #f5edd9; color: #a47d29; }
+  .noor-home-status .status-icon svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+  .noor-home-status button > span:nth-child(2) { display: flex; flex-direction: column; }
+  .noor-home-status small { color: #747c78; font-size: 9px; }
+  .noor-home-status strong { margin-top: 3px; color: #123e36; font-size: 12px; }
+  .noor-home-status em { margin-top: 2px; color: #8a8f8c; font-size: 8px; font-style: normal; }
+  .noor-home-status b { color: #a1813d; font-size: 18px; font-weight: 400; }
+
+  .noor-tabbed-home .noor-more-features {
+    order: 4;
+    width: 100%;
+  }
+
   .noor-tabbed-home .home-quran-verses {
-    max-height: 420px;
+    max-height: 360px;
     overflow-y: auto;
+  }
+
+  .noor-tabbed-home .home-quran-verses > div:nth-child(n+3) {
+    display: grid;
   }
 }
