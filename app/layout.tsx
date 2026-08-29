@@ -9,6 +9,7 @@ import HomeStatusStrip from "./home/HomeStatusStrip";
 import "./globals.css";
 import "./home/mmt-home.css";
 import "./home/view-page-label.css";
+import "./home/quran-scroll-fix.css";
 
 const geist = Geist({
   variable: "--font-geist",
