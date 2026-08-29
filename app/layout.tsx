@@ -6,6 +6,7 @@ import MediaProvider from "./media/MediaProvider";
 import SiteUtilitiesProvider from "./site/SiteUtilities";
 import PwaRegister from "./site/PwaRegister";
 import "./globals.css";
+import "./home/mmt-home.css";
 
 const geist = Geist({
   variable: "--font-geist",
