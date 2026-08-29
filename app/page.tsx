@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import HomeFeatureWorkspace, { type FeatureId, type QuranTarget } from "./home/HomeFeatureWorkspace";
-import PrayerTimesStrip from "./home/PrayerTimesStrip";
 import SiteFooter from "./site/SiteFooter";
 import { HeaderUtilities, SearchLauncher } from "./site/SiteUtilities";
 
@@ -154,7 +153,6 @@ export default function Home() {
         </div>
 
         <HomeFeatureWorkspace activeFeature={activeFeature} quranTarget={quranTarget} />
-        <div className="noor-prayer-summary"><PrayerTimesStrip /></div>
       </section>
 
       <SiteFooter />
