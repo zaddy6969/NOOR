@@ -6,7 +6,7 @@ import HomeFeatureWorkspace, { type FeatureId, type QuranTarget } from "./home/H
 import SiteFooter from "./site/SiteFooter";
 import { HeaderUtilities, SearchLauncher } from "./site/SiteUtilities";
 
-type IconName = "book" | "clock" | "compass" | "calendar" | "mosque" | "dua" | "darood" | "zakat" | "prayer" | "dictionary" | "names" | "pin" | "home" | "grid" | "search" | "profile";
+type IconName = "book" | "clock" | "compass" | "calendar" | "mosque" | "dua" | "darood" | "zakat" | "prayer" | "dictionary" | "names" | "pin" | "home" | "grid" | "search" | "profile" | "music" | "family" | "shop" | "community" | "learn" | "info";
 
 export function NoorIcon({ name }: { name: IconName }) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -26,6 +26,12 @@ export function NoorIcon({ name }: { name: IconName }) {
     grid: <><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></>,
     search: <><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,
     profile: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
+    music: <><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></>,
+    family: <><circle cx="12" cy="5" r="2.4"/><circle cx="6" cy="15" r="2.4"/><circle cx="18" cy="15" r="2.4"/><path d="M12 7.5v3M6 12.5v-2h12v2"/></>,
+    shop: <><path d="M4 9h16l-1 12H5Z"/><path d="m6 9 1-5h10l1 5M9 13v4m6-4v4"/></>,
+    community: <><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2.5 21a5.5 5.5 0 0 1 11 0M13 21a4.5 4.5 0 0 1 8.5-2"/></>,
+    learn: <><path d="M3 5h7a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H3Z"/><path d="M21 5h-5a3 3 0 0 0-3 3v13a3 3 0 0 1 3-3h5Z"/><path d="M6 9h4M6 12h4"/></>,
+    info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></>,
   };
   return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
@@ -47,6 +53,19 @@ const FEATURES: Array<{ id: FeatureId; label: string; icon: IconName }> = [
 
 const FEATURE_IDS = new Set(FEATURES.map((feature) => feature.id));
 
+const MORE_FEATURES: Array<{ label: string; description: string; icon: IconName; href: string }> = [
+  { label: "Naat & Salam", description: "Listen, watch and read", icon: "music", href: "/naat" },
+  { label: "Prayer & Wudu", description: "Complete Namaz guide", icon: "prayer", href: "/namaz" },
+  { label: "Family Tree", description: "Explore Islamic lineage", icon: "family", href: "/family-tree" },
+  { label: "Shop by Category", description: "Browse the NOOR catalogue", icon: "shop", href: "/shop" },
+  { label: "Matrimony", description: "Private Muslim profiles", icon: "community", href: "/matrimony" },
+  { label: "Religious Tourism", description: "Plan meaningful journeys", icon: "pin", href: "/religious-tourism" },
+  { label: "Five Pillars", description: "Learn the foundations", icon: "learn", href: "/topics/pillars" },
+  { label: "Ahle Sunnat", description: "Beliefs and guidance", icon: "book", href: "/topics/ahle-sunnat" },
+  { label: "Scholars", description: "Read trusted profiles", icon: "profile", href: "/topics/scholars" },
+  { label: "About NOOR", description: "Purpose and standards", icon: "info", href: "/about" },
+];
+
 function readHash(): FeatureId {
   const value = window.location.hash.slice(1);
   return FEATURE_IDS.has(value as FeatureId) ? value as FeatureId : "quran";
@@ -55,6 +74,7 @@ function readHash(): FeatureId {
 export default function Home() {
   const [activeFeature, setActiveFeature] = useState<FeatureId>("quran");
   const [quranTarget, setQuranTarget] = useState<QuranTarget>({ surah: 1, ayah: null });
+  const [showAllTools, setShowAllTools] = useState(false);
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const activate = useCallback((id: FeatureId, options?: { history?: boolean; focus?: boolean }) => {
@@ -153,6 +173,24 @@ export default function Home() {
         </div>
 
         <HomeFeatureWorkspace activeFeature={activeFeature} quranTarget={quranTarget} />
+
+        <section className={`noor-more-features${showAllTools ? " expanded" : ""}`} aria-labelledby="more-features-title">
+          <header>
+            <div><span>EXPLORE NOOR</span><h2 id="more-features-title">More features</h2></div>
+            <button type="button" aria-expanded={showAllTools} onClick={() => setShowAllTools((value) => !value)}>
+              {showAllTools ? "Show less" : "View all"}<span aria-hidden="true">{showAllTools ? "↑" : "→"}</span>
+            </button>
+          </header>
+          <div>
+            {MORE_FEATURES.slice(0, showAllTools ? MORE_FEATURES.length : 6).map((feature) => (
+              <Link href={feature.href} key={feature.href}>
+                <span><NoorIcon name={feature.icon}/></span>
+                <span><strong>{feature.label}</strong><small>{feature.description}</small></span>
+                <b aria-hidden="true">›</b>
+              </Link>
+            ))}
+          </div>
+        </section>
       </section>
 
       <SiteFooter />
