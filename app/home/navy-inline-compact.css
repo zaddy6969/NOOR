@@ -1,0 +1,368 @@
+/* Extra compact preview-only pass.
+   Keeps the reference dashboard on one screen and brings the selected feature
+   workspace directly under the feature rail. Imported only on the preview branch. */
+
+@media (min-width: 1201px) {
+  .noor-reference-preview {
+    min-height: 100vh;
+  }
+
+  .noor-ref-shell {
+    width: min(1680px, calc(100% - 34px));
+  }
+
+  .noor-ref-header {
+    min-height: 64px;
+    gap: 18px;
+  }
+
+  .noor-ref-brand {
+    gap: 10px;
+  }
+
+  .noor-ref-crescent {
+    width: 40px;
+    height: 40px;
+  }
+
+  .noor-ref-crescent::after {
+    width: 35px;
+    height: 35px;
+    left: 10px;
+    top: -3px;
+  }
+
+  .noor-ref-crescent i {
+    width: 4px;
+    height: 4px;
+    top: 7px;
+  }
+
+  .noor-ref-brand strong {
+    font-size: 29px;
+  }
+
+  .noor-ref-brand small {
+    margin-top: 2px;
+    font-size: 8px;
+  }
+
+  .noor-ref-actions {
+    gap: 8px;
+  }
+
+  .noor-ref-search {
+    width: 330px;
+    height: 39px;
+    padding: 0 16px;
+  }
+
+  .noor-ref-search svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .noor-ref-search span {
+    font-size: 11.5px;
+  }
+
+  .noor-ref-round,
+  .noor-ref-language {
+    width: 39px;
+    height: 39px;
+    font-size: 10px;
+  }
+
+  .noor-ref-round svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .noor-ref-hero {
+    padding-top: 5px;
+    padding-bottom: 8px;
+  }
+
+  .noor-ref-greeting h1 {
+    font-size: clamp(30px, 2.25vw, 39px);
+    line-height: 1;
+  }
+
+  .noor-ref-greeting p {
+    margin-top: 5px;
+    font-size: 12px;
+  }
+
+  .noor-ref-dashboard {
+    grid-template-columns: 1.18fr .78fr 1.04fr;
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .noor-ref-card {
+    min-height: 188px;
+    height: 188px;
+    padding: 17px 21px;
+    border-radius: 15px;
+  }
+
+  .noor-ref-card > span {
+    font-size: 12px;
+  }
+
+  .noor-ref-card h3 {
+    margin-top: 9px;
+    font-size: 25px;
+  }
+
+  .noor-ref-prayer-card::after {
+    width: 215px;
+    height: 115px;
+    right: -18px;
+    bottom: -18px;
+  }
+
+  .noor-ref-prayer-card .crescent-large {
+    width: 48px;
+    height: 48px;
+    right: 64px;
+    top: 31px;
+  }
+
+  .noor-ref-prayer-card .crescent-large::after {
+    width: 43px;
+    height: 43px;
+    left: 13px;
+    top: -3px;
+  }
+
+  .noor-ref-countdown {
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .noor-ref-countdown > div {
+    min-width: 58px;
+  }
+
+  .noor-ref-countdown strong {
+    font-size: clamp(26px, 2vw, 34px);
+  }
+
+  .noor-ref-countdown small {
+    margin-top: 4px;
+    font-size: 8px;
+  }
+
+  .noor-ref-prayer-time {
+    margin-top: 11px;
+    font-size: 14px;
+  }
+
+  .noor-ref-date-card h3 {
+    margin-top: 18px;
+    font-size: 25px;
+    line-height: 1.12;
+  }
+
+  .noor-ref-date-card p {
+    margin-top: 10px;
+    font-size: 11px;
+  }
+
+  .noor-ref-outline-btn {
+    height: 34px;
+    margin-top: 13px;
+    padding: 0 18px;
+    border-radius: 9px;
+    font-size: 10.5px;
+  }
+
+  .noor-ref-quran-card p {
+    margin-top: 8px;
+    font-size: 11px;
+  }
+
+  .noor-ref-quran-track {
+    margin-top: 9px;
+    padding: 9px 11px 10px;
+    border-radius: 9px;
+  }
+
+  .noor-ref-quran-track strong {
+    font-size: 11.5px;
+  }
+
+  .noor-ref-quran-track span {
+    margin-top: 6px;
+    font-size: 10px;
+  }
+
+  .noor-ref-progress-row {
+    gap: 9px;
+    margin-top: 7px;
+  }
+
+  .noor-ref-progress {
+    height: 6px;
+  }
+
+  .noor-ref-progress-row b {
+    font-size: 10px;
+  }
+
+  .noor-ref-quran-card .noor-ref-outline-btn {
+    height: 33px;
+    margin-top: 8px;
+  }
+
+  .noor-ref-feature-rail {
+    width: calc(100% - 2px);
+    margin-top: 11px;
+    padding: 8px 10px 7px;
+    border-radius: 16px;
+    box-shadow: 0 10px 24px rgba(0,0,0,.22);
+  }
+
+  .noor-ref-feature-rail button {
+    min-height: 68px;
+    border-radius: 9px;
+    gap: 4px;
+  }
+
+  .noor-ref-feature-rail svg {
+    width: 23px;
+    height: 23px;
+  }
+
+  .noor-ref-feature-rail span {
+    max-width: 92px;
+    font-size: 8.5px;
+    line-height: 1.08;
+  }
+
+  .noor-ref-feature-rail button.active::after {
+    width: 10px;
+    height: 3px;
+  }
+
+  .noor-ref-preview-note {
+    display: none;
+  }
+
+  /* Selected page/tool starts immediately below the rail instead of feeling like
+     a separate page far down the document. */
+  .noor-ref-workspace-wrap {
+    width: min(1660px, calc(100% - 34px));
+    margin: 9px auto 26px;
+    padding-top: 0;
+    scroll-margin-top: 6px;
+  }
+
+  .noor-reference-preview .noor-dynamic-workspace {
+    max-height: 330px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 13px 30px rgba(0,0,0,.20);
+  }
+
+  .noor-reference-preview .workspace-transition {
+    max-height: 330px;
+    overflow: hidden;
+  }
+
+  .noor-reference-preview .workspace-heading {
+    min-height: 58px;
+    padding: 9px 16px;
+  }
+
+  .noor-reference-preview .workspace-heading h2 {
+    font-size: 20px;
+  }
+
+  .noor-reference-preview .workspace-heading p {
+    margin-top: 2px;
+    font-size: 9.5px;
+  }
+
+  .noor-reference-preview .workspace-heading > a {
+    min-height: 31px;
+    padding: 0 11px;
+    font-size: 9.5px;
+  }
+
+  .noor-reference-preview .home-quran-reader {
+    max-height: 270px;
+  }
+
+  .noor-reference-preview .home-quran-toolbar {
+    min-height: 38px;
+    padding: 3px 10px;
+  }
+
+  .noor-reference-preview .home-quran-toolbar label,
+  .noor-reference-preview .home-quran-toolbar button {
+    height: 29px;
+    min-height: 29px;
+  }
+
+  .noor-reference-preview .home-quran-verses {
+    max-height: 205px !important;
+    overflow-y: auto !important;
+  }
+
+  .noor-reference-preview .home-quran-verses > div {
+    min-height: 66px !important;
+    padding: 6px 10px !important;
+  }
+
+  .noor-reference-preview .ayah-arabic {
+    font-size: clamp(18px, 1.35vw, 22px) !important;
+  }
+
+  .noor-reference-preview .ayah-translation {
+    font-size: 10.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  .noor-reference-preview .home-quran-audio {
+    min-height: 205px !important;
+    padding: 10px 12px !important;
+  }
+
+  .noor-reference-preview .workspace-prayer,
+  .noor-reference-preview .workspace-qibla,
+  .noor-reference-preview .workspace-calendar,
+  .noor-reference-preview .workspace-mosque,
+  .noor-reference-preview .workspace-duas,
+  .noor-reference-preview .workspace-darood,
+  .noor-reference-preview .workspace-zakat,
+  .noor-reference-preview .workspace-kaza,
+  .noor-reference-preview .workspace-lughat,
+  .noor-reference-preview .workspace-names,
+  .noor-reference-preview .workspace-destinations {
+    max-height: 270px !important;
+    overflow: auto !important;
+  }
+}
+
+@media (min-width: 1201px) and (max-height: 850px) {
+  .noor-ref-header { min-height: 56px; }
+  .noor-ref-hero { padding-top: 0; }
+  .noor-ref-greeting h1 { font-size: 31px; }
+  .noor-ref-dashboard { margin-top: 10px; }
+  .noor-ref-card { min-height: 166px; height: 166px; padding: 14px 18px; }
+  .noor-ref-card h3 { font-size: 22px; }
+  .noor-ref-countdown { margin-top: 10px; }
+  .noor-ref-countdown strong { font-size: 28px; }
+  .noor-ref-prayer-time { margin-top: 8px; }
+  .noor-ref-date-card h3 { margin-top: 12px; font-size: 22px; }
+  .noor-ref-date-card p { margin-top: 7px; }
+  .noor-ref-outline-btn { margin-top: 9px; height: 31px; }
+  .noor-ref-quran-track { margin-top: 6px; padding-block: 7px; }
+  .noor-ref-feature-rail { margin-top: 8px; }
+  .noor-ref-feature-rail button { min-height: 61px; }
+  .noor-ref-workspace-wrap { margin-top: 7px; }
+  .noor-reference-preview .noor-dynamic-workspace,
+  .noor-reference-preview .workspace-transition { max-height: 305px; }
+}
