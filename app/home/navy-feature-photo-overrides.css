@@ -1,0 +1,110 @@
+/* Preview-only photographic accents for NOOR feature pages. */
+
+/* Keep the generated landing background, but make it a little more visible behind the dashboard. */
+.noor-reference-preview {
+  background-blend-mode: normal;
+}
+
+.noor-reference-preview #panel-quran .workspace-heading {
+  background-image:
+    linear-gradient(90deg, rgba(4,31,49,.98) 0%, rgba(4,31,49,.88) 42%, rgba(4,31,49,.28) 100%),
+    url("https://images.unsplash.com/photo-1761406778100-de0254ec6788?auto=format&fit=crop&fm=jpg&q=70&w=1400");
+  background-size: cover;
+  background-position: center 58%;
+}
+
+.noor-reference-preview #panel-prayer-times .workspace-heading {
+  background-image:
+    linear-gradient(90deg, rgba(4,31,49,.98) 0%, rgba(4,31,49,.86) 42%, rgba(4,31,49,.24) 100%),
+    url("https://images.unsplash.com/photo-1559561368-141ce33bacb9?auto=format&fit=crop&fm=jpg&q=70&w=1400");
+  background-size: cover;
+  background-position: center 55%;
+}
+
+.noor-reference-preview #panel-qibla .workspace-heading {
+  background-image:
+    linear-gradient(90deg, rgba(4,31,49,.98) 0%, rgba(4,31,49,.84) 40%, rgba(4,31,49,.20) 100%),
+    url("https://images.unsplash.com/photo-1772096168501-44a92c1b6929?auto=format&fit=crop&fm=jpg&q=70&w=1400");
+  background-size: cover;
+  background-position: center 50%;
+}
+
+.noor-reference-preview #panel-islamic-calendar .workspace-heading {
+  background-image:
+    linear-gradient(90deg, rgba(4,31,49,.98) 0%, rgba(4,31,49,.86) 43%, rgba(4,31,49,.24) 100%),
+    url("https://images.unsplash.com/photo-1781748806274-b4111e828eb4?auto=format&fit=crop&fm=jpg&q=70&w=1400");
+  background-size: cover;
+  background-position: center 52%;
+}
+
+.noor-reference-preview #panel-mosque-finder .workspace-heading {
+  background-image:
+    linear-gradient(90deg, rgba(4,31,49,.98) 0%, rgba(4,31,49,.84) 40%, rgba(4,31,49,.20) 100%),
+    url("https://images.unsplash.com/photo-1778067217860-971b430b84c6?auto=format&fit=crop&fm=jpg&q=70&w=1400");
+  background-size: cover;
+  background-position: center 55%;
+}
+
+.noor-reference-preview #panel-quran .workspace-heading,
+.noor-reference-preview #panel-prayer-times .workspace-heading,
+.noor-reference-preview #panel-qibla .workspace-heading,
+.noor-reference-preview #panel-islamic-calendar .workspace-heading,
+.noor-reference-preview #panel-mosque-finder .workspace-heading {
+  min-height: 124px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 -1px 0 rgba(226,183,83,.28);
+}
+
+/* Put the same imagery inside the tool itself in subtle, readable places. */
+.noor-reference-preview #panel-quran .home-quran-audio {
+  background-image:
+    linear-gradient(rgba(255,255,255,.93), rgba(255,255,255,.97)),
+    url("https://images.unsplash.com/photo-1761406778100-de0254ec6788?auto=format&fit=crop&fm=jpg&q=65&w=900");
+  background-size: cover;
+  background-position: center;
+}
+
+.noor-reference-preview #panel-qibla .workspace-qibla > aside {
+  background-image:
+    linear-gradient(rgba(255,255,255,.88), rgba(255,255,255,.95)),
+    url("https://images.unsplash.com/photo-1772096168501-44a92c1b6929?auto=format&fit=crop&fm=jpg&q=65&w=900");
+  background-size: cover;
+  background-position: center;
+}
+
+.noor-reference-preview #panel-islamic-calendar .workspace-calendar > aside {
+  background-image:
+    linear-gradient(rgba(255,255,255,.90), rgba(255,255,255,.96)),
+    url("https://images.unsplash.com/photo-1781748806274-b4111e828eb4?auto=format&fit=crop&fm=jpg&q=65&w=900");
+  background-size: cover;
+  background-position: center;
+}
+
+.noor-reference-preview #panel-mosque-finder .workspace-mosques > aside {
+  background-image:
+    linear-gradient(rgba(255,255,255,.88), rgba(255,255,255,.95)),
+    url("https://images.unsplash.com/photo-1778067217860-971b430b84c6?auto=format&fit=crop&fm=jpg&q=65&w=900");
+  background-size: cover;
+  background-position: center;
+}
+
+/* Add a gentle photographic layer to the live prayer-times tool without making timings harder to read. */
+.noor-reference-preview #panel-prayer-times .workspace-prayer {
+  background-image:
+    linear-gradient(rgba(255,255,255,.94), rgba(255,255,255,.98)),
+    url("https://images.unsplash.com/photo-1559561368-141ce33bacb9?auto=format&fit=crop&fm=jpg&q=60&w=1100");
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 760px) {
+  .noor-reference-preview #panel-quran .workspace-heading,
+  .noor-reference-preview #panel-prayer-times .workspace-heading,
+  .noor-reference-preview #panel-qibla .workspace-heading,
+  .noor-reference-preview #panel-islamic-calendar .workspace-heading,
+  .noor-reference-preview #panel-mosque-finder .workspace-heading {
+    min-height: 108px;
+    background-position: 68% center;
+  }
+}
