@@ -15,6 +15,7 @@ type SearchResult = {
 type UtilitiesContextValue = {
   openSearch: () => void;
   dark: boolean;
+  setTheme: (theme: "light" | "dark") => void;
   toggleTheme: () => void;
 };
 
@@ -30,13 +31,20 @@ export function HeaderUtilities({ compact = false }: { compact?: boolean }) {
   return (
     <div className={compact ? "site-utilities compact" : "site-utilities"}>
       <button className="header-global-search" type="button" onClick={utilities.openSearch} aria-label="Search everything in NOOR">
-        <SearchIcon/><span>Search everything</span><kbd>⌘ K</kbd>
+        <SearchIcon/><span>Search everything…</span><kbd>⌘ K</kbd>
       </button>
       <button className="theme-toggle" type="button" onClick={utilities.toggleTheme} aria-label={utilities.dark ? "Switch to light theme" : "Switch to dark theme"}>
         <span aria-hidden="true">{utilities.dark ? "☀" : "☾"}</span>
       </button>
+      <label className="header-theme-select"><span className="sr-only">Theme</span><select value={utilities.dark ? "dark" : "light"} onChange={(event) => utilities.setTheme(event.target.value as "light" | "dark")} aria-label="Choose website theme"><option value="light">Light</option><option value="dark">Dark</option></select></label>
     </div>
   );
+}
+
+export function SearchLauncher({ className, children }: { className?: string; children: React.ReactNode }) {
+  const utilities = useContext(UtilitiesContext);
+  if (!utilities) return null;
+  return <button className={className} type="button" onClick={utilities.openSearch}>{children}</button>;
 }
 
 export default function SiteUtilitiesProvider({ children }: { children: React.ReactNode }) {
@@ -100,15 +108,37 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
 
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const toggleTheme = useCallback(() => setDark((value) => !value), []);
+  const setTheme = useCallback((theme: "light" | "dark") => setDark(theme === "dark"), []);
 
   const chooseResult = (result: SearchResult) => {
     setSearchOpen(false);
     setQuery("");
+    if (window.location.pathname === "/") {
+      const resultUrl = new URL(result.href, window.location.origin);
+      const exactPath = resultUrl.pathname;
+      const feature = result.href.includes("/namaz#recitations") ? "daily-duas"
+        : result.href.includes("/topics/tawheed#protection") ? "names"
+        : exactPath === "/quran" ? "quran"
+        : exactPath === "/qibla" ? "qibla"
+        : exactPath === "/islamic-calendar" ? "islamic-calendar"
+        : exactPath === "/mosque-finder" ? "mosque-finder"
+        : exactPath === "/darood" ? "darood"
+        : exactPath === "/zakat-calculator" ? "zakat"
+        : exactPath === "/qaza-namaz" ? "kaza"
+        : exactPath === "/firozul-lughat" || exactPath === "/glossary" ? "lughat"
+        : exactPath === "/destinations" || exactPath === "/religious-tourism" ? "destinations"
+        : result.href.includes("#prayer-times") || exactPath === "/namaz" ? "prayer-times"
+        : null;
+      if (feature) {
+        window.dispatchEvent(new CustomEvent("noor:activate-feature", { detail: { feature, href: result.href } }));
+        return;
+      }
+    }
     router.push(result.href);
   };
 
   return (
-    <UtilitiesContext.Provider value={{ openSearch, dark, toggleTheme }}>
+    <UtilitiesContext.Provider value={{ openSearch, dark, setTheme, toggleTheme }}>
       {children}
       {searchOpen ? (
         <div className="global-search-overlay" role="dialog" aria-modal="true" aria-label="Search NOOR">
