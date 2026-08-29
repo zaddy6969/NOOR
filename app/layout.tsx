@@ -5,11 +5,11 @@ import { isClerkConfigured } from "@/lib/auth-config";
 import MediaProvider from "./media/MediaProvider";
 import SiteUtilitiesProvider from "./site/SiteUtilities";
 import PwaRegister from "./site/PwaRegister";
-import HomeStatusStrip from "./home/HomeStatusStrip";
 import "./globals.css";
 import "./home/mmt-home.css";
 import "./home/view-page-label.css";
 import "./home/quran-scroll-fix.css";
+import "./home/navy-reference-preview.css";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -54,7 +54,7 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const application = <SiteUtilitiesProvider><MediaProvider>{children}<HomeStatusStrip /></MediaProvider></SiteUtilitiesProvider>;
+  const application = <SiteUtilitiesProvider><MediaProvider>{children}</MediaProvider></SiteUtilitiesProvider>;
   const content = isClerkConfigured()
     ? <ClerkProvider dynamic>{application}</ClerkProvider>
     : application;
