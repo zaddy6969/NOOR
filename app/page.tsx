@@ -1,40 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import HomeFeatureWorkspace, { type FeatureId, type QuranTarget } from "./home/HomeFeatureWorkspace";
-import SiteFooter from "./site/SiteFooter";
-import { HeaderUtilities, SearchLauncher } from "./site/SiteUtilities";
 
-type IconName = "book" | "clock" | "compass" | "calendar" | "mosque" | "dua" | "darood" | "zakat" | "prayer" | "dictionary" | "names" | "pin" | "home" | "grid" | "search" | "profile" | "music" | "family" | "shop" | "community" | "learn" | "info";
+type IconName = "book" | "clock" | "compass" | "calendar" | "mosque" | "dua" | "darood" | "zakat" | "prayer" | "dictionary" | "names" | "pin" | "search" | "moon" | "profile";
 
-export function NoorIcon({ name }: { name: IconName }) {
-  const paths: Record<IconName, React.ReactNode> = {
-    book: <><path d="M3.8 5.5A3.7 3.7 0 0 1 7.5 2H11a3 3 0 0 1 3 3v16a3 3 0 0 0-3-3H7.5a3.7 3.7 0 0 0-3.7 3.5Z"/><path d="M20.2 5.5A3.7 3.7 0 0 0 16.5 2H14v19a3 3 0 0 1 3-3h3.2Z"/></>,
-    clock: <><circle cx="12" cy="12" r="9"/><path d="M12 6.5V12l3.8 2.2"/></>,
-    compass: <><circle cx="12" cy="12" r="9"/><path d="m16.5 7.5-2.8 6.2-6.2 2.8 2.8-6.2Z"/></>,
-    calendar: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/><path d="M16 14a3 3 0 1 0 3 3 3.4 3.4 0 0 1-3-3Z"/></>,
-    mosque: <><path d="M4 21V11h16v10M8 21v-5a4 4 0 0 1 8 0v5M7 11a5 5 0 0 1 10 0M12 3v3M3 21h18"/></>,
-    dua: <><path d="M8.5 21 5.7 18.1a4 4 0 0 1-1.1-2.8V9.7a1.5 1.5 0 0 1 3 0v3.8-7a1.5 1.5 0 0 1 3 0V14l1.4 1.6 1.4-1.6V6.5a1.5 1.5 0 0 1 3 0v7-3.8a1.5 1.5 0 0 1 3 0v5.6a4 4 0 0 1-1.1 2.8L15.5 21"/></>,
-    darood: <><circle cx="12" cy="4.5" r="1.6"/><circle cx="7.5" cy="7.5" r="1.6"/><circle cx="6" cy="12.5" r="1.6"/><circle cx="9" cy="17" r="1.6"/><circle cx="15" cy="17" r="1.6"/><circle cx="18" cy="12.5" r="1.6"/><circle cx="16.5" cy="7.5" r="1.6"/><path d="M12 18.6V22"/></>,
-    zakat: <><circle cx="12" cy="12" r="9"/><path d="m8 16 8-8M8.5 8.5h.01M15.5 15.5h.01"/></>,
-    prayer: <><path d="M4 21h16M8 21v-6.3a4 4 0 0 1 8 0V21"/><circle cx="12" cy="7" r="2.1"/><path d="M9.5 11.5h5"/></>,
-    dictionary: <><path d="M4 4h7a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H4Z"/><path d="M20 4h-3a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h3Z"/></>,
-    names: <><path d="m12 2 2.3 3.2 3.9-.4.4 3.9L22 11l-2 3.4.8 3.8-3.9.8-2.6 3-2.8-2.8-3.9.7-.7-3.9L3 13.6l2-3.4-.8-3.8 3.9-.8Z"/><text x="12" y="14" textAnchor="middle" stroke="none" fill="currentColor" fontSize="7">99</text></>,
-    pin: <><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,
-    home: <><path d="m3 11 9-8 9 8M5 10v11h14V10M9 21v-7h6v7"/></>,
-    grid: <><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></>,
-    search: <><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,
-    profile: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
-    music: <><path d="M9 18V5l10-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></>,
-    family: <><circle cx="12" cy="5" r="2.4"/><circle cx="6" cy="15" r="2.4"/><circle cx="18" cy="15" r="2.4"/><path d="M12 7.5v3M6 12.5v-2h12v2"/></>,
-    shop: <><path d="M4 9h16l-1 12H5Z"/><path d="m6 9 1-5h10l1 5M9 13v4m6-4v4"/></>,
-    community: <><circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2.5 21a5.5 5.5 0 0 1 11 0M13 21a4.5 4.5 0 0 1 8.5-2"/></>,
-    learn: <><path d="M3 5h7a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H3Z"/><path d="M21 5h-5a3 3 0 0 0-3 3v13a3 3 0 0 1 3-3h5Z"/><path d="M6 9h4M6 12h4"/></>,
-    info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></>,
-  };
-  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
-}
+type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
+type PrayerPayload = { timings?: Record<PrayerName, string>; hijri?: string | null };
 
 const FEATURES: Array<{ id: FeatureId; label: string; icon: IconName }> = [
   { id: "quran", label: "Quran", icon: "book" },
@@ -51,167 +24,157 @@ const FEATURES: Array<{ id: FeatureId; label: string; icon: IconName }> = [
   { id: "destinations", label: "Muslim Destinations", icon: "pin" },
 ];
 
-const FEATURE_IDS = new Set(FEATURES.map((feature) => feature.id));
+function Icon({ name }: { name: IconName }) {
+  const paths: Record<IconName, React.ReactNode> = {
+    book: <><path d="M4 4.5h6a4 4 0 0 1 4 4V21a4 4 0 0 0-4-4H4Z"/><path d="M20 4.5h-2a4 4 0 0 0-4 4V21a4 4 0 0 1 4-4h2Z"/></>,
+    clock: <><circle cx="12" cy="12" r="9"/><path d="M12 6.5V12l4 2.3"/></>,
+    compass: <><circle cx="12" cy="12" r="9"/><path d="m16.8 7.2-3 6.6-6.6 3 3-6.6Z"/></>,
+    calendar: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/><path d="M16 14a3 3 0 1 0 3 3 3.6 3.6 0 0 1-3-3Z"/></>,
+    mosque: <><path d="M4 21V11h16v10M8 21v-5a4 4 0 0 1 8 0v5M7 11a5 5 0 0 1 10 0M12 3v3M3 21h18"/></>,
+    dua: <><path d="M8.5 21 5.7 18.1a4 4 0 0 1-1.1-2.8V9.7a1.5 1.5 0 0 1 3 0v3.8-7a1.5 1.5 0 0 1 3 0V14l1.4 1.6 1.4-1.6V6.5a1.5 1.5 0 0 1 3 0v7-3.8a1.5 1.5 0 0 1 3 0v5.6a4 4 0 0 1-1.1 2.8L15.5 21"/></>,
+    darood: <><circle cx="12" cy="4.5" r="1.6"/><circle cx="7.5" cy="7.5" r="1.6"/><circle cx="6" cy="12.5" r="1.6"/><circle cx="9" cy="17" r="1.6"/><circle cx="15" cy="17" r="1.6"/><circle cx="18" cy="12.5" r="1.6"/><circle cx="16.5" cy="7.5" r="1.6"/><path d="M12 18.6V22"/></>,
+    zakat: <><circle cx="12" cy="12" r="9"/><path d="m8 16 8-8M8.5 8.5h.01M15.5 15.5h.01"/></>,
+    prayer: <><path d="M4 21h16M8 21v-6.3a4 4 0 0 1 8 0V21"/><circle cx="12" cy="7" r="2.1"/></>,
+    dictionary: <><path d="M4 4h7a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H4Z"/><path d="M20 4h-3a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h3Z"/></>,
+    names: <><path d="m12 2 2.3 3.2 3.9-.4.4 3.9L22 11l-2 3.4.8 3.8-3.9.8-2.6 3-2.8-2.8-3.9.7-.7-3.9L3 13.6l2-3.4-.8-3.8 3.9-.8Z"/><text x="12" y="14" textAnchor="middle" stroke="none" fill="currentColor" fontSize="7">99</text></>,
+    pin: <><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,
+    search: <><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></>,
+    moon: <path d="M20 15.5A8 8 0 1 1 11.5 4 6.3 6.3 0 0 0 20 15.5Z"/>,
+    profile: <><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></>,
+  };
+  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
+}
 
-const MORE_FEATURES: Array<{ label: string; description: string; icon: IconName; href: string }> = [
-  { label: "Naat & Salam", description: "Listen, watch and read", icon: "music", href: "/naat" },
-  { label: "Prayer & Wudu", description: "Complete Namaz guide", icon: "prayer", href: "/namaz" },
-  { label: "Family Tree", description: "Explore Islamic lineage", icon: "family", href: "/family-tree" },
-  { label: "Shop by Category", description: "Browse the NOOR catalogue", icon: "shop", href: "/shop" },
-  { label: "Matrimony", description: "Private Muslim profiles", icon: "community", href: "/matrimony" },
-  { label: "Religious Tourism", description: "Plan meaningful journeys", icon: "pin", href: "/religious-tourism" },
-  { label: "Five Pillars", description: "Learn the foundations", icon: "learn", href: "/topics/pillars" },
-  { label: "Ahle Sunnat", description: "Beliefs and guidance", icon: "book", href: "/topics/ahle-sunnat" },
-  { label: "Tawheed", description: "Understand the oneness of Allah", icon: "names", href: "/topics/tawheed" },
-  { label: "Ramadan & Roza", description: "Fasting guidance", icon: "calendar", href: "/topics/roza" },
-  { label: "Hajj Guide", description: "Rites, preparation and etiquette", icon: "pin", href: "/topics/hajj" },
-  { label: "Waqiyahs", description: "Read Islamic accounts inside NOOR", icon: "learn", href: "/topics/waqiyahs" },
-  { label: "Islamic Festivals", description: "Dates, meaning and practice", icon: "calendar", href: "/topics/festivals" },
-  { label: "Islamic Quotes", description: "Sourced reminders and reflections", icon: "dua", href: "/topics/quotes" },
-  { label: "Scholars", description: "Read trusted profiles", icon: "profile", href: "/topics/scholars" },
-  { label: "Institutes", description: "Islamic learning directory", icon: "mosque", href: "/topics/institutes" },
-  { label: "Jobs & Careers", description: "Faith-conscious work guidance", icon: "community", href: "/topics/jobs" },
-  { label: "Islamic FAQs", description: "Clear answers to common questions", icon: "info", href: "/topics/faqs" },
-  { label: "Islamic Glossary", description: "Arabic and Urdu terms", icon: "dictionary", href: "/glossary" },
-  { label: "About NOOR", description: "Purpose and standards", icon: "info", href: "/about" },
-];
+const PRAYERS: PrayerName[] = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 
-function readHash(): FeatureId {
-  const value = window.location.hash.slice(1);
-  return FEATURE_IDS.has(value as FeatureId) ? value as FeatureId : "quran";
+function nextPrayer(timings: PrayerPayload["timings"], now: Date) {
+  if (!timings) return null;
+  for (const prayer of PRAYERS) {
+    const [h, m] = timings[prayer].split(":").map(Number);
+    if (!Number.isFinite(h) || !Number.isFinite(m)) continue;
+    const target = new Date(now);
+    target.setHours(h, m, 0, 0);
+    if (target > now) return { prayer, target };
+  }
+  const [h, m] = timings.Fajr.split(":").map(Number);
+  const target = new Date(now);
+  target.setDate(target.getDate() + 1);
+  target.setHours(h, m, 0, 0);
+  return { prayer: "Fajr" as PrayerName, target };
 }
 
 export default function Home() {
   const [activeFeature, setActiveFeature] = useState<FeatureId>("quran");
-  const [quranTarget, setQuranTarget] = useState<QuranTarget>({ surah: 1, ayah: null });
-  const [showAllTools, setShowAllTools] = useState(false);
-  const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-
-  const activate = useCallback((id: FeatureId, options?: { history?: boolean; focus?: boolean }) => {
-    setActiveFeature(id);
-    if (options?.history !== false && window.location.hash !== `#${id}`) window.history.pushState({ feature: id }, "", `#${id}`);
-    window.requestAnimationFrame(() => {
-      tabRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-      if (options?.focus) document.getElementById(`workspace-${id}-heading`)?.focus({ preventScroll: true });
-    });
-  }, []);
+  const [quranTarget] = useState<QuranTarget>({ surah: 1, ayah: null });
+  const [now, setNow] = useState(() => new Date());
+  const [prayerData, setPrayerData] = useState<PrayerPayload | null>(null);
+  const workspaceRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const sync = () => setActiveFeature(readHash());
-    sync();
-    const onFeature = (event: Event) => {
-      const detail = (event as CustomEvent<{ feature?: FeatureId; href?: string }>).detail;
-      if (!detail?.feature || !FEATURE_IDS.has(detail.feature)) return;
-      if (detail.feature === "quran" && detail.href) {
-        const url = new URL(detail.href, window.location.origin);
-        const surah = Number(url.searchParams.get("surah"));
-        const ayah = Number(url.searchParams.get("ayah"));
-        if (surah >= 1 && surah <= 114) setQuranTarget({ surah, ayah: ayah > 0 ? ayah : null });
-      }
-      activate(detail.feature, { focus: true });
+    const timer = window.setInterval(() => setNow(new Date()), 1000);
+    fetch("/api/prayer-times?latitude=12.9716&longitude=77.5946&method=1&school=1")
+      .then((response) => response.json())
+      .then((data: PrayerPayload) => setPrayerData(data))
+      .catch(() => setPrayerData(null));
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const upcoming = useMemo(() => nextPrayer(prayerData?.timings, now), [prayerData?.timings, now]);
+  const countdown = useMemo(() => {
+    if (!upcoming) return { h: "04", m: "15", s: "33" };
+    const sec = Math.max(0, Math.floor((upcoming.target.getTime() - now.getTime()) / 1000));
+    return {
+      h: String(Math.floor(sec / 3600)).padStart(2, "0"),
+      m: String(Math.floor((sec % 3600) / 60)).padStart(2, "0"),
+      s: String(sec % 60).padStart(2, "0"),
     };
-    window.addEventListener("hashchange", sync);
-    window.addEventListener("popstate", sync);
-    window.addEventListener("noor:activate-feature", onFeature);
-    return () => {
-      window.removeEventListener("hashchange", sync);
-      window.removeEventListener("popstate", sync);
-      window.removeEventListener("noor:activate-feature", onFeature);
-    };
-  }, [activate]);
+  }, [now, upcoming]);
+
+  const prayerTime = upcoming && prayerData?.timings?.[upcoming.prayer]
+    ? new Date(`${now.toDateString()} ${prayerData.timings[upcoming.prayer]}`).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
+    : "07:30 PM";
+
+  const hijri = useMemo(() => {
+    try {
+      const formatted = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura", { day: "numeric", month: "long", year: "numeric" }).format(now);
+      return formatted.replace(" AH", "") + " AH";
+    } catch { return prayerData?.hijri ?? "24 Safar 1447 AH"; }
+  }, [now, prayerData?.hijri]);
+
+  const activate = (id: FeatureId) => {
+    setActiveFeature(id);
+    window.setTimeout(() => workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  };
 
   return (
-    <main className="noor-tabbed-home">
-      <header className="noor-shell-header">
-        <Link className="reference-brand" href="#quran" onClick={(event) => { event.preventDefault(); activate("quran"); }} aria-label="NOOR Daily Muslim home">
-          <span className="reference-logo" aria-hidden="true"><i /></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span>
-        </Link>
-        <nav className="noor-main-nav" aria-label="Main navigation">
-          <button className="active" type="button" onClick={() => activate("quran")}>Home</button>
-          <button type="button" onClick={() => activate("quran")}>Quran</button>
-          <Link href="/namaz">Learn</Link><Link href="/matrimony">Community</Link><Link href="/shop">Shop</Link><Link href="/about">Premium</Link>
-        </nav>
-        <div className="noor-header-actions">
-          <HeaderUtilities />
-          <label className="noor-language"><span className="sr-only">Language</span><select defaultValue="en" aria-label="Language"><option value="en">EN</option><option value="ur">اردو</option><option value="hi">हिंदी</option></select></label>
-          <Link className="noor-profile" href="/sign-in" aria-label="Your NOOR account"><NoorIcon name="profile" /></Link>
-        </div>
-      </header>
-
-      <section className="noor-fixed-hero" aria-labelledby="noor-home-title">
-        <span className="noor-pattern noor-pattern-left" aria-hidden="true"/><span className="noor-pattern noor-pattern-right" aria-hidden="true"/>
-        <div className="noor-hero-inner">
-          <span className="noor-hero-crescent" aria-hidden="true"><i/>✦</span>
-          <p>YOUR DAILY MUSLIM COMPANION</p>
-          <h1 id="noor-home-title">Faith, beautifully organised.</h1>
-          <span>Your daily companion for Quran, prayer, knowledge and a better you.</span>
-          <SearchLauncher className="noor-hero-search"><NoorIcon name="search"/><span>What would you like to explore?</span><kbd>⌘ K</kbd></SearchLauncher>
-          <div className="noor-hero-actions">
-            <button type="button" onClick={() => activate("quran")}><NoorIcon name="book"/>Read Quran</button>
-            <button type="button" onClick={() => activate("prayer-times")}><NoorIcon name="clock"/>Prayer Times</button>
-            <button type="button" onClick={() => activate("mosque-finder")}><NoorIcon name="pin"/>Find a Mosque</button>
+    <main className="noor-reference-preview">
+      <div className="noor-ref-shell">
+        <header className="noor-ref-header">
+          <Link className="noor-ref-brand" href="/" aria-label="NOOR Daily Muslim home">
+            <span className="noor-ref-crescent" aria-hidden="true"><i /></span>
+            <span><strong>NOOR</strong><small>DAILY MUSLIM</small></span>
+          </Link>
+          <div className="noor-ref-actions">
+            <button className="noor-ref-search" type="button"><Icon name="search"/><span>Search everything...</span></button>
+            <button className="noor-ref-round" type="button" aria-label="Dark mode"><Icon name="moon"/></button>
+            <button className="noor-ref-language" type="button">EN</button>
+            <Link className="noor-ref-round" href="/sign-in" aria-label="Profile"><Icon name="profile"/></Link>
           </div>
-        </div>
-      </section>
+        </header>
 
-      <section className="noor-feature-shell" aria-label="NOOR daily features">
-        <div className="noor-feature-tabs" role="tablist" aria-label="Choose a NOOR feature">
-          {FEATURES.map((feature) => (
-            <button
-              ref={(node) => { tabRefs.current[feature.id] = node; }}
-              className={activeFeature === feature.id ? "active" : ""}
-              id={`tab-${feature.id}`}
-              role="tab"
-              aria-selected={activeFeature === feature.id}
-              aria-controls={`panel-${feature.id}`}
-              tabIndex={activeFeature === feature.id ? 0 : -1}
-              type="button"
-              onClick={() => activate(feature.id, { focus: true })}
-              onKeyDown={(event) => {
-                const current = FEATURES.findIndex((item) => item.id === feature.id);
-                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-                event.preventDefault();
-                const next = (current + (event.key === "ArrowRight" ? 1 : -1) + FEATURES.length) % FEATURES.length;
-                activate(FEATURES[next].id);
-                tabRefs.current[FEATURES[next].id]?.focus();
-              }}
-              key={feature.id}
-            >
-              <NoorIcon name={feature.icon}/><span>{feature.label}</span>
-            </button>
-          ))}
-        </div>
+        <section className="noor-ref-hero" aria-label="NOOR daily dashboard">
+          <div className="noor-ref-greeting">
+            <h1>Assalamu Alaikum</h1>
+            <p>May Allah bless your day <span>🌿</span></p>
+          </div>
 
-        <HomeFeatureWorkspace activeFeature={activeFeature} quranTarget={quranTarget} />
+          <div className="noor-ref-dashboard">
+            <article className="noor-ref-card noor-ref-prayer-card">
+              <span>Next Prayer</span>
+              <h3>{upcoming?.prayer ?? "Isha"}</h3>
+              <span className="crescent-large" aria-hidden="true" />
+              <div className="noor-ref-countdown">
+                <div><strong>{countdown.h}</strong><small>HRS</small></div>
+                <div><strong>{countdown.m}</strong><small>MINS</small></div>
+                <div><strong>{countdown.s}</strong><small>SECS</small></div>
+              </div>
+              <div className="noor-ref-prayer-time">{prayerTime}</div>
+            </article>
 
-        <section className={`noor-more-features${showAllTools ? " expanded" : ""}`} aria-labelledby="more-features-title">
-          <header>
-            <div><span>EXPLORE NOOR</span><h2 id="more-features-title">More features</h2></div>
-            <button type="button" aria-expanded={showAllTools} onClick={() => setShowAllTools((value) => !value)}>
-              {showAllTools ? "Show less" : "View all"}<span aria-hidden="true">{showAllTools ? "↑" : "→"}</span>
-            </button>
-          </header>
-          <div>
-            {MORE_FEATURES.slice(0, showAllTools ? MORE_FEATURES.length : 6).map((feature) => (
-              <Link href={feature.href} key={feature.href}>
-                <span><NoorIcon name={feature.icon}/></span>
-                <span><strong>{feature.label}</strong><small>{feature.description}</small></span>
-                <b aria-hidden="true">›</b>
-              </Link>
+            <article className="noor-ref-card noor-ref-date-card">
+              <span>Islamic Date</span>
+              <h3>{hijri}</h3>
+              <p>{now.toLocaleDateString("en-GB", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}</p>
+              <button className="noor-ref-outline-btn" type="button" onClick={() => activate("islamic-calendar")}>View Calendar</button>
+            </article>
+
+            <article className="noor-ref-card noor-ref-quran-card">
+              <span>Quran Tracker</span>
+              <p>Continue your journey</p>
+              <div className="noor-ref-quran-track">
+                <strong>Surah Al-Kahf</strong>
+                <span>Ayah 32/110</span>
+                <div className="noor-ref-progress-row"><div className="noor-ref-progress"><i /></div><b>29%</b></div>
+              </div>
+              <button className="noor-ref-outline-btn" type="button" onClick={() => activate("quran")}>Continue Reading</button>
+            </article>
+          </div>
+
+          <nav className="noor-ref-feature-rail" aria-label="NOOR features">
+            {FEATURES.map((feature) => (
+              <button className={activeFeature === feature.id ? "active" : ""} type="button" onClick={() => activate(feature.id)} key={feature.id}>
+                <Icon name={feature.icon}/><span>{feature.label}</span>
+              </button>
             ))}
-          </div>
+          </nav>
+
+          <p className="noor-ref-preview-note">Preview branch only — the live production homepage is unchanged.</p>
         </section>
-      </section>
+      </div>
 
-      <SiteFooter />
-
-      <nav className="noor-mobile-nav" aria-label="Mobile navigation">
-        <button className={activeFeature === "quran" ? "active" : ""} type="button" onClick={() => activate("quran")}><NoorIcon name="home"/><span>Home</span></button>
-        <button type="button" onClick={() => activate("quran")}><NoorIcon name="book"/><span>Quran</span></button>
-        <button type="button" onClick={() => activate("prayer-times")}><NoorIcon name="prayer"/><span>Prayer</span></button>
-        <button type="button" onClick={() => activate("qibla")}><NoorIcon name="compass"/><span>Qibla</span></button>
-        <button type="button" onClick={() => document.querySelector<HTMLElement>(".noor-feature-tabs")?.scrollIntoView({ behavior: "smooth" })}><NoorIcon name="grid"/><span>More</span></button>
-      </nav>
+      <div className="noor-ref-workspace-wrap" ref={workspaceRef}>
+        <HomeFeatureWorkspace activeFeature={activeFeature} quranTarget={quranTarget} />
+      </div>
     </main>
   );
 }
