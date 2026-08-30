@@ -4,7 +4,7 @@ import ToolHeader from "../site/ToolHeader";
 import MosqueFinder from "./MosqueFinder";
 
 export const metadata: Metadata = {
-  title: "Mosque Finder — Nearby Masjids | NOOR",
+  title: "Mosque Finder — Nearby Masjids",
   description: "Find nearby mosques on a live map, filter mosques and dargahs, see distance and open directions.",
   alternates: { canonical: "/mosque-finder" },
 };

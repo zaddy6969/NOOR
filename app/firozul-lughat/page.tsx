@@ -4,7 +4,7 @@ import ToolHeader from "../site/ToolHeader";
 import LughatLibrary from "./LughatLibrary";
 
 export const metadata: Metadata = {
-  title: "Islamic Urdu Glossary | NOOR",
+  title: "Islamic Urdu Glossary",
   description: "Search NOOR's original concise Islamic Urdu glossary with Urdu script, Roman reading help, English meanings and usage notes.",
   alternates: { canonical: "/glossary" },
 };

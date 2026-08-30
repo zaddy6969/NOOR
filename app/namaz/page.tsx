@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { HeaderUtilities } from "../site/SiteUtilities";
 import PrayerTracker from "./PrayerTracker";
+import NamazReadingProgress from "./NamazReadingProgress";
+import StepLearningMode from "./StepLearningMode";
 
 export const metadata: Metadata = {
-  title: "Namaz & Wudu — Complete Hanafi Prayer Guide | NOOR",
+  title: "Namaz & Wudu — Complete Hanafi Prayer Guide",
   description:
     "A structured Sunni Hanafi guide to Wudu, Ghusl, Tayammum, five daily prayers, rakahs, recitations, congregation, travel and missed Salah.",
   alternates: { canonical: "/namaz" },
@@ -149,8 +151,21 @@ function SectionHead({ number, label, title, copy }: { number: string; label: st
 }
 
 export default function NamazPage() {
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: "Namaz & Wudu — Complete Hanafi Prayer Guide",
+    description: "A structured guide to purification, daily prayer, recitations, common mistakes and visible sources.",
+    mainEntityOfPage: "https://noor-daily-muslim.vercel.app/namaz",
+    author: { "@type": "Organization", name: "NOOR Daily Muslim" },
+    publisher: { "@type": "Organization", name: "NOOR Daily Muslim", logo: { "@type": "ImageObject", url: "https://noor-daily-muslim.vercel.app/favicon.svg" } },
+    dateModified: "2026-08-30",
+    inLanguage: "en",
+  };
   return (
     <main className="namaz-page">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <NamazReadingProgress />
       <header className="namaz-topbar">
         <Link className="brand" href="/" aria-label="Back to NOOR home"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link>
         <nav aria-label="Prayer guide navigation"><a href="#purity">Wudu</a><a href="#times">Prayer table</a><a href="#method">How to pray</a><a href="#recitations">Recitations</a></nav>
@@ -172,7 +187,14 @@ export default function NamazPage() {
         </div>
       </section>
 
-      <div className="namaz-chapter-bar" aria-label="Guide chapters">{chapters.slice(0, 9).map(([id, name]) => <a href={`#${id}`} key={id}>{name}</a>)}</div>
+      <div className="namaz-chapter-bar" aria-label="Guide chapters">{chapters.map(([id, name]) => <a href={`#${id}`} key={id}>{name}</a>)}</div>
+
+      <section className="namaz-quick-start" aria-label="Prayer guide quick start">
+        <div><span>01</span><strong>Purify</strong><a href="#purity">Learn Wudu</a></div>
+        <div><span>02</span><strong>Prepare</strong><a href="#times">Check time &amp; Rak‘ahs</a></div>
+        <div><span>03</span><strong>Pray</strong><a href="#method">Use step-by-step mode</a></div>
+        <div><span>04</span><strong>Review</strong><a href="#mistakes">Fix common mistakes</a></div>
+      </section>
 
       <section className="namaz-guide-shell">
         <aside className="namaz-aside">
@@ -202,7 +224,7 @@ export default function NamazPage() {
           <section className="namaz-section" id="purity">
             <SectionHead number="02" label="RITUAL PURITY" title="Wudu, step by step" copy="Qur’an 5:6 names the core washes of ablution. The Sunnah teaches a careful, ordered method without wasting water." />
             <div className="wudu-reference"><div><span>THE FOUR FARD ACTS · HANAFI</span><h3>Face · Arms · Head · Feet</h3><p>Wash the complete face, wash both arms including elbows, wipe at least one quarter of the head, and wash both feet including ankles.</p></div><Link href="/quran?surah=5&ayah=6">Qur’an 5:6 →</Link></div>
-            <div className="step-list wudu-list">{wuduSteps.map(([n,title,copy]) => <article key={n}><span>{n}</span><div><h3>{title}</h3><p>{copy}</p></div></article>)}</div>
+            <StepLearningMode label="Wudu" storageKey="noor-namaz-wudu-step-v1" steps={wuduSteps} />
             <div className="two-column-cards">
               <div className="rule-card positive"><span>SUNNAH & CARE</span><h3>Complete Wudu well</h3><ul><li>Follow the order without long gaps.</li><li>Wash the limbs three times where Sunnah.</li><li>Begin from the right.</li><li>Rub gently and ensure water reaches dry folds.</li><li>Use only the water needed.</li><li>Do not talk unnecessarily during Wudu.</li></ul></div>
               <div className="rule-card warning"><span>WATER BARRIERS</span><h3>Check before washing</h3><ul><li>Nail polish and impermeable coatings.</li><li>Paint, glue or wax that prevents water reaching skin.</li><li>Tight rings or jewellery hiding dry skin.</li><li>Dry heels, elbows, beard area or skin folds.</li><li>Water-resistant makeup where it forms a barrier.</li></ul></div>
@@ -233,7 +255,7 @@ export default function NamazPage() {
           <section className="namaz-section" id="method">
             <SectionHead number="05" label="COMPLETE SEQUENCE" title="How to perform Salah" copy="The Prophet ﷺ instructed Muslims to pray as they saw him pray. Move calmly, allow every posture to settle and do not race through the prayer." />
             <div className="hadith-strip"><span>PROPHETIC METHOD</span><p>“Pray as you have seen me praying.”</p><strong>Sahih al-Bukhari 631</strong></div>
-            <div className="step-list salah-list">{salahSteps.map(([n,title,copy]) => <article key={n}><span>{n}</span><div><h3>{title}</h3><p>{copy}</p></div></article>)}</div>
+            <StepLearningMode label="Salah" storageKey="noor-namaz-salah-step-v1" steps={salahSteps} />
             <div className="rakats-explainer">
               <article><span>2 RAK‘AHS</span><p>After the second Sajdah, sit for Tashahhud, Durood and dua, then finish with Salam.</p></article>
               <article><span>3 RAK‘AHS</span><p>After Tashahhud in Rak‘ah two, stand. In the third Fard Rak‘ah recite al-Fatihah, then complete the final sitting.</p></article>

@@ -5,7 +5,7 @@ import ToolHeader from "../site/ToolHeader";
 import QazaCalculator from "./QazaCalculator";
 
 export const metadata: Metadata = {
-  title: "Qaza Namaz Calculator — Missed Prayer Plan | NOOR",
+  title: "Qaza Namaz Calculator — Missed Prayer Plan",
   description: "Estimate missed Fajr, Dhuhr, Asr, Maghrib, Isha and Hanafi Witr prayers, then create a practical completion target.",
   alternates: { canonical: "/qaza-namaz" },
   openGraph: { title: "Qaza Namaz Calculator | NOOR", description: "A private missed-prayer estimate and completion plan.", images: [] },

@@ -12,15 +12,17 @@ export async function GET(request: Request) {
   const longitude = Number(params.get("longitude"));
   const requestedMethod = Number(params.get("method") ?? 1);
   const requestedSchool = Number(params.get("school") ?? 1);
+  const requestedAdjustment = Number(params.get("adjustment") ?? 0);
   const method = new Set([1, 3, 4, 5]).has(requestedMethod) ? requestedMethod : 1;
   const school = requestedSchool === 0 ? 0 : 1;
+  const adjustment = Number.isInteger(requestedAdjustment) && requestedAdjustment >= -2 && requestedAdjustment <= 2 ? requestedAdjustment : 0;
   if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 || !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
     return Response.json({ error: "Valid latitude and longitude are required." }, { status: 400 });
   }
 
   try {
     const date = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date()).replaceAll("/", "-");
-    const url = `https://api.aladhan.com/v1/timings/${date}?latitude=${latitude}&longitude=${longitude}&method=${method}&school=${school}`;
+    const url = `https://api.aladhan.com/v1/timings/${date}?latitude=${latitude}&longitude=${longitude}&method=${method}&school=${school}&adjustment=${adjustment}`;
     const response = await fetch(url, { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error("Prayer service unavailable");
     const payload = await response.json() as PrayerPayload;
@@ -42,6 +44,7 @@ export async function GET(request: Request) {
       method: payload.data?.meta?.method?.name,
       methodId: method,
       school,
+      adjustment,
     }, { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=900" } });
   } catch {
     return Response.json({ error: "Prayer timings are temporarily unavailable." }, { status: 502 });

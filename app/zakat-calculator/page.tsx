@@ -5,7 +5,7 @@ import ToolHeader from "../site/ToolHeader";
 import ZakatCalculator from "./ZakatCalculator";
 
 export const metadata: Metadata = {
-  title: "Zakat Calculator — Nisab & 2.5% Estimate | NOOR",
+  title: "Zakat Calculator — Nisab & 2.5% Estimate",
   description: "Calculate a clear Zakat estimate from cash, gold, investments, business assets, receivables and short-term liabilities.",
   alternates: { canonical: "/zakat-calculator" },
   openGraph: { title: "Zakat Calculator | NOOR", description: "A private, in-browser Zakat estimate with gold, silver or custom Nisab.", images: [] },

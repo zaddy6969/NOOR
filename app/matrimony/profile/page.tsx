@@ -9,14 +9,15 @@ import { HeaderUtilities } from "../../site/SiteUtilities";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "My Private Matrimony Profile | NOOR",
+  title: "My Private Matrimony Profile",
   description: "Create and manage a private NOOR matrimony profile.",
+  alternates: { canonical: "/matrimony/profile" },
   robots: { index: false, follow: false },
 };
 
 export default async function MatrimonyProfilePage() {
   if (!isClerkConfigured()) {
-    return <main className="auth-unavailable"><div><span>NOOR MATRIMONY</span><h1>Private accounts are not configured on this preview.</h1><p>Use the connected Vercel production deployment to sign in and manage your profile.</p><Link href="/matrimony">Return to matrimony</Link></div></main>;
+    return <main className="auth-unavailable"><div><span>NOOR MATRIMONY</span><h1>Private profiles are temporarily unavailable.</h1><p>Secure production authentication must be connected before personal profile data can be accepted.</p><Link href="/matrimony">Return to matrimony</Link></div></main>;
   }
 
   const { userId, redirectToSignIn } = await auth();

@@ -8,6 +8,7 @@ import PwaRegister from "./site/PwaRegister";
 import "./globals.css";
 import "./home/noor-redesign.css";
 import "./home/noor-polish.css";
+import "./home/noor-production.css";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -31,6 +32,7 @@ export const metadata: Metadata = {
   title: { default: "NOOR — Daily Muslim Companion", template: "%s · NOOR" },
   description: "Prayer, Quran, Naat, Islamic learning and trusted community resources—organized simply for everyday use.",
   keywords: ["Quran", "prayer times", "Qibla compass", "Islamic calendar", "Darood", "Muslim daily app"],
+  alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
   robots: { index: true, follow: true },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
@@ -63,9 +65,41 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     ? <ClerkProvider dynamic>{application}</ClerkProvider>
     : application;
 
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "NOOR Daily Muslim",
+      url: "https://noor-daily-muslim.vercel.app",
+      logo: "https://noor-daily-muslim.vercel.app/favicon.svg",
+      description: "A calm, privacy-conscious daily companion for prayer, Quran and trusted Islamic learning.",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "NOOR Daily Muslim",
+      url: "https://noor-daily-muslim.vercel.app",
+      inLanguage: ["en", "ur", "hi"],
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://noor-daily-muslim.vercel.app/?search={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ];
+
   return (
-    <html lang="en">
-      <body className={`${geist.variable} ${notoArabic.variable} ${display.variable}`}>{content}<PwaRegister /></body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {process.env.VERCEL_ENV !== "production" ? <meta name="codex-preview" content="development" /> : null}
+        <script dangerouslySetInnerHTML={{ __html: "try{var t=localStorage.getItem('noor-theme-v2');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('noor-dark')}catch(e){}" }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+      </head>
+      <body className={`${geist.variable} ${notoArabic.variable} ${display.variable}`}>
+        <a className="skip-to-content" href="#main-content">Skip to main content</a>
+        <div className="site-content-root" id="main-content" tabIndex={-1}>{content}</div>
+        <PwaRegister />
+      </body>
     </html>
   );
 }

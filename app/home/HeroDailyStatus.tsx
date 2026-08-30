@@ -1,13 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { NOOR_LOCATION_EVENT, readNoorLocation, type NoorLocation } from "../site/location-settings";
 
 type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
 type PrayerPayload = {
   timings?: Record<PrayerName, string>;
   hijri?: string | null;
+  method?: string | null;
   error?: string;
 };
+
+type QuranProgress = { surah: number; ayah: number; englishName?: string };
 
 const PRAYERS: PrayerName[] = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 const FALLBACK_TIMES: Record<PrayerName, string> = {
@@ -72,17 +76,30 @@ export default function HeroDailyStatus({ locale, onPrayer, onCalendar, onQuran,
   locale: Locale;
   onPrayer: () => void;
   onCalendar: () => void;
-  onQuran: () => void;
+  onQuran: (target: { surah: number; ayah: number }) => void;
   onQibla: () => void;
 }) {
   const [payload, setPayload] = useState<PrayerPayload | null>(null);
   const [now, setNow] = useState<Date | null>(null);
+  const [location, setLocation] = useState<NoorLocation | null>(null);
+  const [quranProgress, setQuranProgress] = useState<QuranProgress>({ surah: 1, ayah: 1, englishName: "Al-Fatihah" });
   const copy = COPY[locale];
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => setNow(new Date()));
     const timer = window.setInterval(() => setNow(new Date()), 1000);
-    fetch("/api/prayer-times?latitude=12.9716&longitude=77.5946&method=1&school=1")
+    const progressTimer = window.setTimeout(() => {
+      try {
+        const progress = JSON.parse(window.localStorage.getItem("noor-quran-progress-v1") ?? "null") as QuranProgress | null;
+        if (progress && Number.isInteger(progress.surah) && Number.isInteger(progress.ayah)) setQuranProgress(progress);
+      } catch { /* keep Al-Fatihah */ }
+    }, 0);
+    const load = () => {
+      const selected = readNoorLocation();
+      setLocation(selected);
+      let prayerSettings = { method: 1, school: 1, adjustment: 0 };
+      try { prayerSettings = { ...prayerSettings, ...JSON.parse(window.localStorage.getItem("noor-prayer-settings-v1") ?? "{}") }; } catch { /* keep safe defaults */ }
+      fetch(`/api/prayer-times?latitude=${selected.latitude}&longitude=${selected.longitude}&method=${prayerSettings.method}&school=${prayerSettings.school}&adjustment=${prayerSettings.adjustment}`)
       .then(async (response) => {
         const result = await response.json() as PrayerPayload;
         if (!response.ok) throw new Error(result.error ?? "Prayer timings unavailable");
@@ -90,7 +107,10 @@ export default function HeroDailyStatus({ locale, onPrayer, onCalendar, onQuran,
       })
       .then(setPayload)
       .catch(() => setPayload({ timings: FALLBACK_TIMES }));
-    return () => { window.cancelAnimationFrame(frame); window.clearInterval(timer); };
+    };
+    load();
+    window.addEventListener(NOOR_LOCATION_EVENT, load);
+    return () => { window.cancelAnimationFrame(frame); window.clearInterval(timer); window.clearTimeout(progressTimer); window.removeEventListener(NOOR_LOCATION_EVENT, load); };
   }, []);
 
   const timings = payload?.timings ?? FALLBACK_TIMES;
@@ -108,7 +128,7 @@ export default function HeroDailyStatus({ locale, onPrayer, onCalendar, onQuran,
         <strong>{upcoming?.prayer ?? "Prayer"}</strong>
         <div className="prayer-countdown" aria-live="polite">{upcoming && now ? formatCountdown(upcoming.target, now) : "00 : 00 : 00"}</div>
         <div className="countdown-labels"><span>HRS</span><span>MINS</span><span>SECS</span></div>
-        <div className="daily-card-meta"><b>{upcoming ? timings[upcoming.prayer] : "—"}</b><span>{copy.localSchedule}</span></div>
+        <div className="daily-card-meta"><b>{upcoming ? timings[upcoming.prayer] : "—"}</b><span>{location?.label ?? copy.localSchedule}</span></div>
       </button>
 
       <button type="button" className="daily-status-card date-summary-card" onClick={onCalendar} aria-label={`${copy.islamicDate}: ${hijri}. Open Islamic calendar.`}>
@@ -119,12 +139,18 @@ export default function HeroDailyStatus({ locale, onPrayer, onCalendar, onQuran,
         <span className="daily-card-source">Hijri calendar</span>
       </button>
 
-      <button type="button" className="daily-status-card verse-summary-card" onClick={onQuran} aria-label="Open Quran at Surah Hud, verse 88">
+      <button type="button" className="daily-status-card verse-summary-card" onClick={() => onQuran({ surah: quranProgress.surah, ayah: quranProgress.ayah })} aria-label={`Continue Quran at Surah ${quranProgress.englishName ?? quranProgress.surah}, verse ${quranProgress.ayah}`}>
         <span className="daily-card-open" aria-hidden="true">↗</span>
-        <div className="daily-card-label"><span className="quote-mark" aria-hidden="true">“</span><span>{copy.reminder}</span></div>
-        <p className="hero-ayah" lang="ar" dir="rtl">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</p>
-        <blockquote>{copy.success}</blockquote>
-        <span className="daily-card-source">Surah Hud · 11:88</span>
+        <div className="daily-card-label"><span className="quote-mark" aria-hidden="true">“</span><span>{quranProgress.surah === 1 && quranProgress.ayah === 1 ? copy.reminder : "Continue Quran"}</span></div>
+        {quranProgress.surah === 1 && quranProgress.ayah === 1 ? <>
+          <p className="hero-ayah" lang="ar" dir="rtl">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</p>
+          <blockquote>{copy.success}</blockquote>
+          <span className="daily-card-source">Surah Hud · 11:88</span>
+        </> : <>
+          <p className="hero-ayah continue-reading-mark" lang="ar" dir="rtl">اقْرَأْ</p>
+          <blockquote>Continue where you left off</blockquote>
+          <span className="daily-card-source">{quranProgress.englishName ? `Surah ${quranProgress.englishName}` : `Surah ${quranProgress.surah}`} · {quranProgress.surah}:{quranProgress.ayah}</span>
+        </>}
       </button>
 
       <button type="button" className="daily-status-card qibla-summary-card" onClick={onQibla} aria-label={`${copy.qibla}. ${copy.qiblaHelp}. Open compass.`}>
@@ -135,7 +161,7 @@ export default function HeroDailyStatus({ locale, onPrayer, onCalendar, onQuran,
             <b className="mini-qibla-n">N</b><b className="mini-qibla-e">E</b><b className="mini-qibla-s">S</b><b className="mini-qibla-w">W</b>
             <i className="mini-qibla-arrow"/><i className="mini-kaaba"/>
           </span>
-          <span className="mini-qibla-copy"><strong>280° WNW</strong><small>{copy.qiblaHelp}</small></span>
+          <span className="mini-qibla-copy"><strong>Open compass</strong><small>{location?.label ?? copy.qiblaHelp}</small></span>
         </span>
       </button>
     </div>

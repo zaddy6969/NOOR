@@ -7,6 +7,7 @@ import { lughatEntries } from "../firozul-lughat/lughat-data";
 import { useMediaPlayer } from "../media/MediaProvider";
 import QiblaCompass from "../qibla/QiblaCompass";
 import { readSavedList, SAVED_KEYS, writeSavedList } from "../site/saved-items";
+import { writeNoorLocation } from "../site/location-settings";
 import PrayerTimesStrip from "./PrayerTimesStrip";
 
 export type FeatureId = "quran" | "prayer-times" | "qibla" | "islamic-calendar" | "mosque-finder" | "daily-duas" | "darood" | "zakat" | "kaza" | "lughat" | "names" | "destinations";
@@ -276,6 +277,7 @@ function MosqueWorkspace() {
     setState("locating");
     navigator.geolocation.getCurrentPosition(async (position) => {
       setState("loading");
+      writeNoorLocation({ id: "current", label: "Current location", latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy, source: "device" });
       try {
         const response = await fetch(`/api/mosques?lat=${position.coords.latitude}&lng=${position.coords.longitude}&radius=5000`);
         const result = await response.json() as { mosques?: Mosque[]; error?: string };
@@ -284,7 +286,7 @@ function MosqueWorkspace() {
       } catch (error) { setState("error"); setMessage(error instanceof Error ? error.message : "The mosque service is unavailable."); }
     }, () => { setState("error"); setMessage("Location permission was denied. Allow location and try again."); }, { enableHighAccuracy: true, timeout: 10000 });
   };
-  return <><WorkspaceHeader feature="mosque-finder" title="Mosque Finder" description="Nearby mosques from your location, shown as an internal NOOR list." href="/mosque-finder" /><div className="workspace-mosques"><aside><span aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 43s14-11.4 14-25A14 14 0 1 0 10 18c0 13.6 14 25 14 25Z"/><circle cx="24" cy="18" r="5"/></svg></span><strong>Find a mosque near you</strong><p>Your coordinates are used only for this search and are not saved.</p><button type="button" onClick={locate} disabled={state === "locating" || state === "loading"}>{state === "locating" ? "Getting location…" : state === "loading" ? "Searching map…" : "Use current location"}</button><small role="status">{message}</small></aside><section>{mosques.map((mosque) => <article key={mosque.id}><div><span>{mosque.kind}</span><strong>{mosque.name}</strong><small>{mosque.address}</small></div><b>{mosque.distanceKm.toFixed(1)} km</b></article>)}{state === "idle" ? <div className="workspace-empty">Nearby mosque results will appear here.</div> : null}</section></div></>;
+  return <><WorkspaceHeader feature="mosque-finder" title="Mosque Finder" description="Nearby mosques from your location, shown as an internal NOOR list." href="/mosque-finder" /><div className="workspace-mosques"><aside><span aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 43s14-11.4 14-25A14 14 0 1 0 10 18c0 13.6 14 25 14 25Z"/><circle cx="24" cy="18" r="5"/></svg></span><strong>Find a mosque near you</strong><p>Your selected location is kept only on this device and shared with Prayer Times and Qibla.</p><button type="button" onClick={locate} disabled={state === "locating" || state === "loading"}>{state === "locating" ? "Getting location…" : state === "loading" ? "Searching map…" : "Use current location"}</button><small role="status">{message}</small></aside><section>{mosques.map((mosque) => <article key={mosque.id}><div><span>{mosque.kind}</span><strong>{mosque.name}</strong><small>{mosque.address}</small></div><b>{mosque.distanceKm.toFixed(1)} km</b></article>)}{state === "idle" ? <div className="workspace-empty">Nearby mosque results will appear here.</div> : null}</section></div></>;
 }
 
 function DuasWorkspace() {
@@ -312,7 +314,7 @@ function KazaWorkspace() {
   const [completed, setCompleted] = useState(0);
   const [goal, setGoal] = useState(5);
   const total = Math.max(0, (Number(days) || 0) * 5 - completed);
-  return <><WorkspaceHeader feature="kaza" title="Kaza Namaz Planner" description="Estimate missed prayers and build a steady private completion plan." href="/qaza-namaz" /><div className="workspace-kaza"><section><label><span>Estimated missed days</span><input type="number" min="0" value={days} onChange={(event) => setDays(event.target.value)} placeholder="0"/></label><label><span>Daily completion goal</span><input type="number" min="1" value={goal} onChange={(event) => setGoal(Math.max(1, Number(event.target.value) || 1))}/></label><div>{["Fajr","Dhuhr","Asr","Maghrib","Isha"].map((prayer) => <span key={prayer}><b>{prayer}</b><small>{Math.max(0, Number(days) || 0).toLocaleString("en-IN")}</small></span>)}</div></section><aside><span>REMAINING PRAYERS</span><strong>{total.toLocaleString("en-IN")}</strong><p>{total ? `About ${Math.ceil(total / goal).toLocaleString("en-IN")} days at ${goal} per day.` : "Enter a careful estimate to begin."}</p><button type="button" onClick={() => setCompleted((value) => Math.min((Number(days) || 0) * 5, value + 1))}>Mark one completed</button><small>{completed.toLocaleString("en-IN")} marked complete on this visit</small></aside></div></>;
+  return <><WorkspaceHeader feature="kaza" title="Qaza Namaz Planner" description="Estimate missed prayers and build a steady private completion plan." href="/qaza-namaz" /><div className="workspace-kaza"><section><label><span>Estimated missed days</span><input type="number" min="0" value={days} onChange={(event) => setDays(event.target.value)} placeholder="0"/></label><label><span>Daily completion goal</span><input type="number" min="1" value={goal} onChange={(event) => setGoal(Math.max(1, Number(event.target.value) || 1))}/></label><div>{["Fajr","Dhuhr","Asr","Maghrib","Isha"].map((prayer) => <span key={prayer}><b>{prayer}</b><small>{Math.max(0, Number(days) || 0).toLocaleString("en-IN")}</small></span>)}</div></section><aside><span>REMAINING PRAYERS</span><strong>{total.toLocaleString("en-IN")}</strong><p>{total ? `About ${Math.ceil(total / goal).toLocaleString("en-IN")} days at ${goal} per day.` : "Enter a careful estimate to begin."}</p><button type="button" onClick={() => setCompleted((value) => Math.min((Number(days) || 0) * 5, value + 1))}>Mark one completed</button><small>{completed.toLocaleString("en-IN")} marked complete on this visit</small></aside></div></>;
 }
 
 function LughatWorkspace() {
@@ -358,7 +360,7 @@ const FEATURE_REGION_LABELS: Record<FeatureId, string> = {
   "daily-duas": "Daily duas",
   darood: "Darood Sharif",
   zakat: "Zakat calculator",
-  kaza: "Kaza Namaz",
+  kaza: "Qaza Namaz",
   lughat: "Firoz-ul-Lughat",
   names: "99 Names of Allah",
   destinations: "Muslim destinations",

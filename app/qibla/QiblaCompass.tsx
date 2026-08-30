@@ -1,16 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { DEFAULT_NOOR_LOCATION, NOOR_CITIES, NOOR_LOCATION_EVENT, readNoorLocation, writeNoorLocation } from "../site/location-settings";
 
 const KAABA = { latitude: 21.4225, longitude: 39.8262 };
-const CITY_PRESETS = [
-  { id: "mumbai", label: "Mumbai", latitude: 19.071017570421, longitude: 72.838622286762 },
-  { id: "bengaluru", label: "Bengaluru", latitude: 12.9716, longitude: 77.5946 },
-  { id: "delhi", label: "Delhi", latitude: 28.6139, longitude: 77.209 },
-  { id: "hyderabad", label: "Hyderabad", latitude: 17.385, longitude: 78.4867 },
-  { id: "kolkata", label: "Kolkata", latitude: 22.5726, longitude: 88.3639 },
-  { id: "lucknow", label: "Lucknow", latitude: 26.8467, longitude: 80.9462 },
-] as const;
 
 type UserLocation = { latitude: number; longitude: number; accuracy: number | null; label: string };
 type CompassEvent = DeviceOrientationEvent & { webkitCompassHeading?: number; webkitCompassAccuracy?: number };
@@ -43,8 +36,8 @@ function cardinalDirection(bearing: number) {
 }
 
 export default function QiblaCompass({ minimal = false }: { minimal?: boolean }) {
-  const [location, setLocation] = useState<UserLocation>(() => ({ ...CITY_PRESETS[0], accuracy: null }));
-  const [selectedCity, setSelectedCity] = useState<string>(CITY_PRESETS[0].id);
+  const [location, setLocation] = useState<UserLocation>(() => DEFAULT_NOOR_LOCATION);
+  const [selectedCity, setSelectedCity] = useState<string>(DEFAULT_NOOR_LOCATION.id);
   const [verifiedBearing, setVerifiedBearing] = useState<number | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
   const [locationState, setLocationState] = useState<"idle" | "loading" | "ready" | "error">("idle");
@@ -63,12 +56,9 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      const saved = window.localStorage.getItem("noor-qibla-city-v1");
-      const city = CITY_PRESETS.find((item) => item.id === saved);
-      if (city) {
-        setSelectedCity(city.id);
-        setLocation({ ...city, accuracy: null });
-      }
+      const saved = readNoorLocation();
+      setSelectedCity(saved.id === "current" ? "live" : saved.id);
+      setLocation(saved);
       if (!("DeviceOrientationEvent" in window)) return;
       const OrientationEvent = window.DeviceOrientationEvent as PermissionedOrientationEvent;
       if (typeof OrientationEvent.requestPermission === "function") setNeedsPermission(true);
@@ -77,7 +67,13 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
         setOrientationEnabled(true);
       }
     });
-    return () => window.cancelAnimationFrame(frame);
+    const sync = () => {
+      const saved = readNoorLocation();
+      setSelectedCity(saved.id === "current" ? "live" : saved.id);
+      setLocation(saved);
+    };
+    window.addEventListener(NOOR_LOCATION_EVENT, sync);
+    return () => { window.cancelAnimationFrame(frame); window.removeEventListener(NOOR_LOCATION_EVENT, sync); };
   }, []);
 
   useEffect(() => {
@@ -103,9 +99,11 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setVerifiedBearing(null);
-        setLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy, label: "Current location" });
+        const liveLocation = { id: "current", latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy, label: "Current location", source: "device" as const };
+        setLocation(liveLocation);
         setSelectedCity("live");
         setLocationState("ready");
+        writeNoorLocation(liveLocation);
       },
       (error) => {
         setLocationState("error");
@@ -205,13 +203,13 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
   }
 
   function chooseCity(id: string) {
-    const city = CITY_PRESETS.find((item) => item.id === id) ?? CITY_PRESETS[0];
+    const city = NOOR_CITIES.find((item) => item.id === id) ?? DEFAULT_NOOR_LOCATION;
     setSelectedCity(city.id);
     setVerifiedBearing(null);
     setLocation({ ...city, accuracy: null });
     setLocationState("idle");
     setLocationError("");
-    window.localStorage.setItem("noor-qibla-city-v1", city.id);
+    writeNoorLocation(city);
   }
 
   const status = sensorMode === "relative" && !relativeCalibrated
@@ -242,7 +240,7 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
   return (
     <section className="qibla-compact-tool">
       <div className="qibla-location-controls">
-        <label>Location<select value={selectedCity} onChange={(event) => chooseCity(event.target.value)}><option value="live" disabled>Current location</option>{CITY_PRESETS.map((city) => <option value={city.id} key={city.id}>{city.label}</option>)}</select></label>
+        <label>Location<select value={selectedCity} onChange={(event) => chooseCity(event.target.value)}><option value="live" disabled>Current location</option>{NOOR_CITIES.map((city) => <option value={city.id} key={city.id}>{city.label}</option>)}</select></label>
         <button type="button" onClick={findLocation} disabled={locationState === "loading"}>{locationState === "loading" ? "Locating…" : "Use my location"}</button>
       </div>
 

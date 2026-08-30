@@ -5,7 +5,7 @@ import MatrimonyAccountActions from "./_components/MatrimonyAccountActions";
 import { HeaderUtilities } from "../site/SiteUtilities";
 
 export const metadata: Metadata = {
-  title: "Private Islamic Matrimony | NOOR",
+  title: "Private Islamic Matrimony",
   description: "A privacy-first, family-aware Islamic matrimony account and profile flow with moderation safeguards.",
   alternates: { canonical: "/matrimony" },
   openGraph: { title: "Private Islamic Matrimony | NOOR", description: "Private profiles, family involvement and careful moderation.", images: [] },

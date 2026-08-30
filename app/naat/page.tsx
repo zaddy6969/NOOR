@@ -5,7 +5,7 @@ import NaatLibrary from "./NaatLibrary";
 import { naatEntries } from "./naat-data";
 
 export const metadata: Metadata = {
-  title: "Naat & Salam Library | NOOR",
+  title: "Naat & Salam Library",
   description: "Browse Naat and Salam by title, writer, reciter and language, with separate audio and video players.",
   alternates: { canonical: "/naat" },
 };

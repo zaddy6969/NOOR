@@ -1,19 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { NOOR_CITIES, writeNoorLocation } from "../site/location-settings";
 
 type PlaceKind = "Mosque" | "Dargah";
 type Mosque = { id: string; name: string; address: string; denomination: string | null; phone: string | null; website: string | null; kind: PlaceKind; lat: number; lng: number; distanceKm: number };
-type Coordinates = { lat: number; lng: number; label: string };
+type Coordinates = { id?: string; lat: number; lng: number; label: string; accuracy?: number | null; source?: "preset" | "device" };
 type PlaceFilter = "Mosques" | "All places" | "Dargahs";
 
-const cityPresets: Coordinates[] = [
-  { label: "Bengaluru", lat: 12.9716, lng: 77.5946 },
-  { label: "Mumbai", lat: 19.076, lng: 72.8777 },
-  { label: "Delhi", lat: 28.6139, lng: 77.209 },
-  { label: "Hyderabad", lat: 17.385, lng: 78.4867 },
-  { label: "Lucknow", lat: 26.8467, lng: 80.9462 },
-];
+const cityPresets: Coordinates[] = NOOR_CITIES.map((city) => ({ id: city.id, label: city.label, lat: city.latitude, lng: city.longitude, source: "preset" }));
 
 function mapEmbedUrl(point: { lat: number; lng: number }) {
   const offset = 0.018;
@@ -32,6 +27,7 @@ export default function MosqueFinder() {
 
   const search = async (coordinates: Coordinates, selectedRadius = radius) => {
     setCenter(coordinates); setLoading(true); setMessage("Searching the live community map…");
+    writeNoorLocation({ id: coordinates.id ?? "current", label: coordinates.label === "your location" ? "Current location" : coordinates.label, latitude: coordinates.lat, longitude: coordinates.lng, accuracy: coordinates.accuracy ?? null, source: coordinates.source ?? "preset" });
     try {
       const response = await fetch(`/api/mosques?lat=${coordinates.lat}&lng=${coordinates.lng}&radius=${selectedRadius}`);
       const payload = await response.json() as { mosques?: Mosque[]; error?: string };
@@ -49,7 +45,7 @@ export default function MosqueFinder() {
     if (!navigator.geolocation) { setMessage("Location is unavailable in this browser. Choose a city instead."); return; }
     setLoading(true); setMessage("Waiting for location permission…");
     navigator.geolocation.getCurrentPosition(
-      (position) => search({ label: "your location", lat: position.coords.latitude, lng: position.coords.longitude }),
+      (position) => search({ id: "current", label: "your location", lat: position.coords.latitude, lng: position.coords.longitude, accuracy: position.coords.accuracy, source: "device" }),
       () => { setLoading(false); setMessage("Location permission was not available. Choose a city, or allow location in browser settings."); },
       { enableHighAccuracy: true, timeout: 12000, maximumAge: 300000 },
     );

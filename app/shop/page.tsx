@@ -4,7 +4,7 @@ import ToolHeader from "../site/ToolHeader";
 import ShopCatalog from "./ShopCatalog";
 
 export const metadata: Metadata = {
-  title: "Islamic Product Request Catalogue | NOOR",
+  title: "Islamic Product Request Catalogue",
   description: "Browse Islamic products by category and save a private request list. Checkout, pricing and ordering are not active.",
   alternates: { canonical: "/shop" },
 };

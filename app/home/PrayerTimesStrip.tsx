@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { DEFAULT_NOOR_LOCATION, locationFromCity, NOOR_CITIES, NOOR_LOCATION_EVENT, readNoorLocation, writeNoorLocation, type NoorLocation } from "../site/location-settings";
 
 type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
 type PrayerResponse = {
@@ -9,26 +10,17 @@ type PrayerResponse = {
   method?: string | null;
   error?: string;
 };
-type City = { id: string; label: string; latitude: number; longitude: number };
-type PrayerSettings = { cityId: string; method: number; school: number };
+type PrayerSettings = { cityId: string; method: number; school: number; adjustment: number };
 type NoorLocale = "en" | "hi" | "ur";
 
 const PRAYERS: PrayerName[] = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-const CITIES: City[] = [
-  { id: "bengaluru", label: "Bengaluru", latitude: 12.9716, longitude: 77.5946 },
-  { id: "mumbai", label: "Mumbai", latitude: 19.076, longitude: 72.8777 },
-  { id: "delhi", label: "Delhi", latitude: 28.6139, longitude: 77.209 },
-  { id: "hyderabad", label: "Hyderabad", latitude: 17.385, longitude: 78.4867 },
-  { id: "kolkata", label: "Kolkata", latitude: 22.5726, longitude: 88.3639 },
-  { id: "lucknow", label: "Lucknow", latitude: 26.8467, longitude: 80.9462 },
-];
 const METHODS = [
   { id: 1, label: "Karachi" },
   { id: 3, label: "Muslim World League" },
   { id: 4, label: "Umm al-Qura" },
   { id: 5, label: "Egyptian Authority" },
 ];
-const DEFAULT_SETTINGS: PrayerSettings = { cityId: "bengaluru", method: 1, school: 1 };
+const DEFAULT_SETTINGS: PrayerSettings = { cityId: "bengaluru", method: 1, school: 1, adjustment: 0 };
 const PRAYER_COPY: Record<NoorLocale, {
   names: Record<PrayerName, string>;
   next: string;
@@ -40,10 +32,6 @@ const PRAYER_COPY: Record<NoorLocale, {
   hi: { names: { Fajr: "फ़ज्र", Dhuhr: "ज़ुहर", Asr: "अस्र", Maghrib: "मग़रिब", Isha: "ईशा" }, next: "अगली नमाज़", useLocation: "मेरी लोकेशन", locating: "लोकेशन…", settings: "नमाज़ सेटिंग खोलें" },
   ur: { names: { Fajr: "فجر", Dhuhr: "ظہر", Asr: "عصر", Maghrib: "مغرب", Isha: "عشاء" }, next: "اگلی نماز", useLocation: "میرا مقام", locating: "مقام…", settings: "نماز کی ترتیبات کھولیں" },
 };
-
-function cityById(id: string) {
-  return CITIES.find((city) => city.id === id) ?? CITIES[0];
-}
 
 function nextPrayer(timings: PrayerResponse["timings"], now: Date | null) {
   if (!timings || !now) return null;
@@ -79,16 +67,16 @@ function SettingsIcon() {
 export default function PrayerTimesStrip({ locale = "en" }: { locale?: NoorLocale }) {
   const [data, setData] = useState<PrayerResponse | null>(null);
   const [settings, setSettings] = useState<PrayerSettings>(DEFAULT_SETTINGS);
-  const [location, setLocation] = useState<City>(CITIES[0]);
+  const [location, setLocation] = useState<NoorLocation>(DEFAULT_NOOR_LOCATION);
   const [loading, setLoading] = useState(true);
   const [locating, setLocating] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
 
-  const load = useCallback((city: City, nextSettings: PrayerSettings) => {
+  const load = useCallback((city: NoorLocation, nextSettings: PrayerSettings) => {
     setLoading(true);
     setLocation(city);
-    fetch(`/api/prayer-times?latitude=${city.latitude}&longitude=${city.longitude}&method=${nextSettings.method}&school=${nextSettings.school}`)
+    fetch(`/api/prayer-times?latitude=${city.latitude}&longitude=${city.longitude}&method=${nextSettings.method}&school=${nextSettings.school}&adjustment=${nextSettings.adjustment}`)
       .then(async (response) => {
         const payload = await response.json() as PrayerResponse;
         if (!response.ok) throw new Error(payload.error ?? "Prayer timings are unavailable.");
@@ -104,14 +92,28 @@ export default function PrayerTimesStrip({ locale = "en" }: { locale?: NoorLocal
       let saved = DEFAULT_SETTINGS;
       try {
         const parsed = JSON.parse(window.localStorage.getItem("noor-prayer-settings-v1") ?? "null") as Partial<PrayerSettings> | null;
-        if (parsed && CITIES.some((city) => city.id === parsed.cityId) && METHODS.some((method) => method.id === parsed.method) && (parsed.school === 0 || parsed.school === 1)) saved = parsed as PrayerSettings;
+        if (parsed && NOOR_CITIES.some((city) => city.id === parsed.cityId) && METHODS.some((method) => method.id === parsed.method) && (parsed.school === 0 || parsed.school === 1)) {
+          saved = { ...DEFAULT_SETTINGS, ...parsed, adjustment: Number.isInteger(parsed.adjustment) ? Number(parsed.adjustment) : 0 } as PrayerSettings;
+        }
       } catch { saved = DEFAULT_SETTINGS; }
+      const sharedLocation = readNoorLocation();
       setSettings(saved);
-      load(cityById(saved.cityId), saved);
+      load(sharedLocation, saved);
       setNow(new Date());
     });
     const timer = window.setInterval(() => setNow(new Date()), 1000);
     return () => { window.cancelAnimationFrame(frame); window.clearInterval(timer); };
+  }, [load]);
+
+  useEffect(() => {
+    const syncLocation = () => {
+      let currentSettings = DEFAULT_SETTINGS;
+      try { currentSettings = { ...DEFAULT_SETTINGS, ...JSON.parse(window.localStorage.getItem("noor-prayer-settings-v1") ?? "{}") } as PrayerSettings; } catch { /* use defaults */ }
+      setSettings(currentSettings);
+      load(readNoorLocation(), currentSettings);
+    };
+    window.addEventListener(NOOR_LOCATION_EVENT, syncLocation);
+    return () => window.removeEventListener(NOOR_LOCATION_EVENT, syncLocation);
   }, [load]);
 
   useEffect(() => {
@@ -124,7 +126,8 @@ export default function PrayerTimesStrip({ locale = "en" }: { locale?: NoorLocal
   const updateSettings = (next: PrayerSettings) => {
     setSettings(next);
     window.localStorage.setItem("noor-prayer-settings-v1", JSON.stringify(next));
-    load(cityById(next.cityId), next);
+    const selected = locationFromCity(next.cityId);
+    writeNoorLocation(selected);
   };
 
   const useLocation = () => {
@@ -132,7 +135,8 @@ export default function PrayerTimesStrip({ locale = "en" }: { locale?: NoorLocal
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        load({ id: "current", label: "Your location", latitude: position.coords.latitude, longitude: position.coords.longitude }, settings);
+        const liveLocation: NoorLocation = { id: "current", label: "Current location", latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy, source: "device" };
+        writeNoorLocation(liveLocation);
         setLocating(false);
       },
       () => { setData({ error: "Location permission was not available. Choose a city instead." }); setLocating(false); },
@@ -142,6 +146,8 @@ export default function PrayerTimesStrip({ locale = "en" }: { locale?: NoorLocal
 
   const upcoming = useMemo(() => nextPrayer(data?.timings, now), [data?.timings, now]);
   const copy = PRAYER_COPY[locale];
+  const methodLabel = METHODS.find((method) => method.id === settings.method)?.label ?? data?.method ?? "Calculated";
+  const schoolLabel = settings.school === 1 ? "Hanafi" : "Standard";
   const countdown = useMemo(() => {
     if (!upcoming || !now) return "—";
     const seconds = Math.max(0, Math.floor((upcoming.target.getTime() - now.getTime()) / 1000));
@@ -157,11 +163,13 @@ export default function PrayerTimesStrip({ locale = "en" }: { locale?: NoorLocal
       <div className="home-prayer-times">{PRAYERS.map((prayer) => <div className={upcoming?.prayer === prayer ? "is-next" : ""} key={prayer}><PrayerIcon prayer={prayer}/><span>{copy.names[prayer]}</span><strong>{loading ? "…" : data?.timings?.[prayer] ?? "—"}</strong></div>)}</div>
       <div className="home-prayer-next"><span>{copy.next}</span><strong>{upcoming ? copy.names[upcoming.prayer] : "Prayer"}</strong><small>{countdown}</small></div>
       <div className="home-prayer-actions"><button type="button" onClick={useLocation} disabled={locating}><PinIcon/>{locating ? copy.locating : copy.useLocation}</button><button className="secondary" type="button" onClick={() => setSettingsOpen(true)} aria-label={copy.settings}><SettingsIcon/></button></div>
+      <div className="prayer-trust-line"><span>Calculation: <strong>{methodLabel}</strong> · <strong>{schoolLabel}</strong> · <strong>{location.label}</strong>{settings.adjustment ? ` · Hijri ${settings.adjustment > 0 ? "+" : ""}${settings.adjustment}` : ""}</span><button type="button" onClick={() => setSettingsOpen(true)}>Edit</button></div>
       {data?.error ? <p className="home-prayer-error" role="alert">{data.error}</p> : null}
       {settingsOpen ? <div className="prayer-settings-overlay" role="dialog" aria-modal="true" aria-label="Prayer time settings"><button className="prayer-settings-backdrop" type="button" onClick={() => setSettingsOpen(false)} aria-label="Close prayer settings"/><div className="home-prayer-settings"><header><div><span>PRAYER SETTINGS</span><strong>Choose your calculation</strong></div><button type="button" onClick={() => setSettingsOpen(false)} aria-label="Close">×</button></header>
-        <label><span>City</span><select value={settings.cityId} onChange={(event) => updateSettings({ ...settings, cityId: event.target.value })}>{CITIES.map((city) => <option value={city.id} key={city.id}>{city.label}</option>)}</select></label>
+        <label><span>City</span><select value={location.id === "current" ? settings.cityId : location.id} onChange={(event) => updateSettings({ ...settings, cityId: event.target.value })}>{NOOR_CITIES.map((city) => <option value={city.id} key={city.id}>{city.label}</option>)}</select></label>
         <label><span>Calculation method</span><select value={settings.method} onChange={(event) => updateSettings({ ...settings, method: Number(event.target.value) })}>{METHODS.map((method) => <option value={method.id} key={method.id}>{method.label}</option>)}</select></label>
         <label><span>Asr method</span><select value={settings.school} onChange={(event) => updateSettings({ ...settings, school: Number(event.target.value) })}><option value={1}>Hanafi</option><option value={0}>Standard</option></select></label>
+        <label><span>Hijri date adjustment</span><select value={settings.adjustment} onChange={(event) => updateSettings({ ...settings, adjustment: Number(event.target.value) })}><option value={-2}>−2 days</option><option value={-1}>−1 day</option><option value={0}>No adjustment</option><option value={1}>+1 day</option><option value={2}>+2 days</option></select></label>
         <small>{data?.method ?? "Calculated prayer times"} · confirm congregation times with your mosque.</small>
       </div></div> : null}
     </section>

@@ -4,7 +4,7 @@ import { HeaderUtilities } from "../site/SiteUtilities";
 import QiblaCompass from "./QiblaCompass";
 
 export const metadata: Metadata = {
-  title: "Qibla Compass — Find the Kaaba Direction | NOOR",
+  title: "Qibla Compass — Find the Kaaba Direction",
   description: "Use your location and phone compass to find the great-circle Qibla direction to the Kaaba, privately in your browser.",
   alternates: { canonical: "/qibla" },
   openGraph: { title: "Qibla Compass | NOOR", description: "Find the direction to the Kaaba from your current location.", images: [] },

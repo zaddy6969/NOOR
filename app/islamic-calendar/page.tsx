@@ -4,7 +4,7 @@ import { HeaderUtilities } from "../site/SiteUtilities";
 import IslamicCalendar from "./IslamicCalendar";
 
 export const metadata: Metadata = {
-  title: "Islamic Calendar — Gregorian & Hijri Dates | NOOR",
+  title: "Islamic Calendar — Gregorian & Hijri Dates",
   description: "Browse a real month-by-month Islamic calendar with Hijri dates, important occasions and local date adjustment.",
   alternates: { canonical: "/islamic-calendar" },
   openGraph: { title: "Islamic Calendar | NOOR", description: "Gregorian and Hijri dates in one calm monthly view.", images: [] },
