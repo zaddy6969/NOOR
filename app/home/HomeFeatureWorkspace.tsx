@@ -6,6 +6,7 @@ import { destinations } from "../destinations/destination-data";
 import { lughatEntries } from "../firozul-lughat/lughat-data";
 import { useMediaPlayer } from "../media/MediaProvider";
 import QiblaCompass from "../qibla/QiblaCompass";
+import { readSavedList, SAVED_KEYS, writeSavedList } from "../site/saved-items";
 import PrayerTimesStrip from "./PrayerTimesStrip";
 
 export type FeatureId = "quran" | "prayer-times" | "qibla" | "islamic-calendar" | "mosque-finder" | "daily-duas" | "darood" | "zakat" | "kaza" | "lughat" | "names" | "destinations";
@@ -118,6 +119,13 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
   const activeVerse = playingThis ? quranPlayback.activeVerseNumber : target.ayah;
 
   useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setBookmarked(readSavedList(SAVED_KEYS.quranSurahs).includes(String(target.surah)));
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [target.surah]);
+
+  useEffect(() => {
     const controller = new AbortController();
     const frame = window.requestAnimationFrame(() => {
       setLoading(true);
@@ -166,6 +174,14 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
     });
   };
 
+  const toggleSurahBookmark = () => {
+    const key = String(surah?.number ?? target.surah);
+    const current = readSavedList(SAVED_KEYS.quranSurahs);
+    const next = current.includes(key) ? current.filter((item) => item !== key) : [...current, key];
+    writeSavedList(SAVED_KEYS.quranSurahs, next);
+    setBookmarked(next.includes(key));
+  };
+
   return <>
     <WorkspaceHeader feature="quran" title={surah ? `Surah ${surah.englishName}` : "Quran Reader"} description={surah ? `${surah.meaning} · ${surah.ayahs.length} verses` : "Arabic, English meaning and full Surah audio."} href={surah ? `/quran?surah=${surah.number}${target.ayah ? `&ayah=${target.ayah}` : ""}` : "/quran"} />
     {loading ? <div className="workspace-state" role="status">Loading the Quran reader…</div> : payload?.error || !surah ? <div className="workspace-state error" role="alert">{payload?.error ?? "This Surah could not be loaded."}</div> : (
@@ -175,7 +191,7 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
             {[1,2,18,36,55,56,67,112,113,114].map((number) => <option value={number} key={number}>{number}. {number === 1 ? "Al-Fatihah" : number === 2 ? "Al-Baqarah" : number === 18 ? "Al-Kahf" : number === 36 ? "Ya-Sin" : number === 55 ? "Ar-Rahman" : number === 56 ? "Al-Waqi‘ah" : number === 67 ? "Al-Mulk" : number === 112 ? "Al-Ikhlas" : number === 113 ? "Al-Falaq" : "An-Nas"}</option>)}
           </select></label>
           <button type="button" onClick={() => setShowRoman((value) => !value)} aria-pressed={showRoman}>Transliteration {showRoman ? "on" : "off"}</button>
-          <button type="button" onClick={() => setBookmarked((value) => !value)} aria-pressed={bookmarked}>{bookmarked ? "★ Saved" : "☆ Bookmark"}</button>
+          <button type="button" onClick={toggleSurahBookmark} aria-pressed={bookmarked}>{bookmarked ? "★ Surah saved" : "☆ Save Surah"}</button>
         </div>
         <div className="home-quran-verses" ref={versesRef} aria-live="polite">
           {surah.ayahs.map((ayah) => {

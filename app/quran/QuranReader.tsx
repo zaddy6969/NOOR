@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { useMediaPlayer } from "../media/MediaProvider";
+import { readSavedList, SAVED_KEYS, writeSavedList } from "../site/saved-items";
 
 type SurahSummary = { number: number; name: string; englishName: string; englishNameTranslation: string; numberOfAyahs: number; revelationType: string };
 type Ayah = { number: number; arabic: string; english: string; juz: number; page: number };
@@ -36,11 +37,9 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
   const initialScrollDone = useRef(false);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("noor-quran-bookmarks-v1");
+    const saved = readSavedList(SAVED_KEYS.quranVerses);
     const timer = window.setTimeout(() => {
-      if (saved) {
-        try { setBookmarks(JSON.parse(saved) as string[]); } catch { setBookmarks([]); }
-      }
+      setBookmarks(saved);
     }, 0);
     fetch("/api/quran/surahs")
       .then((response) => response.ok ? response.json() : Promise.reject())
@@ -106,7 +105,7 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
     const key = `${selected}:${ayah}`;
     const next = bookmarks.includes(key) ? bookmarks.filter((item) => item !== key) : [...bookmarks, key];
     setBookmarks(next);
-    window.localStorage.setItem("noor-quran-bookmarks-v1", JSON.stringify(next));
+    writeSavedList(SAVED_KEYS.quranVerses, next);
     setNotice(next.includes(key) ? `Saved ${key}` : `Removed ${key}`);
     window.setTimeout(() => setNotice(""), 1800);
   };

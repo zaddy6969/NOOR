@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { readSavedCollections, SAVED_ITEMS_EVENT, savedItemsTotal } from "./saved-items";
 
 type SearchResult = {
   id: string;
@@ -25,14 +27,39 @@ function SearchIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>;
 }
 
+function SavedIcon() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5A2.5 2.5 0 0 1 8.5 2h7A2.5 2.5 0 0 1 18 4.5V22l-6-3.8L6 22Z"/></svg>;
+}
+
+function useSavedItemCount() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const sync = () => setCount(savedItemsTotal(readSavedCollections()));
+    sync();
+    window.addEventListener(SAVED_ITEMS_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(SAVED_ITEMS_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+
+  return count;
+}
+
 export function HeaderUtilities({ compact = false }: { compact?: boolean }) {
   const utilities = useContext(UtilitiesContext);
+  const savedCount = useSavedItemCount();
   if (!utilities) return null;
   return (
     <div className={compact ? "site-utilities compact" : "site-utilities"}>
       <button className="header-global-search" type="button" onClick={utilities.openSearch} aria-label="Search everything in NOOR">
         <SearchIcon/><span>Search everything…</span><kbd>⌘ K</kbd>
       </button>
+      <Link className={`saved-header-link${compact ? " compact" : ""}`} href="/saved" aria-label={`Open Saved, ${savedCount} ${savedCount === 1 ? "item" : "items"}`} title="Open saved items">
+        <SavedIcon/><span>Saved</span>{savedCount > 0 ? <b aria-hidden="true">{savedCount > 99 ? "99+" : savedCount}</b> : null}
+      </Link>
       <button className="theme-toggle" type="button" onClick={utilities.toggleTheme} aria-label={utilities.dark ? "Switch to light theme" : "Switch to dark theme"}>
         <span aria-hidden="true">{utilities.dark ? "☀" : "☾"}</span>
       </button>

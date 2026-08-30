@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { readSavedList, SAVED_KEYS, writeSavedList } from "../site/saved-items";
 import { lughatEntries } from "./lughat-data";
 
 type Filter = "All" | "Faith" | "Worship" | "Character" | "Learning" | "Community" | "Saved";
@@ -13,7 +14,7 @@ export default function LughatLibrary() {
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      try { setSaved(JSON.parse(window.localStorage.getItem("noor-lughat-saved-v1") ?? "[]") as string[]); } catch { setSaved([]); }
+      setSaved(readSavedList(SAVED_KEYS.lughat));
     });
     return () => window.cancelAnimationFrame(frame);
   }, []);
@@ -30,7 +31,7 @@ export default function LughatLibrary() {
   const toggleSaved = (id: string) => {
     setSaved((current) => {
       const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
-      window.localStorage.setItem("noor-lughat-saved-v1", JSON.stringify(next));
+      writeSavedList(SAVED_KEYS.lughat, next);
       return next;
     });
   };

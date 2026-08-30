@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { readSavedList, SAVED_KEYS, writeSavedList } from "../site/saved-items";
 
 type DaroodCategory = "Prophetic" | "Traditional" | "Short";
 type Filter = "All" | DaroodCategory | "Saved";
-type DaroodEntry = {
+export type DaroodEntry = {
   id: string;
   title: string;
   alternate: string;
@@ -16,7 +17,7 @@ type DaroodEntry = {
   note: string;
 };
 
-const entries: DaroodEntry[] = [
+export const daroodEntries: DaroodEntry[] = [
   {
     id: "ibrahimiyyah",
     title: "Darood Ibrahim",
@@ -116,9 +117,9 @@ export default function DaroodLibrary() {
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
       try {
-        const saved = window.localStorage.getItem("noor-darood-saved-v1");
+        const saved = readSavedList(SAVED_KEYS.darood);
         const storedCounts = window.localStorage.getItem("noor-darood-counts-v1");
-        if (saved) setSavedIds(JSON.parse(saved) as string[]);
+        setSavedIds(saved);
         if (storedCounts) setCounts(JSON.parse(storedCounts) as Record<string, number>);
       } catch {
         setSavedIds([]);
@@ -140,7 +141,7 @@ export default function DaroodLibrary() {
 
   const visible = useMemo(() => {
     const term = query.trim().toLowerCase();
-    return entries.filter((entry) => {
+    return daroodEntries.filter((entry) => {
       const matchesFilter = filter === "All" || (filter === "Saved" ? savedIds.includes(entry.id) : entry.category === filter);
       const matchesQuery = !term || [entry.title, entry.alternate, entry.roman ?? "", entry.meaning, entry.source].join(" ").toLowerCase().includes(term);
       return matchesFilter && matchesQuery;
@@ -150,7 +151,7 @@ export default function DaroodLibrary() {
   const toggleSaved = (id: string) => {
     setSavedIds((current) => {
       const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
-      window.localStorage.setItem("noor-darood-saved-v1", JSON.stringify(next));
+      writeSavedList(SAVED_KEYS.darood, next);
       return next;
     });
   };
