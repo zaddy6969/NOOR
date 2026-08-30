@@ -2,11 +2,33 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import HeroDailyStatus from "./home/HeroDailyStatus";
 import HomeFeatureWorkspace, { type FeatureId, type QuranTarget } from "./home/HomeFeatureWorkspace";
 import SiteFooter from "./site/SiteFooter";
-import { HeaderUtilities, SearchLauncher } from "./site/SiteUtilities";
+import { HeaderUtilities } from "./site/SiteUtilities";
 
 type IconName = "book" | "clock" | "compass" | "calendar" | "mosque" | "dua" | "darood" | "zakat" | "prayer" | "dictionary" | "names" | "pin" | "home" | "grid" | "search" | "profile" | "music" | "family" | "shop" | "community" | "learn" | "info";
+type NoorLocale = "en" | "hi" | "ur";
+
+const HOME_COPY: Record<NoorLocale, {
+  greeting: string;
+  blessing: string;
+  search: string;
+  explore: string;
+  more: string;
+  viewAll: string;
+  showLess: string;
+}> = {
+  en: { greeting: "Assalamu Alaikum", blessing: "May Allah bless your day", search: "Search everything…", explore: "EXPLORE NOOR", more: "More features", viewAll: "View all", showLess: "Show less" },
+  hi: { greeting: "अस्सलामु अलैकुम", blessing: "अल्लाह आपके दिन में बरकत दे", search: "सब कुछ खोजें…", explore: "नूर देखें", more: "और सुविधाएँ", viewAll: "सभी देखें", showLess: "कम दिखाएँ" },
+  ur: { greeting: "السلام علیکم", blessing: "اللہ آپ کے دن میں برکت دے", search: "سب کچھ تلاش کریں…", explore: "نور دریافت کریں", more: "مزید سہولیات", viewAll: "سب دیکھیں", showLess: "کم دکھائیں" },
+};
+
+const FEATURE_LABELS: Record<NoorLocale, Partial<Record<FeatureId, string>>> = {
+  en: {},
+  hi: { quran: "क़ुरआन", "prayer-times": "नमाज़ के समय", qibla: "क़िबला", "islamic-calendar": "इस्लामी कैलेंडर", "mosque-finder": "मस्जिद खोजें", "daily-duas": "रोज़ाना दुआएँ", darood: "दरूद शरीफ़", zakat: "ज़कात कैलकुलेटर", kaza: "क़ज़ा नमाज़", lughat: "फ़िरोज़ुल लुग़ात", names: "99 नाम", destinations: "मुस्लिम स्थल" },
+  ur: { quran: "قرآن", "prayer-times": "نماز کے اوقات", qibla: "قبلہ", "islamic-calendar": "اسلامی کیلنڈر", "mosque-finder": "مسجد تلاش کریں", "daily-duas": "روزانہ دعائیں", darood: "درود شریف", zakat: "زکوٰۃ کیلکولیٹر", kaza: "قضا نماز", lughat: "فیروز اللغات", names: "99 نام", destinations: "مسلم مقامات" },
+};
 
 export function NoorIcon({ name }: { name: IconName }) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -52,28 +74,73 @@ const FEATURES: Array<{ id: FeatureId; label: string; icon: IconName }> = [
 ];
 
 const FEATURE_IDS = new Set(FEATURES.map((feature) => feature.id));
+const HERO_FEATURE_IDS = new Set<FeatureId>(["quran", "prayer-times", "qibla", "islamic-calendar"]);
+const FEATURE_STRIP = FEATURES.filter((feature) => !HERO_FEATURE_IDS.has(feature.id));
 
-const MORE_FEATURES: Array<{ label: string; description: string; icon: IconName; href: string }> = [
-  { label: "Naat & Salam", description: "Listen, watch and read", icon: "music", href: "/naat" },
-  { label: "Prayer & Wudu", description: "Complete Namaz guide", icon: "prayer", href: "/namaz" },
-  { label: "Family Tree", description: "Explore Islamic lineage", icon: "family", href: "/family-tree" },
-  { label: "Shop by Category", description: "Browse the NOOR catalogue", icon: "shop", href: "/shop" },
-  { label: "Matrimony", description: "Private Muslim profiles", icon: "community", href: "/matrimony" },
-  { label: "Religious Tourism", description: "Plan meaningful journeys", icon: "pin", href: "/religious-tourism" },
-  { label: "Five Pillars", description: "Learn the foundations", icon: "learn", href: "/topics/pillars" },
-  { label: "Ahle Sunnat", description: "Beliefs and guidance", icon: "book", href: "/topics/ahle-sunnat" },
-  { label: "Tawheed", description: "Understand the oneness of Allah", icon: "names", href: "/topics/tawheed" },
-  { label: "Ramadan & Roza", description: "Fasting guidance", icon: "calendar", href: "/topics/roza" },
-  { label: "Hajj Guide", description: "Rites, preparation and etiquette", icon: "pin", href: "/topics/hajj" },
-  { label: "Waqiyahs", description: "Read Islamic accounts inside NOOR", icon: "learn", href: "/topics/waqiyahs" },
-  { label: "Islamic Festivals", description: "Dates, meaning and practice", icon: "calendar", href: "/topics/festivals" },
-  { label: "Islamic Quotes", description: "Sourced reminders and reflections", icon: "dua", href: "/topics/quotes" },
-  { label: "Scholars", description: "Read trusted profiles", icon: "profile", href: "/topics/scholars" },
-  { label: "Institutes", description: "Islamic learning directory", icon: "mosque", href: "/topics/institutes" },
-  { label: "Jobs & Careers", description: "Faith-conscious work guidance", icon: "community", href: "/topics/jobs" },
-  { label: "Islamic FAQs", description: "Clear answers to common questions", icon: "info", href: "/topics/faqs" },
-  { label: "Islamic Glossary", description: "Arabic and Urdu terms", icon: "dictionary", href: "/glossary" },
-  { label: "About NOOR", description: "Purpose and standards", icon: "info", href: "/about" },
+type MoreFeature = {
+  label: string;
+  description: string;
+  href: string;
+  art: string;
+};
+
+type MoreFeatureGroup = {
+  label: string;
+  icon: IconName;
+  features: MoreFeature[];
+};
+
+const MORE_FEATURE_GROUPS: MoreFeatureGroup[] = [
+  {
+    label: "Spiritual Learning",
+    icon: "book",
+    features: [
+      { label: "Naat & Salam", description: "Listen, watch and read beautiful naats", href: "/naat", art: "learning-r1-c1" },
+      { label: "Prayer & Wudu", description: "A complete guide to salah and purification", href: "/namaz", art: "learning-r1-c2" },
+      { label: "Five Pillars", description: "Learn the foundations of Muslim life", href: "/topics/pillars", art: "learning-r1-c3" },
+      { label: "Ahle Sunnat", description: "Beliefs and guidance from authentic sources", href: "/topics/ahle-sunnat", art: "learning-r1-c4" },
+    ],
+  },
+  {
+    label: "Faith & Knowledge",
+    icon: "learn",
+    features: [
+      { label: "Tawheed", description: "Understand the oneness of Allah", href: "/topics/tawheed", art: "learning-r2-c1" },
+      { label: "Waqiyahs", description: "Read meaningful accounts from Islamic history", href: "/topics/waqiyahs", art: "learning-r2-c2" },
+      { label: "Islamic Quotes", description: "Sourced reminders for everyday reflection", href: "/topics/quotes", art: "learning-r2-c3" },
+      { label: "Scholars", description: "Discover trusted teachers and their work", href: "/topics/scholars", art: "learning-r2-c4" },
+    ],
+  },
+  {
+    label: "Community & Family",
+    icon: "community",
+    features: [
+      { label: "Family Tree", description: "Explore your Islamic lineage and heritage", href: "/family-tree", art: "life-r1-c1" },
+      { label: "Shop by Category", description: "Browse the thoughtfully curated NOOR shop", href: "/shop", art: "life-r1-c2" },
+      { label: "Matrimony", description: "Find a compatible partner with privacy", href: "/matrimony", art: "life-r1-c3" },
+      { label: "Institutes", description: "Find Islamic learning near you", href: "/topics/institutes", art: "life-r1-c4" },
+    ],
+  },
+  {
+    label: "Travel & Seasons",
+    icon: "pin",
+    features: [
+      { label: "Religious Tourism", description: "Plan meaningful journeys to sacred places", href: "/religious-tourism", art: "life-r2-c1" },
+      { label: "Ramadan & Roza", description: "Fasting guidance and seasonal resources", href: "/topics/roza", art: "life-r2-c2" },
+      { label: "Hajj Guide", description: "Prepare for the rites, journey and etiquette", href: "/topics/hajj", art: "life-r2-c3" },
+      { label: "Islamic Festivals", description: "Understand dates, meaning and practice", href: "/topics/festivals", art: "life-r2-c4" },
+    ],
+  },
+  {
+    label: "About & Support",
+    icon: "info",
+    features: [
+      { label: "Jobs & Careers", description: "Build a fulfilling, faith-conscious career", href: "/topics/jobs", art: "support-r1-c1" },
+      { label: "Islamic FAQs", description: "Clear answers to common questions", href: "/topics/faqs", art: "support-r1-c2" },
+      { label: "Islamic Glossary", description: "Understand Arabic and Urdu terms", href: "/glossary", art: "support-r2-c1" },
+      { label: "About NOOR", description: "Read about our purpose and standards", href: "/about", art: "support-r2-c2" },
+    ],
+  },
 ];
 
 function readHash(): FeatureId {
@@ -85,14 +152,20 @@ export default function Home() {
   const [activeFeature, setActiveFeature] = useState<FeatureId>("quran");
   const [quranTarget, setQuranTarget] = useState<QuranTarget>({ surah: 1, ayah: null });
   const [showAllTools, setShowAllTools] = useState(false);
+  const [locale, setLocale] = useState<NoorLocale>("en");
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const workspaceRef = useRef<HTMLDivElement | null>(null);
+  const copy = HOME_COPY[locale];
 
-  const activate = useCallback((id: FeatureId, options?: { history?: boolean; focus?: boolean }) => {
+  const activate = useCallback((id: FeatureId, options?: { history?: boolean; focus?: boolean; reveal?: boolean }) => {
     setActiveFeature(id);
     if (options?.history !== false && window.location.hash !== `#${id}`) window.history.pushState({ feature: id }, "", `#${id}`);
     window.requestAnimationFrame(() => {
       tabRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-      if (options?.focus) document.getElementById(`workspace-${id}-heading`)?.focus({ preventScroll: true });
+      window.requestAnimationFrame(() => {
+        if (options?.reveal !== false) workspaceRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (options?.focus) document.getElementById(`workspace-${id}-heading`)?.focus({ preventScroll: true });
+      });
     });
   }, []);
 
@@ -120,20 +193,29 @@ export default function Home() {
     };
   }, [activate]);
 
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const saved = window.localStorage.getItem("noor-language");
+      if (saved === "en" || saved === "hi" || saved === "ur") setLocale(saved);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("noor-language", locale);
+    document.documentElement.lang = locale === "hi" ? "hi" : locale === "ur" ? "ur" : "en";
+    document.documentElement.dir = locale === "ur" ? "rtl" : "ltr";
+  }, [locale]);
+
   return (
-    <main className="noor-tabbed-home">
+    <main className="noor-tabbed-home" lang={locale === "hi" ? "hi" : locale === "ur" ? "ur" : "en"} dir={locale === "ur" ? "rtl" : "ltr"}>
       <header className="noor-shell-header">
-        <Link className="reference-brand" href="#quran" onClick={(event) => { event.preventDefault(); activate("quran"); }} aria-label="NOOR Daily Muslim home">
+        <Link className="reference-brand" href="#quran" onClick={(event) => { event.preventDefault(); activate("quran", { reveal: false }); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label="NOOR Daily Muslim home">
           <span className="reference-logo" aria-hidden="true"><i /></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span>
         </Link>
-        <nav className="noor-main-nav" aria-label="Main navigation">
-          <button className="active" type="button" onClick={() => activate("quran")}>Home</button>
-          <button type="button" onClick={() => activate("quran")}>Quran</button>
-          <Link href="/namaz">Learn</Link><Link href="/matrimony">Community</Link><Link href="/shop">Shop</Link><Link href="/about">Premium</Link>
-        </nav>
         <div className="noor-header-actions">
           <HeaderUtilities />
-          <label className="noor-language"><span className="sr-only">Language</span><select defaultValue="en" aria-label="Language"><option value="en">EN</option><option value="ur">اردو</option><option value="hi">हिंदी</option></select></label>
+          <label className="noor-language"><span className="sr-only">Language</span><select value={locale} onChange={(event) => setLocale(event.target.value as NoorLocale)} aria-label="Language"><option value="en">EN</option><option value="ur">اردو</option><option value="hi">हिंदी</option></select></label>
           <Link className="noor-profile" href="/sign-in" aria-label="Your NOOR account"><NoorIcon name="profile" /></Link>
         </div>
       </header>
@@ -141,22 +223,14 @@ export default function Home() {
       <section className="noor-fixed-hero" aria-labelledby="noor-home-title">
         <span className="noor-pattern noor-pattern-left" aria-hidden="true"/><span className="noor-pattern noor-pattern-right" aria-hidden="true"/>
         <div className="noor-hero-inner">
-          <span className="noor-hero-crescent" aria-hidden="true"><i/>✦</span>
-          <p>YOUR DAILY MUSLIM COMPANION</p>
-          <h1 id="noor-home-title">Faith, beautifully organised.</h1>
-          <span>Your daily companion for Quran, prayer, knowledge and a better you.</span>
-          <SearchLauncher className="noor-hero-search"><NoorIcon name="search"/><span>What would you like to explore?</span><kbd>⌘ K</kbd></SearchLauncher>
-          <div className="noor-hero-actions">
-            <button type="button" onClick={() => activate("quran")}><NoorIcon name="book"/>Read Quran</button>
-            <button type="button" onClick={() => activate("prayer-times")}><NoorIcon name="clock"/>Prayer Times</button>
-            <button type="button" onClick={() => activate("mosque-finder")}><NoorIcon name="pin"/>Find a Mosque</button>
-          </div>
+          <div className="noor-greeting-row"><div><span>NOOR DAILY MUSLIM</span><h1 id="noor-home-title">{copy.greeting}</h1><p>{copy.blessing}<i aria-hidden="true">✦</i></p></div></div>
+          <HeroDailyStatus locale={locale} onPrayer={() => activate("prayer-times", { focus: true })} onCalendar={() => activate("islamic-calendar", { focus: true })} onQuran={() => { setQuranTarget({ surah: 11, ayah: 88 }); activate("quran", { focus: true }); }} onQibla={() => activate("qibla", { focus: true })} />
         </div>
       </section>
 
       <section className="noor-feature-shell" aria-label="NOOR daily features">
         <div className="noor-feature-tabs" role="tablist" aria-label="Choose a NOOR feature">
-          {FEATURES.map((feature) => (
+          {FEATURE_STRIP.map((feature, index) => (
             <button
               ref={(node) => { tabRefs.current[feature.id] = node; }}
               className={activeFeature === feature.id ? "active" : ""}
@@ -164,40 +238,54 @@ export default function Home() {
               role="tab"
               aria-selected={activeFeature === feature.id}
               aria-controls={`panel-${feature.id}`}
-              tabIndex={activeFeature === feature.id ? 0 : -1}
+              tabIndex={activeFeature === feature.id || (HERO_FEATURE_IDS.has(activeFeature) && index === 0) ? 0 : -1}
               type="button"
               onClick={() => activate(feature.id, { focus: true })}
               onKeyDown={(event) => {
-                const current = FEATURES.findIndex((item) => item.id === feature.id);
+                const current = FEATURE_STRIP.findIndex((item) => item.id === feature.id);
                 if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
                 event.preventDefault();
-                const next = (current + (event.key === "ArrowRight" ? 1 : -1) + FEATURES.length) % FEATURES.length;
-                activate(FEATURES[next].id);
-                tabRefs.current[FEATURES[next].id]?.focus();
+                const next = (current + (event.key === "ArrowRight" ? 1 : -1) + FEATURE_STRIP.length) % FEATURE_STRIP.length;
+                activate(FEATURE_STRIP[next].id);
+                tabRefs.current[FEATURE_STRIP[next].id]?.focus();
               }}
               key={feature.id}
             >
-              <NoorIcon name={feature.icon}/><span>{feature.label}</span>
+              <NoorIcon name={feature.icon}/><span>{FEATURE_LABELS[locale][feature.id] ?? feature.label}</span>
             </button>
           ))}
         </div>
 
-        <HomeFeatureWorkspace activeFeature={activeFeature} quranTarget={quranTarget} />
+        <div className="noor-tool-anchor" id="selected-tool" ref={workspaceRef}>
+          <HomeFeatureWorkspace activeFeature={activeFeature} quranTarget={quranTarget} locale={locale} />
+        </div>
 
         <section className={`noor-more-features${showAllTools ? " expanded" : ""}`} aria-labelledby="more-features-title">
           <header>
-            <div><span>EXPLORE NOOR</span><h2 id="more-features-title">More features</h2></div>
+            <div><span>{copy.explore}</span><h2 id="more-features-title">{copy.more}</h2></div>
             <button type="button" aria-expanded={showAllTools} onClick={() => setShowAllTools((value) => !value)}>
-              {showAllTools ? "Show less" : "View all"}<span aria-hidden="true">{showAllTools ? "↑" : "→"}</span>
+              {showAllTools ? copy.showLess : copy.viewAll}<span aria-hidden="true">{showAllTools ? "↑" : "→"}</span>
             </button>
           </header>
-          <div>
-            {MORE_FEATURES.slice(0, showAllTools ? MORE_FEATURES.length : 6).map((feature) => (
-              <Link href={feature.href} key={feature.href}>
-                <span><NoorIcon name={feature.icon}/></span>
-                <span><strong>{feature.label}</strong><small>{feature.description}</small></span>
-                <b aria-hidden="true">›</b>
-              </Link>
+          <div className="noor-more-feature-groups">
+            {MORE_FEATURE_GROUPS.slice(0, showAllTools ? MORE_FEATURE_GROUPS.length : 2).map((group) => (
+              <section className="noor-more-feature-group" aria-labelledby={`more-group-${group.label.replaceAll(" ", "-").toLowerCase()}`} key={group.label}>
+                <h3 id={`more-group-${group.label.replaceAll(" ", "-").toLowerCase()}`}>
+                  <NoorIcon name={group.icon}/><span>{group.label}</span><i aria-hidden="true" />
+                </h3>
+                <div className="noor-more-feature-grid">
+                  {group.features.map((feature) => (
+                    <Link className="noor-more-feature-card" href={feature.href} key={feature.href}>
+                      <span className="noor-more-feature-copy">
+                        <strong>{feature.label}</strong>
+                        <small>{feature.description}</small>
+                        <b aria-hidden="true">→</b>
+                      </span>
+                      <span className={`noor-more-feature-art ${feature.art}`} aria-hidden="true" />
+                    </Link>
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         </section>
@@ -206,7 +294,7 @@ export default function Home() {
       <SiteFooter />
 
       <nav className="noor-mobile-nav" aria-label="Mobile navigation">
-        <button className={activeFeature === "quran" ? "active" : ""} type="button" onClick={() => activate("quran")}><NoorIcon name="home"/><span>Home</span></button>
+        <button className={activeFeature === "quran" ? "active" : ""} type="button" onClick={() => { activate("quran", { reveal: false }); window.scrollTo({ top: 0, behavior: "smooth" }); }}><NoorIcon name="home"/><span>Home</span></button>
         <button type="button" onClick={() => activate("quran")}><NoorIcon name="book"/><span>Quran</span></button>
         <button type="button" onClick={() => activate("prayer-times")}><NoorIcon name="prayer"/><span>Prayer</span></button>
         <button type="button" onClick={() => activate("qibla")}><NoorIcon name="compass"/><span>Qibla</span></button>

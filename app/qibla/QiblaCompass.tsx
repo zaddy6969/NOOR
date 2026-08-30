@@ -42,7 +42,7 @@ function cardinalDirection(bearing: number) {
   return points[Math.round(normalize(bearing) / 22.5) % 16];
 }
 
-export default function QiblaCompass() {
+export default function QiblaCompass({ minimal = false }: { minimal?: boolean }) {
   const [location, setLocation] = useState<UserLocation>(() => ({ ...CITY_PRESETS[0], accuracy: null }));
   const [selectedCity, setSelectedCity] = useState<string>(CITY_PRESETS[0].id);
   const [verifiedBearing, setVerifiedBearing] = useState<number | null>(null);
@@ -221,6 +221,23 @@ export default function QiblaCompass() {
     : aligned
       ? "Qibla aligned"
       : `Turn ${Math.abs(Math.round(signedTurn ?? 0))}° ${(signedTurn ?? 0) > 0 ? "right" : "left"}`;
+
+  if (minimal) {
+    return (
+      <section className="qibla-compact-tool qibla-minimal-tool" aria-label="Qibla compass">
+        <div className={`qibla-compact-face${aligned ? " is-aligned" : ""}`} aria-label={`Qibla bearing ${bearingLabel} degrees ${cardinalDirection(bearing)}`}>
+          <div className="qibla-dial" style={{ transform: `rotate(${northRotation}deg)` }}>
+            <span className="qibla-ticks" />
+            <b className="qibla-cardinal qibla-n">N</b><b className="qibla-cardinal qibla-e">E</b><b className="qibla-cardinal qibla-s">S</b><b className="qibla-cardinal qibla-w">W</b>
+          </div>
+          <span className="north-needle" style={{ transform: `translate(-50%, -50%) rotate(${northRotation}deg)` }} aria-hidden="true"><i /><i /></span>
+          <span className="qibla-red-arrow" style={{ transform: `translate(-50%, -50%) rotate(${qiblaRotation}deg)` }} aria-hidden="true"><i /><b className="kaaba-marker"><span /></b></span>
+          <span className="qibla-pin" aria-hidden="true" />
+        </div>
+        <span className="sr-only" role="status">{status}. {location.label}. Qibla {bearingLabel} degrees {cardinalDirection(bearing)}.</span>
+      </section>
+    );
+  }
 
   return (
     <section className="qibla-compact-tool">

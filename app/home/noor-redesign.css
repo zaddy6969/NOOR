@@ -1,0 +1,674 @@
+/* NOOR persistent homepage shell — the hero and launcher remain mounted while tools change below. */
+.noor-tabbed-home {
+  min-height: 100dvh;
+  overflow-x: clip;
+  background: #f8f6ef;
+  color: #102d28;
+}
+
+.noor-tabbed-home .noor-shell-header {
+  height: 76px;
+  padding: 0 clamp(22px, 4vw, 72px);
+  border-bottom: 1px solid rgba(166, 128, 49, .3);
+  background:
+    linear-gradient(45deg, transparent 47%, rgba(169, 132, 54, .055) 48%, rgba(169, 132, 54, .055) 50%, transparent 51%) 0 0 / 30px 30px,
+    linear-gradient(-45deg, transparent 47%, rgba(13, 91, 76, .04) 48%, rgba(13, 91, 76, .04) 50%, transparent 51%) 0 0 / 30px 30px,
+    #fbf7ea;
+  color: #123e35;
+  box-shadow: 0 5px 24px rgba(35, 72, 62, .07);
+  display: flex;
+  grid-template-columns: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+}
+
+.noor-tabbed-home .reference-brand {
+  min-width: 210px;
+  color: #0b584c;
+}
+
+.noor-tabbed-home .reference-logo {
+  width: 46px;
+  height: 46px;
+  color: #f0cf79;
+  background: #0b584c;
+  box-shadow: 0 0 0 1px rgba(11, 88, 76, .12), 0 6px 18px rgba(11, 88, 76, .12);
+}
+
+.noor-tabbed-home .reference-logo::after { background: #fbf7ea; }
+
+.noor-tabbed-home .reference-brand strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: .13em;
+}
+
+.noor-tabbed-home .reference-brand small {
+  color: #355f56;
+  font-size: 8px;
+  letter-spacing: .24em;
+}
+
+.noor-tabbed-home .noor-header-actions,
+.noor-tabbed-home .site-utilities {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.noor-tabbed-home .header-global-search {
+  width: clamp(230px, 24vw, 390px);
+  min-width: 230px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d9cfb5;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .72);
+  color: #16483e;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .85);
+}
+
+.noor-tabbed-home .header-global-search svg,
+.noor-tabbed-home .theme-toggle svg {
+  fill: none;
+  stroke: currentColor;
+}
+
+.noor-tabbed-home .header-global-search span { color: #58736c; }
+.noor-tabbed-home .header-global-search kbd { border-color: #d8ccb0; background: #f4ecd8; color: #80652d; }
+.noor-tabbed-home .theme-toggle,
+.noor-tabbed-home .noor-profile,
+.noor-tabbed-home .noor-language select {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  border: 1px solid #d9cfb5;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .72);
+  color: #16483e;
+}
+
+.noor-tabbed-home .theme-toggle span { color: #ad8735; font-size: 19px; }
+.noor-tabbed-home .noor-profile { display: grid; place-items: center; }
+.noor-tabbed-home .noor-profile svg { width: 20px; height: 20px; }
+.noor-tabbed-home .noor-language select { padding: 0 6px; text-align: center; cursor: pointer; }
+.noor-tabbed-home .noor-language option { background: #fffdf7; color: #102d28; }
+.noor-tabbed-home .header-theme-select { display: none; }
+
+.noor-tabbed-home .noor-fixed-hero {
+  min-height: 390px;
+  height: auto;
+  padding: 22px clamp(18px, 4vw, 72px) 76px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(253, 250, 241, .99) 0%, rgba(250, 246, 232, .94) 48%, rgba(244, 234, 205, .78) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, .35), rgba(241, 232, 205, .5)),
+    url("/images/noor/hero-scene.webp") center 58% / cover no-repeat,
+    #f8f2e1;
+  color: #123e35;
+  position: relative;
+}
+
+.noor-tabbed-home .noor-fixed-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .32;
+  background-image:
+    linear-gradient(30deg, transparent 48%, rgba(167, 129, 50, .22) 49%, transparent 51%),
+    linear-gradient(-30deg, transparent 48%, rgba(13, 91, 76, .13) 49%, transparent 51%);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(90deg, #000, transparent 23%, transparent 77%, #000);
+}
+
+.noor-tabbed-home .noor-pattern {
+  width: 190px;
+  height: 330px;
+  top: 34px;
+  opacity: .2;
+  border-color: #9e7a35;
+}
+
+.noor-tabbed-home .noor-hero-inner {
+  width: min(100%, 1440px);
+  max-width: 1440px;
+  margin: 0 auto;
+  color: inherit;
+  align-items: stretch;
+  text-align: left;
+  position: relative;
+  z-index: 2;
+}
+
+.noor-greeting-row {
+  min-height: 76px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.noor-greeting-row > div > span {
+  color: #d9b967;
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: .18em;
+}
+
+.noor-greeting-row h1 {
+  margin: 4px 0 0;
+  color: #123e35;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(29px, 2.35vw, 39px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -.02em;
+}
+
+.noor-greeting-row p {
+  margin: 6px 0 0;
+  color: #557169;
+  font-size: 13px;
+}
+
+.noor-greeting-row p i { margin-inline-start: 7px; color: #d9b967; font-style: normal; }
+
+.noor-daily-status {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr 1.05fr .72fr;
+  gap: 14px;
+}
+
+.daily-status-card {
+  width: 100%;
+  min-width: 0;
+  min-height: 164px;
+  padding: 16px 18px;
+  border: 1px solid rgba(230, 203, 128, .32);
+  border-radius: 15px;
+  appearance: none;
+  background: rgba(255, 255, 255, .045);
+  color: #fffdf7;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .04), 0 8px 22px rgba(0, 25, 20, .08);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.daily-status-card::before,
+.daily-status-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.daily-status-card::before {
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: .68;
+  transform: scale(1.01);
+  transition: opacity .2s ease, transform .35s ease;
+}
+
+.daily-status-card::after {
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(3, 48, 40, .97) 0%, rgba(3, 48, 40, .88) 50%, rgba(3, 48, 40, .48) 100%);
+}
+
+.daily-status-card > :not(.daily-card-open) { position: relative; z-index: 1; }
+.daily-status-card:hover { background: rgba(255, 255, 255, .075); border-color: rgba(230, 203, 128, .62); transform: translateY(-2px); }
+.daily-status-card:hover::before { opacity: .82; transform: scale(1.045); }
+.daily-status-card:focus-visible { outline: 3px solid #f0d481; outline-offset: 3px; border-color: #f0d481; box-shadow: 0 0 0 6px rgba(240, 212, 129, .16); }
+.daily-card-open { position: absolute; z-index: 2; top: 13px; right: 14px; color: rgba(255, 255, 255, .72); font-size: 14px; line-height: 1; transition: color .18s ease, transform .18s ease; }
+.daily-status-card:hover .daily-card-open { color: #f0d481; transform: translate(2px, -2px); }
+
+.prayer-summary-card::before,
+.date-summary-card::before { background-image: url("/images/noor/hero-scene.webp"); }
+.prayer-summary-card::before { background-position: 58% 64%; }
+.date-summary-card::before { background-position: 82% 54%; }
+.date-summary-card::after { background: linear-gradient(90deg, rgba(3, 48, 40, .98) 0%, rgba(3, 48, 40, .9) 58%, rgba(3, 48, 40, .42) 100%); }
+.verse-summary-card::before { background-image: url("/images/noor/quran-card.webp"); background-position: 74% center; }
+.verse-summary-card::after { background: linear-gradient(90deg, rgba(3, 48, 40, .88), rgba(3, 48, 40, .8) 58%, rgba(3, 48, 40, .5)); }
+.qibla-summary-card::before { background-image: url("/images/noor/qibla-card.webp"); background-position: 66% center; }
+.qibla-summary-card::after { background: linear-gradient(90deg, rgba(3, 48, 40, .88), rgba(3, 48, 40, .72)); }
+
+.daily-card-label {
+  color: #e0c16f;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.daily-card-label svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.prayer-summary-card > strong,
+.date-summary-card > strong {
+  display: block;
+  margin-top: 9px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(24px, 1.8vw, 31px);
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+.prayer-countdown {
+  margin-top: 8px;
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(22px, 1.75vw, 29px);
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+.countdown-labels {
+  max-width: 245px;
+  margin-top: 2px;
+  padding-inline: 2px;
+  color: rgba(255, 255, 255, .48);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  font-size: 8px;
+  letter-spacing: .16em;
+}
+
+.daily-card-meta {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.daily-card-meta b { color: #e6cb80; font-size: 15px; }
+.daily-card-meta span,
+.daily-card-source { color: rgba(255, 255, 255, .52); font-size: 9px; letter-spacing: .06em; }
+.date-summary-card > p { margin: 8px 0 11px; color: rgba(255, 255, 255, .65); font-size: 12px; }
+.quote-mark { font-family: Georgia, serif; font-size: 25px; line-height: .6; }
+.verse-summary-card { text-align: center; }
+.verse-summary-card .daily-card-label { justify-content: center; }
+.hero-ayah { margin: 9px 0 2px; font-family: var(--font-arabic), Georgia, serif; font-size: clamp(22px, 1.7vw, 29px); line-height: 1.55; }
+.verse-summary-card blockquote { margin: 0; color: rgba(255, 255, 255, .74); font-size: 12px; line-height: 1.4; }
+.verse-summary-card .daily-card-source { display: inline-block; margin-top: 9px; }
+
+.qibla-summary-card { display: flex; flex-direction: column; }
+.qibla-summary-card .mini-qibla-content {
+  min-height: 0;
+  flex: 1;
+  margin-top: 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.mini-qibla-dial {
+  width: 88px;
+  height: 88px;
+  border: 1px solid rgba(224, 193, 111, .64);
+  border-radius: 50%;
+  position: relative;
+  background: radial-gradient(circle, rgba(255, 255, 255, .075), transparent 67%);
+  box-shadow: inset 0 0 0 7px rgba(255, 255, 255, .025);
+}
+.mini-qibla-dial b { color: rgba(255, 255, 255, .7); font-size: 7px; font-weight: 700; position: absolute; }
+.mini-qibla-n { top: 5px; left: 50%; transform: translateX(-50%); }
+.mini-qibla-e { right: 6px; top: 50%; transform: translateY(-50%); }
+.mini-qibla-s { bottom: 5px; left: 50%; transform: translateX(-50%); }
+.mini-qibla-w { left: 6px; top: 50%; transform: translateY(-50%); }
+.mini-qibla-arrow {
+  width: 2px;
+  height: 49px;
+  border-radius: 2px;
+  background: linear-gradient(#e5c570 0 50%, rgba(255, 255, 255, .34) 50%);
+  position: absolute;
+  left: calc(50% - 1px);
+  top: calc(50% - 24px);
+  transform: rotate(-80deg);
+}
+.mini-qibla-arrow::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid #e5c570;
+  position: absolute;
+  left: -4px;
+  top: -4px;
+}
+.mini-kaaba { width: 10px; height: 10px; border: 2px solid #e5c570; position: absolute; right: 9px; top: 34px; }
+.mini-qibla-copy { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.mini-qibla-copy strong { color: #fff; font-size: 11px; }
+.mini-qibla-copy small { color: rgba(255, 255, 255, .58); font-size: 8px; line-height: 1.25; text-align: center; }
+
+.noor-tabbed-home .noor-feature-shell {
+  width: min(calc(100% - 44px), 1440px);
+  margin: -54px auto 30px;
+  position: relative;
+  z-index: 5;
+}
+
+.noor-tabbed-home .noor-feature-tabs {
+  width: 100%;
+  min-height: 88px;
+  padding: 7px 9px;
+  border: 1px solid #ddd8cb;
+  border-radius: 22px;
+  background: #fffefa;
+  box-shadow: 0 12px 34px rgba(11, 48, 40, .08);
+  display: grid;
+  grid-template-columns: repeat(8, minmax(100px, 1fr));
+  align-items: stretch;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.noor-tabbed-home .noor-feature-tabs > button {
+  min-width: 92px;
+  min-height: 70px;
+  padding: 6px 5px 5px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: #21473f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.noor-tabbed-home .noor-feature-tabs > button::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  bottom: 18px;
+  border-left: 1px solid #ebe7de;
+}
+
+.noor-tabbed-home .noor-feature-tabs > button:first-child::before,
+.noor-tabbed-home .noor-feature-tabs > button.active::before { display: none; }
+.noor-tabbed-home .noor-feature-tabs > button:hover { background: #f1f3ec; transform: translateY(-1px); }
+.noor-tabbed-home .noor-feature-tabs > button.active { background: #075548; color: #fff; }
+.noor-tabbed-home .noor-feature-tabs > button.active::after {
+  left: 24%;
+  right: 24%;
+  bottom: -8px;
+  height: 3px;
+  border-radius: 3px;
+  background: #c9a95a;
+}
+
+.noor-tabbed-home .noor-feature-tabs svg { width: 23px; height: 23px; stroke-width: 1.55; }
+.noor-tabbed-home .noor-feature-tabs span { max-width: 108px; font-family: Georgia, "Times New Roman", serif; font-size: 10.5px; line-height: 1.15; text-align: center; }
+
+.noor-tool-anchor { margin-top: 18px; scroll-margin-top: 90px; }
+.noor-tabbed-home .noor-dynamic-workspace {
+  width: 100%;
+  margin-top: 0;
+  border: 1px solid #ddd8cb;
+  border-radius: 20px;
+  background: #fffefa;
+  box-shadow: 0 10px 30px rgba(15, 49, 42, .045);
+  overflow: hidden;
+}
+
+.noor-tabbed-home .noor-dynamic-workspace.qibla-only-panel {
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  outline-offset: 5px;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.workspace-qibla-only {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+}
+
+.workspace-qibla-only .qibla-minimal-tool {
+  width: auto;
+  margin: 0;
+  padding: 24px 0 32px;
+  background: transparent;
+}
+
+.workspace-qibla-only .qibla-compact-face { width: min(320px, 74vw); }
+
+.noor-tabbed-home .workspace-heading {
+  min-height: 58px;
+  padding: 9px 18px;
+  border-bottom: 1px solid #e5e1d7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.noor-tabbed-home .workspace-heading h2 { margin: 1px 0; font-size: clamp(21px, 1.55vw, 26px); line-height: 1.05; }
+.noor-tabbed-home .workspace-heading p { margin: 2px 0 0; font-size: 11px; line-height: 1.35; }
+.noor-tabbed-home .workspace-loaded-state { display: none; }
+.noor-tabbed-home .workspace-heading > a.workspace-full-page {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d9d5ca;
+  border-radius: 10px;
+  background: #f8f6ef;
+  color: #0b5649;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+.noor-tabbed-home .workspace-heading > a.workspace-full-page:hover { border-color: #b89a52; background: #f3efe2; color: #073f36; }
+.noor-tabbed-home .workspace-heading > a.workspace-full-page span { color: inherit; font-size: inherit; font-weight: inherit; letter-spacing: 0; }
+.noor-tabbed-home .workspace-heading > a.workspace-full-page svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Prayer icons must always stay as premium line art. */
+.noor-tabbed-home .home-prayer-strip svg {
+  width: 24px;
+  height: 24px;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.7;
+}
+
+.noor-tabbed-home .workspace-prayer .home-prayer-strip {
+  width: 100%;
+  margin: 0;
+  box-shadow: none;
+}
+
+/* Readable dual-calendar treatment. */
+.noor-tabbed-home .workspace-calendar { padding: 18px; grid-template-columns: minmax(0, 1.65fr) minmax(280px, .55fr); gap: 16px; }
+.noor-tabbed-home .workspace-calendar > section,
+.noor-tabbed-home .workspace-calendar > aside { border: 1px solid #ddd8cb; border-radius: 16px; background: #fffefa; overflow: hidden; }
+.noor-tabbed-home .workspace-calendar > section > header { min-height: 66px; padding: 8px 12px; border-bottom: 1px solid #e6e2d9; display: grid; grid-template-columns: 42px 1fr auto 42px; align-items: center; gap: 8px; }
+.noor-tabbed-home .workspace-calendar > section > header > div { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.noor-tabbed-home .workspace-calendar > section > header strong { font-family: Georgia, serif; font-size: 20px; font-weight: 520; }
+.noor-tabbed-home .workspace-calendar > section > header small { color: #9b7b34; font-size: 10px; font-weight: 700; letter-spacing: .05em; }
+.noor-tabbed-home .workspace-calendar > section > header button { width: 40px; height: 40px; border: 1px solid #e0ddd3; border-radius: 12px; background: #f1f3ec; cursor: pointer; }
+.noor-tabbed-home .workspace-calendar > section > header .calendar-today-button { width: auto; padding: 0 13px; color: #075548; font-size: 11px; font-weight: 700; }
+.noor-tabbed-home .calendar-week { min-height: 34px; background: #f7f5ef; }
+.noor-tabbed-home .calendar-week span { color: #6b7772; font-size: 10px; font-weight: 700; }
+.noor-tabbed-home .calendar-grid button,
+.noor-tabbed-home .calendar-grid i { min-height: 76px; }
+.noor-tabbed-home .calendar-grid button { padding: 9px; border-color: #ebe7df; align-items: flex-start; justify-content: flex-start; text-align: left; position: relative; }
+.noor-tabbed-home .calendar-grid button > strong { color: #17332e; font-size: 18px; line-height: 1; }
+.noor-tabbed-home .calendar-grid button > span { color: #87908c; font-size: 8px; text-transform: uppercase; }
+.noor-tabbed-home .calendar-grid button > small { margin-top: auto; color: #9b7b34; font-size: 10px; font-weight: 650; }
+.noor-tabbed-home .calendar-grid button.friday { background: #fbf7e9; }
+.noor-tabbed-home .calendar-grid button.selected { box-shadow: inset 0 0 0 2px #af914c; }
+.noor-tabbed-home .calendar-grid button.today { background: #075548; }
+.noor-tabbed-home .calendar-grid button.today > strong,
+.noor-tabbed-home .calendar-grid button.today > span,
+.noor-tabbed-home .calendar-grid button.today > small { color: #fff; }
+.noor-tabbed-home .workspace-calendar > aside { padding: 16px; }
+.calendar-selected-day { margin-bottom: 16px; padding: 15px; border-radius: 13px; background: #075548; color: #fff; display: flex; flex-direction: column; gap: 5px; }
+.calendar-selected-day > span { color: #e1c472 !important; }
+.calendar-selected-day > strong { font-family: Georgia, serif; font-size: 20px; font-weight: 520; line-height: 1.2; }
+.calendar-selected-day > small { color: rgba(255, 255, 255, .72) !important; font-size: 10px; }
+.noor-tabbed-home .workspace-calendar > aside > span { color: #9b7b34; font-size: 9px; font-weight: 800; letter-spacing: .13em; }
+.noor-tabbed-home .workspace-calendar > aside > article { padding: 12px 2px; border-bottom: 1px solid #e7e3da; }
+.noor-tabbed-home .workspace-calendar > aside > article div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.noor-tabbed-home .workspace-calendar > aside > article strong { font-size: 12px; }
+.noor-tabbed-home .workspace-calendar > aside > article small { color: #9b7b34; font-size: 9px; }
+.noor-tabbed-home .workspace-calendar > aside > article p { margin: 4px 0 0; color: #65706c; font-size: 10px; line-height: 1.4; }
+.noor-tabbed-home .workspace-calendar > aside > small { display: block; margin-top: 12px; color: #7b8580; font-size: 9px; line-height: 1.45; }
+
+html.noor-dark .noor-tabbed-home { background: #0f1d19; color: #f6f2e8; }
+html.noor-dark .noor-tabbed-home .noor-shell-header {
+  border-bottom-color: rgba(195, 162, 86, .25);
+  background: #063d34;
+  color: #fffdf7;
+  box-shadow: none;
+}
+html.noor-dark .noor-tabbed-home .reference-brand { color: #f0cf79; }
+html.noor-dark .noor-tabbed-home .reference-brand small { color: #fffdf7; }
+html.noor-dark .noor-tabbed-home .reference-logo { background: #fffdf7; box-shadow: none; }
+html.noor-dark .noor-tabbed-home .reference-logo::after { background: #063d34; }
+html.noor-dark .noor-tabbed-home .header-global-search,
+html.noor-dark .noor-tabbed-home .theme-toggle,
+html.noor-dark .noor-tabbed-home .noor-profile,
+html.noor-dark .noor-tabbed-home .noor-language select {
+  border-color: rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, .045);
+  color: #fff;
+  box-shadow: none;
+}
+html.noor-dark .noor-tabbed-home .header-global-search span { color: rgba(255, 255, 255, .78); }
+html.noor-dark .noor-tabbed-home .header-global-search kbd { border-color: rgba(255, 255, 255, .18); background: transparent; color: #ead38e; }
+html.noor-dark .noor-tabbed-home .theme-toggle span { color: #f1d276; }
+html.noor-dark .noor-tabbed-home .noor-language option { background: #063d34; color: #fffdf7; }
+html.noor-dark .noor-tabbed-home .noor-fixed-hero {
+  background:
+    linear-gradient(90deg, rgba(3, 49, 41, .97) 0%, rgba(4, 61, 51, .9) 43%, rgba(4, 55, 47, .72) 100%),
+    linear-gradient(180deg, rgba(2, 42, 35, .15), rgba(2, 42, 35, .62)),
+    url("/images/noor/hero-scene.webp") center 58% / cover no-repeat,
+    #063d34;
+  color: #fffdf7;
+}
+html.noor-dark .noor-greeting-row h1 { color: #fffdf7; }
+html.noor-dark .noor-greeting-row p { color: rgba(255, 255, 255, .72); }
+html.noor-dark .noor-tabbed-home .noor-pattern { border-color: #c3a256; }
+html.noor-dark .noor-tabbed-home .noor-feature-tabs,
+html.noor-dark .noor-tabbed-home .noor-dynamic-workspace,
+html.noor-dark .noor-tabbed-home .workspace-calendar > section,
+html.noor-dark .noor-tabbed-home .workspace-calendar > aside { border-color: #29413a; background: #14231f; color: #f6f2e8; }
+html.noor-dark .noor-tabbed-home .noor-feature-tabs > button { color: #dce6e1; }
+html.noor-dark .noor-tabbed-home .noor-feature-tabs > button.active { background: #1b6a5a; color: #fff; }
+html.noor-dark .noor-tabbed-home .noor-dynamic-workspace.qibla-only-panel { border: 0; background: transparent; }
+html.noor-dark .noor-tabbed-home .workspace-heading > a.workspace-full-page { border-color: #29413a; background: #1a2d28; color: #e4c875; }
+html.noor-dark .noor-tabbed-home .calendar-grid button > strong { color: #f6f2e8; }
+html.noor-dark .noor-tabbed-home .calendar-week,
+html.noor-dark .noor-tabbed-home .calendar-grid button.friday { background: #1a2d28; }
+
+@media (max-width: 1180px) {
+  .noor-tabbed-home .noor-shell-header { padding-inline: 22px; }
+  .noor-tabbed-home .header-global-search { width: 230px; }
+  .noor-tabbed-home .noor-fixed-hero { min-height: 390px; padding-inline: 28px; }
+  .daily-status-card { padding: 16px; }
+  .noor-tabbed-home .noor-feature-shell { width: calc(100% - 30px); }
+  .noor-tabbed-home .noor-feature-tabs { grid-template-columns: repeat(8, 96px); }
+}
+
+@media (max-width: 840px) {
+  .noor-tabbed-home .header-global-search { width: 44px; min-width: 44px; padding: 0; justify-content: center; }
+  .noor-tabbed-home .header-global-search span,
+  .noor-tabbed-home .header-global-search kbd { display: none; }
+  .noor-tabbed-home .noor-fixed-hero { min-height: 385px; padding-bottom: 72px; }
+  .noor-greeting-row { min-height: 74px; }
+  .noor-daily-status { grid-auto-flow: column; grid-auto-columns: minmax(290px, 72vw); grid-template-columns: none; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 7px; }
+  .daily-status-card { min-height: 170px; scroll-snap-align: start; }
+  .noor-tabbed-home .noor-feature-shell { margin-top: -52px; }
+  .noor-tabbed-home .workspace-calendar { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 650px) {
+  .noor-tabbed-home .noor-shell-header { height: 64px; padding-inline: 12px; gap: 8px; }
+  .noor-tabbed-home .reference-brand { min-width: 0; gap: 7px; }
+  .noor-tabbed-home .reference-logo { width: 36px; height: 36px; }
+  .noor-tabbed-home .reference-brand strong { font-size: 17px; }
+  .noor-tabbed-home .reference-brand small { font-size: 6px; }
+  .noor-tabbed-home .site-utilities,
+  .noor-tabbed-home .noor-header-actions { gap: 5px; }
+  .noor-tabbed-home .theme-toggle,
+  .noor-tabbed-home .noor-profile,
+  .noor-tabbed-home .noor-language select,
+  .noor-tabbed-home .header-global-search { width: 38px; min-width: 38px; height: 38px; border-radius: 11px; }
+  .noor-tabbed-home .noor-profile { display: none; }
+  .noor-tabbed-home .noor-fixed-hero { min-height: 370px; padding: 17px 14px 65px; }
+  .noor-tabbed-home .noor-pattern { display: none; }
+  .noor-greeting-row { min-height: 70px; }
+  .noor-greeting-row > div > span { font-size: 8px; }
+  .noor-greeting-row h1 { margin-top: 3px; font-size: 29px; }
+  .noor-greeting-row p { margin-top: 5px; font-size: 12px; }
+  .noor-daily-status { grid-auto-columns: minmax(275px, 86vw); gap: 10px; }
+  .daily-status-card { min-height: 164px; padding: 15px; border-radius: 17px; }
+  .daily-card-label { font-size: 9px; }
+  .prayer-summary-card > strong,
+  .date-summary-card > strong { font-size: 24px; }
+  .prayer-countdown { font-size: 23px; }
+  .date-summary-card > p { margin-bottom: 12px; }
+  .hero-ayah { font-size: 24px; }
+  .noor-tabbed-home .noor-feature-shell { width: calc(100% - 18px); margin-top: -48px; }
+  .noor-tabbed-home .noor-feature-tabs { min-height: 84px; padding: 7px; border-radius: 16px; grid-template-columns: repeat(8, 76px); }
+  .noor-tabbed-home .noor-feature-tabs > button { min-width: 76px; min-height: 68px; gap: 5px; }
+  .noor-tabbed-home .noor-feature-tabs > button::before { top: 14px; bottom: 14px; }
+  .noor-tabbed-home .noor-feature-tabs svg { width: 23px; height: 23px; }
+  .noor-tabbed-home .noor-feature-tabs span { font-size: 9.5px; }
+  .noor-tool-anchor { margin-top: 11px; scroll-margin-top: 72px; }
+  .noor-tabbed-home .workspace-heading { min-height: 56px; padding: 8px 13px; }
+  .noor-tabbed-home .workspace-heading h2 { font-size: 21px; }
+  .noor-tabbed-home .workspace-heading p { font-size: 10px; }
+  .noor-tabbed-home .workspace-heading > a.workspace-full-page { width: 40px; min-height: 40px; padding: 0; }
+  .noor-tabbed-home .workspace-heading > a.workspace-full-page span { display: none; }
+  .noor-tabbed-home .workspace-calendar { padding: 10px; }
+  .noor-tabbed-home .workspace-calendar > section > header { grid-template-columns: 38px 1fr 38px; }
+  .noor-tabbed-home .workspace-calendar > section > header .calendar-today-button { display: none; }
+  .noor-tabbed-home .calendar-grid button,
+  .noor-tabbed-home .calendar-grid i { min-height: 66px; }
+  .noor-tabbed-home .calendar-grid button { padding: 7px 5px; }
+  .noor-tabbed-home .calendar-grid button > span { display: none; }
+  .noor-tabbed-home .calendar-grid button > small { font-size: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .daily-status-card,
+  .noor-tabbed-home .noor-feature-tabs > button { transition: none; }
+}
