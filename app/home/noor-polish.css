@@ -1,0 +1,523 @@
+/* NOOR editorial polish layer.
+   The product stays compact, but every label, action and reading surface remains legible. */
+:root {
+  --noor-canvas: #f6f3eb;
+  --noor-surface: #fffdf8;
+  --noor-surface-soft: #f0eee6;
+  --noor-ink: #142f29;
+  --noor-muted: #536861;
+  --noor-green: #075548;
+  --noor-green-deep: #043f36;
+  --noor-gold: #9b7731;
+  --noor-line: #d8d2c5;
+  --noor-line-soft: #e9e4da;
+  --noor-display: var(--font-display), Georgia, "Times New Roman", serif;
+  --noor-shadow-sm: 0 5px 18px rgba(17, 52, 43, .055);
+  --noor-shadow-md: 0 16px 42px rgba(17, 52, 43, .085);
+  --noor-radius-sm: 10px;
+  --noor-radius-md: 14px;
+  --noor-radius-lg: 18px;
+  --noor-motion: 180ms ease;
+}
+
+html.noor-dark {
+  --noor-canvas: #0f1d19;
+  --noor-surface: #14231f;
+  --noor-surface-soft: #1a2d28;
+  --noor-ink: #f5f2e9;
+  --noor-muted: #bdcac4;
+  --noor-gold: #dfc274;
+  --noor-line: #334a43;
+  --noor-line-soft: #293e38;
+  --noor-shadow-sm: 0 6px 22px rgba(0, 0, 0, .16);
+  --noor-shadow-md: 0 18px 48px rgba(0, 0, 0, .22);
+}
+
+body {
+  background: var(--noor-canvas);
+  color: var(--noor-ink);
+  font-family: var(--font-geist), Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(155, 119, 49, .24); color: var(--noor-ink); }
+button, a, input, select, summary { touch-action: manipulation; }
+button, a, summary { -webkit-tap-highlight-color: transparent; }
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--noor-green) 52%, white);
+  outline-offset: 3px;
+}
+
+/* A restrained editorial type hierarchy replaces the generic card-template feel. */
+.reference-brand strong,
+.noor-greeting-row h1,
+.daily-status-card > strong,
+.prayer-countdown,
+.workspace-heading h2,
+.workspace-calendar > section > header strong,
+.calendar-selected-day > strong,
+.home-quran-audio > strong,
+.workspace-mosques > aside strong,
+.workspace-duas h3,
+.workspace-darood h3,
+.workspace-lughat article strong,
+.workspace-names h3,
+.workspace-destinations nav strong,
+.workspace-destinations h3,
+.noor-more-features h2,
+.noor-more-feature-group h3,
+.noor-more-feature-copy strong,
+.saved-summary h1,
+.saved-summary > strong b,
+.saved-sections h2,
+.saved-card h3,
+.saved-empty h2,
+.quran-topbar strong,
+.compact-tool-topbar strong,
+.tool-page-intro h1,
+.compact-directory-intro h1 {
+  font-family: var(--noor-display);
+}
+
+/* Header */
+.noor-tabbed-home .noor-shell-header {
+  height: 72px;
+  padding-inline: clamp(20px, 4vw, 64px);
+  border-bottom-color: color-mix(in srgb, var(--noor-gold) 28%, transparent);
+  background:
+    linear-gradient(45deg, transparent 48%, rgba(155, 119, 49, .035) 49%, transparent 51%) 0 0 / 36px 36px,
+    #fbf8ee;
+  box-shadow: 0 3px 18px rgba(32, 67, 58, .055);
+}
+
+.noor-tabbed-home .reference-brand { min-width: 200px; }
+.noor-tabbed-home .reference-logo { width: 44px; height: 44px; box-shadow: 0 5px 16px rgba(8, 70, 59, .12); }
+.noor-tabbed-home .reference-brand strong { font-size: 25px; font-weight: 600; letter-spacing: .12em; }
+.noor-tabbed-home .reference-brand small { color: #415f57; font-size: 9px; font-weight: 700; letter-spacing: .2em; }
+
+.noor-tabbed-home .header-global-search,
+.noor-tabbed-home .theme-toggle,
+.noor-tabbed-home .saved-header-link,
+.noor-tabbed-home .noor-profile,
+.noor-tabbed-home .noor-language select {
+  min-height: 44px;
+  border-color: #d5cebe;
+  border-radius: 11px;
+  background: rgba(255, 253, 248, .92);
+  box-shadow: none;
+  transition: border-color var(--noor-motion), background var(--noor-motion), box-shadow var(--noor-motion);
+}
+
+.noor-tabbed-home .header-global-search:hover,
+.noor-tabbed-home .theme-toggle:hover,
+.noor-tabbed-home .saved-header-link:hover,
+.noor-tabbed-home .noor-profile:hover,
+.noor-tabbed-home .noor-language select:hover {
+  border-color: #b59b62;
+  background: #fffdf8;
+  box-shadow: var(--noor-shadow-sm);
+}
+
+.noor-tabbed-home .header-global-search span { color: #4e6760; font-size: 13px; }
+.noor-tabbed-home .saved-header-link { padding-inline: 13px; font-size: 12px; }
+
+/* Hero */
+.noor-tabbed-home .noor-fixed-hero {
+  min-height: 408px;
+  padding: 26px clamp(18px, 4vw, 64px) 80px;
+  background:
+    linear-gradient(90deg, rgba(252, 249, 240, .99) 0%, rgba(249, 245, 231, .94) 52%, rgba(243, 232, 201, .78) 100%),
+    url("/images/noor/hero-scene.webp") center 58% / cover no-repeat,
+    #f8f2e1;
+}
+
+.noor-tabbed-home .noor-fixed-hero::after { opacity: .18; background-size: 88px 88px; }
+.noor-greeting-row { min-height: 84px; }
+.noor-greeting-row > div > span { color: var(--noor-gold); font-size: 11px; font-weight: 750; letter-spacing: .16em; }
+.noor-greeting-row h1 { margin-top: 4px; font-size: clamp(38px, 3vw, 48px); font-weight: 600; line-height: .98; letter-spacing: -.025em; }
+.noor-greeting-row p { margin-top: 8px; color: #49675f; font-size: 15px; line-height: 1.4; }
+
+.noor-daily-status { grid-template-columns: 1.06fr 1fr 1.06fr .76fr; gap: 12px; }
+.daily-status-card {
+  min-height: 178px;
+  padding: 18px 20px;
+  border-color: rgba(231, 204, 128, .38);
+  border-radius: var(--noor-radius-md);
+  box-shadow: 0 9px 26px rgba(0, 32, 26, .09);
+  transition: border-color var(--noor-motion), box-shadow var(--noor-motion), background var(--noor-motion);
+}
+.daily-status-card:hover { transform: none; border-color: rgba(239, 207, 117, .72); box-shadow: 0 12px 31px rgba(0, 32, 26, .14); }
+.daily-status-card:hover::before { transform: scale(1.018); }
+.daily-card-open { top: 15px; right: 16px; font-size: 16px; }
+.daily-card-label { gap: 8px; font-size: 11px; letter-spacing: .11em; }
+.daily-card-label svg { width: 18px; height: 18px; }
+.prayer-summary-card > strong,
+.date-summary-card > strong { margin-top: 11px; font-size: clamp(28px, 2vw, 34px); font-weight: 600; }
+.prayer-countdown { margin-top: 9px; font-size: clamp(24px, 1.75vw, 30px); font-variant-numeric: tabular-nums; }
+.countdown-labels { color: rgba(255,255,255,.7); font-size: 9px; }
+.daily-card-meta b { font-size: 16px; }
+.daily-card-meta span,
+.daily-card-source { color: rgba(255,255,255,.72); font-size: 11px; letter-spacing: .035em; }
+.date-summary-card > p { font-size: 13px; }
+.hero-ayah { font-size: clamp(26px, 1.8vw, 32px); }
+.verse-summary-card blockquote { color: rgba(255,255,255,.84); font-size: 13px; }
+.mini-qibla-copy strong { font-size: 13px; }
+.mini-qibla-copy small { color: rgba(255,255,255,.72); font-size: 10px; }
+
+/* Tool launcher */
+.noor-tabbed-home .noor-feature-shell { width: min(calc(100% - 40px), 1440px); margin-top: -55px; }
+.noor-tabbed-home .noor-feature-tabs {
+  min-height: 96px;
+  padding: 8px;
+  border-color: var(--noor-line);
+  border-radius: var(--noor-radius-lg);
+  background: var(--noor-surface);
+  box-shadow: var(--noor-shadow-md);
+  gap: 0;
+}
+.noor-tabbed-home .noor-feature-tabs > button {
+  min-height: 78px;
+  padding: 8px 6px 7px;
+  border-radius: var(--noor-radius-sm);
+  gap: 7px;
+  transition: background var(--noor-motion), color var(--noor-motion), box-shadow var(--noor-motion);
+}
+.noor-tabbed-home .noor-feature-tabs > button::before { top: 18px; bottom: 18px; border-color: var(--noor-line-soft); }
+.noor-tabbed-home .noor-feature-tabs > button:hover { transform: none; background: #f3f2eb; }
+.noor-tabbed-home .noor-feature-tabs > button.active { background: var(--noor-green); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+.noor-tabbed-home .noor-feature-tabs > button.active::after { left: 30%; right: 30%; bottom: -8px; height: 2px; }
+.noor-tabbed-home .noor-feature-tabs svg { width: 25px; height: 25px; stroke-width: 1.6; }
+.noor-tabbed-home .noor-feature-tabs span { max-width: 116px; font-family: var(--font-geist), Arial, sans-serif; font-size: 12px; font-weight: 620; line-height: 1.25; }
+
+/* Every workspace shares the same calm information hierarchy. */
+.noor-tool-anchor { margin-top: 20px; }
+.noor-tabbed-home .noor-dynamic-workspace {
+  border-color: var(--noor-line);
+  border-radius: var(--noor-radius-lg);
+  background: var(--noor-surface);
+  box-shadow: 0 10px 32px rgba(23, 53, 45, .055);
+}
+.noor-tabbed-home .workspace-heading { min-height: 78px; padding: 14px 20px 13px; border-color: var(--noor-line-soft); }
+.noor-tabbed-home .workspace-heading > div > span { display: none; }
+.noor-tabbed-home .workspace-heading h2 { margin: 0; color: var(--noor-ink); font-size: clamp(27px, 2vw, 32px); font-weight: 600; line-height: 1.05; letter-spacing: -.018em; }
+.noor-tabbed-home .workspace-heading p { margin-top: 4px; color: var(--noor-muted); font-size: 13px; line-height: 1.5; }
+.noor-tabbed-home .workspace-heading > a.workspace-full-page {
+  min-height: 44px;
+  padding-inline: 13px;
+  border-color: var(--noor-line);
+  border-radius: var(--noor-radius-sm);
+  background: transparent;
+  color: var(--noor-green);
+  font-size: 12px;
+}
+.noor-tabbed-home .workspace-heading > a.workspace-full-page:hover { border-color: #aa8c49; background: #f3f0e7; }
+
+/* Quran */
+.home-quran-toolbar { min-height: 58px; padding: 8px 16px; gap: 8px; }
+.home-quran-toolbar label { min-width: 250px; height: 44px; padding-inline: 12px; border-radius: var(--noor-radius-sm); }
+.home-quran-toolbar label span { font-size: 11px; letter-spacing: .08em; }
+.home-quran-toolbar select { font-size: 14px; }
+.home-quran-toolbar button { min-height: 44px; padding-inline: 13px; border-radius: var(--noor-radius-sm); font-size: 12px; font-weight: 630; }
+.home-quran-verses { max-height: 500px; }
+.home-quran-verses > div { min-height: 112px; padding: 15px 18px; grid-template-columns: 38px minmax(280px, 1.2fr) minmax(260px, .8fr); gap: 18px; }
+.ayah-number { width: 34px; height: 34px; font-size: 11px; }
+.ayah-arabic { margin-block: 0; font-size: clamp(29px, 2.1vw, 36px); line-height: 1.75; }
+.ayah-arabic-wrap small { color: var(--noor-muted); font-size: 12px; line-height: 1.45; }
+.ayah-translation { color: var(--noor-muted); font-size: 14px; line-height: 1.6; }
+.ayah-translation b { font-size: 11px; }
+.home-quran-audio { padding: 24px; }
+.home-quran-audio > span { font-size: 11px; letter-spacing: .12em; }
+.home-quran-audio > strong { font-size: 24px; font-weight: 600; }
+.home-quran-audio > p { font-size: 13px; line-height: 1.6; }
+.home-quran-audio > button,
+.home-quran-audio > a { min-height: 44px; border-radius: var(--noor-radius-sm); font-size: 13px; }
+.home-quran-audio > div:last-of-type { font-size: 11px; font-variant-numeric: tabular-nums; }
+
+/* Prayer and calendar */
+.workspace-prayer { padding: 18px 20px 20px; }
+.prayer-workspace-notes { margin-top: 14px; gap: 10px; }
+.prayer-workspace-notes span { min-height: 52px; padding: 12px 14px; border-radius: var(--noor-radius-sm); background: var(--noor-surface-soft); color: var(--noor-muted); font-size: 12px; line-height: 1.5; }
+.home-prayer-label strong { font-size: 18px; }
+.home-prayer-label small,
+.home-prayer-times span,
+.home-prayer-next span { font-size: 11px; }
+.home-prayer-times strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+.home-prayer-next small { font-size: 15px; }
+.noor-tabbed-home .workspace-calendar { padding: 20px; gap: 18px; }
+.noor-tabbed-home .workspace-calendar > section,
+.noor-tabbed-home .workspace-calendar > aside { border-radius: var(--noor-radius-md); }
+.noor-tabbed-home .workspace-calendar > section > header { min-height: 74px; padding: 10px 14px; }
+.noor-tabbed-home .workspace-calendar > section > header strong { font-size: 23px; font-weight: 600; }
+.noor-tabbed-home .workspace-calendar > section > header small,
+.noor-tabbed-home .calendar-week span { font-size: 11px; }
+.noor-tabbed-home .calendar-grid button,
+.noor-tabbed-home .calendar-grid i { min-height: 82px; }
+.noor-tabbed-home .calendar-grid button > span { font-size: 10px; }
+.noor-tabbed-home .calendar-grid button > small { font-size: 11px; }
+.calendar-selected-day > strong { font-size: 23px; }
+.calendar-selected-day > small,
+.noor-tabbed-home .workspace-calendar > aside > article p,
+.noor-tabbed-home .workspace-calendar > aside > small { font-size: 12px; }
+.noor-tabbed-home .workspace-calendar > aside > span { font-size: 11px; }
+.noor-tabbed-home .workspace-calendar > aside > article strong { font-size: 14px; }
+.noor-tabbed-home .workspace-calendar > aside > article small { font-size: 11px; }
+
+/* Mosque, dua and darood */
+.workspace-mosques { padding: 22px; grid-template-columns: 340px 1fr; gap: 18px; }
+.workspace-mosques > aside { padding: 26px; border-radius: var(--noor-radius-md); }
+.workspace-mosques > aside > span { width: 40px; height: 40px; display: grid; place-items: center; }
+.workspace-mosques > aside > span svg,
+.mosque-empty > span svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.workspace-mosques > aside strong { font-size: 29px; font-weight: 600; }
+.workspace-mosques > aside p { font-size: 14px; line-height: 1.65; }
+.workspace-mosques > aside button { min-height: 46px; border-radius: var(--noor-radius-sm); }
+.workspace-mosques > aside small { font-size: 12px; }
+.workspace-mosques > section { border-radius: var(--noor-radius-md); }
+.workspace-mosques article { min-height: 76px; padding: 13px 16px; }
+.workspace-mosques article span { font-size: 10px; }
+.workspace-mosques article strong { font-size: 15px; }
+.workspace-mosques article small { font-size: 12px; }
+.workspace-mosques article b { font-size: 13px; }
+
+.workspace-duas { padding: 20px 22px 22px; grid-template-columns: 200px 1fr; gap: 20px; }
+.workspace-duas nav button { min-height: 44px; border-radius: var(--noor-radius-sm); font-size: 13px; }
+.workspace-duas article,
+.workspace-darood article { padding: 22px 26px; border-radius: var(--noor-radius-md); }
+.workspace-duas article > span,
+.workspace-darood article > span { font-size: 11px; }
+.workspace-duas h3,
+.workspace-darood h3 { font-size: 27px; font-weight: 600; }
+.workspace-duas .arabic,
+.workspace-darood .arabic,
+.workspace-destinations .arabic { font-size: clamp(28px, 2vw, 34px); }
+.workspace-duas article > p:not(.arabic),
+.workspace-darood article > p:not(.arabic) { color: var(--noor-muted); font-size: 14px; line-height: 1.65; }
+.workspace-duas blockquote,
+.workspace-darood blockquote,
+.workspace-names blockquote { padding: 12px 14px; font-family: var(--font-geist), Arial, sans-serif; font-size: 13px; line-height: 1.6; }
+.workspace-duas article button { min-height: 44px; font-size: 12px; }
+.workspace-darood { padding: 20px 22px 22px; grid-template-columns: 1fr 280px; gap: 20px; }
+.workspace-darood > aside { padding: 26px; border-radius: var(--noor-radius-md); }
+.workspace-darood > aside > span { font-size: 11px; }
+.workspace-darood > aside > strong { font-size: 58px; }
+.workspace-darood > aside > small { font-size: 12px; }
+.workspace-darood aside > div button,
+.workspace-darood aside select { min-height: 40px; font-size: 12px; }
+
+/* Reference tools */
+.workspace-lughat { padding: 20px 22px 24px; }
+.workspace-lughat > div input { height: 44px; font-size: 14px; }
+.workspace-lughat > div span { color: var(--noor-muted); font-size: 12px; }
+.workspace-lughat > section { margin-top: 16px; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.workspace-lughat article { min-height: 166px; padding: 16px; border-radius: var(--noor-radius-sm); }
+.workspace-lughat article > span { font-size: 10px; }
+.workspace-lughat article strong { font-size: 21px; font-weight: 600; }
+.workspace-lughat article b { font-size: 27px; }
+.workspace-lughat article small { font-size: 11px; }
+.workspace-lughat article p,
+.workspace-lughat article em { color: var(--noor-muted); font-size: 12px; line-height: 1.5; }
+
+.workspace-names aside input { height: 44px; font-size: 14px; }
+.workspace-names aside button { min-height: 58px; padding: 8px 10px; }
+.workspace-names aside button span { font-size: 10px; }
+.workspace-names aside button b { font-size: 19px; }
+.workspace-names aside button strong { font-size: 11px; }
+.workspace-names > article { padding: 32px 36px; }
+.workspace-names article > span { font-size: 11px; }
+.workspace-names h3 { font-size: 31px; font-weight: 600; }
+.workspace-names article button { min-height: 44px; font-size: 12px; }
+
+.workspace-destinations { grid-template-columns: 320px 1fr; }
+.workspace-destinations nav button { min-height: 72px; padding: 11px 13px; }
+.workspace-destinations nav span { font-size: 10px; }
+.workspace-destinations nav strong { font-size: 19px; font-weight: 600; }
+.workspace-destinations nav small { font-size: 11px; }
+.workspace-destinations > article { padding: 28px 32px; }
+.destination-ornament b,
+.workspace-destinations article > span { font-size: 11px; }
+.workspace-destinations h3 { font-size: 34px; font-weight: 600; }
+.workspace-destinations article > p:not(.arabic) { color: var(--noor-muted); font-size: 14px; line-height: 1.65; }
+.workspace-destinations h4 { font-size: 14px; }
+.workspace-destinations ul,
+.workspace-destinations details p { font-size: 13px; line-height: 1.6; }
+.workspace-destinations summary { min-height: 44px; padding-block: 11px; font-size: 13px; }
+.workspace-destinations article > button { min-height: 44px; font-size: 12px; }
+
+/* Supporting feature directory: image-led but still content-first. */
+.noor-more-features {
+  margin-top: 20px;
+  padding: 22px;
+  border-color: var(--noor-line);
+  border-radius: var(--noor-radius-lg);
+  background: var(--noor-surface);
+  box-shadow: var(--noor-shadow-sm);
+}
+.noor-more-features > header { min-height: 64px; padding: 0 2px 16px; }
+.noor-more-features > header span:first-child { color: var(--noor-gold); font-size: 10px; }
+.noor-more-features h2 { margin-top: 3px; font-size: 29px; font-weight: 600; line-height: 1; }
+.noor-more-features > header button { min-height: 44px; padding-inline: 14px; border-radius: var(--noor-radius-sm); background: transparent; font-size: 12px; }
+.noor-more-feature-groups { padding-top: 18px; gap: 26px; }
+.noor-more-feature-group h3 { min-height: 29px; margin-bottom: 11px; grid-template-columns: 19px auto minmax(20px, 1fr); font-size: 17px; }
+.noor-more-feature-group h3 svg { width: 17px; height: 17px; }
+.noor-more-feature-grid { gap: 12px; }
+.noor-more-feature-card {
+  min-height: 168px;
+  padding: 20px;
+  border-color: var(--noor-line);
+  border-radius: 12px;
+  background: #fffdf8;
+  box-shadow: 0 3px 12px rgba(32, 59, 51, .045);
+  transition: border-color var(--noor-motion), box-shadow var(--noor-motion), background var(--noor-motion);
+}
+.noor-more-feature-card:hover { transform: none; border-color: #b79c5e; background: #fffefb; box-shadow: 0 9px 24px rgba(32, 59, 51, .09); }
+.noor-more-feature-card:hover .noor-more-feature-art { transform: scale(1.018); }
+.noor-more-feature-copy { width: 60%; min-height: 128px; }
+.noor-more-feature-copy strong { font-size: 18px; font-weight: 600; line-height: 1.12; }
+.noor-more-feature-copy small { margin-top: 7px; color: var(--noor-muted); font-size: 12px; line-height: 1.45; }
+.noor-more-feature-copy b { width: 30px; height: 28px; border-radius: 8px; font-size: 14px; }
+.noor-more-feature-art { width: 48%; filter: drop-shadow(0 6px 5px rgba(50,62,52,.10)); }
+
+/* Saved library and standalone tools inherit the same system. */
+.saved-page { background: var(--noor-canvas); color: var(--noor-ink); }
+.saved-summary { border-radius: var(--noor-radius-lg); box-shadow: var(--noor-shadow-sm); }
+.saved-summary h1 { font-weight: 600; }
+.saved-summary > div > span,
+.saved-card > span { font-size: 11px; }
+.saved-sections h2,
+.saved-card h3,
+.saved-empty h2 { font-weight: 600; }
+.saved-card { border-radius: var(--noor-radius-md); box-shadow: var(--noor-shadow-sm); }
+.saved-card > p { color: var(--noor-muted); font-size: 13px; }
+.saved-card .saved-arabic { font-size: 23px; }
+.saved-device-note { font-size: 12px; }
+
+.quran-topbar,
+.compact-tool-topbar { border-bottom-color: var(--noor-line); box-shadow: 0 3px 16px rgba(20, 52, 44, .05); }
+.quran-topbar strong,
+.compact-tool-topbar strong { font-weight: 600; }
+.tool-page-intro h1,
+.compact-directory-intro h1 { font-weight: 600; letter-spacing: -.02em; }
+
+/* Dark mode parity. */
+html.noor-dark .noor-tabbed-home .noor-shell-header { background: #063d34; }
+html.noor-dark .noor-tabbed-home .header-global-search,
+html.noor-dark .noor-tabbed-home .theme-toggle,
+html.noor-dark .noor-tabbed-home .saved-header-link,
+html.noor-dark .noor-tabbed-home .noor-profile,
+html.noor-dark .noor-tabbed-home .noor-language select { background: rgba(255,255,255,.055); }
+html.noor-dark .noor-tabbed-home .noor-feature-tabs > button:hover { background: var(--noor-surface-soft); }
+html.noor-dark .noor-tabbed-home .workspace-heading > a.workspace-full-page:hover { background: var(--noor-surface-soft); }
+html.noor-dark .noor-more-feature-card { background: var(--noor-surface); }
+html.noor-dark .noor-more-feature-card:hover { background: var(--noor-surface-soft); }
+
+@media (max-width: 1180px) {
+  .noor-daily-status { grid-template-columns: repeat(4, minmax(255px, 1fr)); overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; }
+  .daily-status-card { scroll-snap-align: start; }
+  .workspace-lughat > section { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 920px) {
+  .noor-tabbed-home .noor-fixed-hero { min-height: 402px; }
+  .noor-daily-status { grid-auto-columns: minmax(300px, 70vw); grid-template-columns: none; }
+  .home-quran-reader { grid-template-columns: 1fr; }
+  .home-quran-audio { border-top: 1px solid var(--noor-line-soft); border-left: 0; position: static; }
+  .home-quran-verses > div { grid-template-columns: 38px 1fr; }
+  .ayah-translation { grid-column: 2; }
+  .workspace-mosques { grid-template-columns: 280px 1fr; }
+  .workspace-darood { grid-template-columns: 1fr; }
+  .workspace-destinations { grid-template-columns: 250px 1fr; }
+  .noor-more-feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 650px) {
+  body { font-size: 16px; }
+  .noor-tabbed-home .noor-shell-header { height: 64px; padding-inline: 12px; }
+  .noor-tabbed-home .reference-brand strong { font-size: 19px; }
+  .noor-tabbed-home .reference-brand small { font-size: 8px; }
+  .noor-tabbed-home .theme-toggle,
+  .noor-tabbed-home .saved-header-link,
+  .noor-tabbed-home .noor-profile,
+  .noor-tabbed-home .noor-language select,
+  .noor-tabbed-home .header-global-search { width: 40px; min-width: 40px; height: 40px; }
+
+  .noor-tabbed-home .noor-fixed-hero { min-height: 386px; padding: 18px 14px 68px; }
+  .noor-greeting-row { min-height: 82px; }
+  .noor-greeting-row > div > span { font-size: 10px; }
+  .noor-greeting-row h1 { font-size: 35px; }
+  .noor-greeting-row p { margin-top: 6px; font-size: 14px; }
+  .noor-daily-status { grid-auto-columns: minmax(286px, 86vw); gap: 10px; }
+  .daily-status-card { min-height: 174px; padding: 17px; }
+  .daily-card-label { font-size: 10px; }
+  .daily-card-meta span,
+  .daily-card-source { font-size: 10px; }
+
+  .noor-tabbed-home .noor-feature-shell { width: calc(100% - 18px); margin-top: -48px; }
+  .noor-tabbed-home .noor-feature-tabs { min-height: 88px; padding: 6px; grid-template-columns: repeat(8, 82px); border-radius: var(--noor-radius-md); }
+  .noor-tabbed-home .noor-feature-tabs > button { min-width: 82px; min-height: 74px; }
+  .noor-tabbed-home .noor-feature-tabs span { font-size: 11px; }
+  .noor-tabbed-home .noor-dynamic-workspace { border-radius: var(--noor-radius-md); }
+  .noor-tabbed-home .workspace-heading { min-height: 72px; padding: 12px 14px; }
+  .noor-tabbed-home .workspace-heading h2 { font-size: 25px; }
+  .noor-tabbed-home .workspace-heading p { max-width: 260px; font-size: 12px; }
+  .noor-tabbed-home .workspace-heading > a.workspace-full-page { width: 44px; min-width: 44px; padding: 0; }
+  .noor-tabbed-home .workspace-heading > a.workspace-full-page span { display: none; }
+
+  .home-quran-toolbar { padding: 8px 10px; overflow-x: auto; }
+  .home-quran-toolbar label { min-width: 210px; }
+  .home-quran-toolbar button { white-space: nowrap; }
+  .home-quran-verses > div { padding: 14px 12px; grid-template-columns: 30px 1fr; gap: 9px; }
+  .ayah-number { width: 28px; height: 28px; }
+  .ayah-arabic { font-size: 27px; line-height: 1.7; }
+  .ayah-translation { font-size: 14px; line-height: 1.6; }
+  .home-quran-audio { padding: 20px 16px; }
+
+  .workspace-prayer,
+  .noor-tabbed-home .workspace-calendar,
+  .workspace-mosques,
+  .workspace-duas,
+  .workspace-darood { padding: 12px; grid-template-columns: 1fr; }
+  .prayer-workspace-notes { grid-template-columns: 1fr; }
+  .workspace-prayer .home-prayer-strip { grid-template-columns: 160px minmax(430px, 1fr) 110px 170px; }
+  .workspace-duas nav { flex-direction: row; overflow-x: auto; }
+  .workspace-duas nav button { min-width: 120px; }
+  .workspace-duas article,
+  .workspace-darood article { padding: 18px 16px; }
+  .workspace-mosques > aside { padding: 22px; }
+
+  .workspace-lughat { padding: 14px 12px; }
+  .workspace-lughat > section { grid-template-columns: 1fr; }
+  .workspace-lughat article { min-height: 154px; }
+  .workspace-names aside > div { grid-template-columns: 1fr; }
+  .workspace-names > article { padding: 26px 16px; }
+  .workspace-destinations { grid-template-columns: 1fr; }
+  .workspace-destinations > nav { overflow-x: auto; flex-direction: row; }
+  .workspace-destinations nav button { min-width: 190px; }
+  .workspace-destinations > article { padding: 24px 18px; }
+  .workspace-destinations h3,
+  .workspace-destinations article > p:not(.arabic),
+  .workspace-destinations details { max-width: 100%; }
+
+  .noor-more-features { padding: 16px 12px; border-radius: var(--noor-radius-md); }
+  .noor-more-features > header { min-height: 58px; padding-inline: 4px; }
+  .noor-more-features h2 { font-size: 26px; }
+  .noor-more-feature-grid { grid-template-columns: 1fr; gap: 10px; }
+  .noor-more-feature-card { min-height: 156px; padding: 18px; }
+  .noor-more-feature-copy { min-height: 120px; }
+  .noor-more-feature-copy strong { font-size: 19px; }
+  .noor-more-feature-copy small { font-size: 13px; }
+  .saved-library { width: min(100% - 24px, 560px); }
+  .saved-card > p,
+  .saved-empty p { font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

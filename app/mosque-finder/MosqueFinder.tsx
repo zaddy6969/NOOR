@@ -72,7 +72,7 @@ export default function MosqueFinder() {
       </div>
       <div className="mosque-results" aria-live="polite">
         {visible.map((mosque, index) => <article className={mosque.id === active?.id ? "active" : ""} key={mosque.id}><span>{String(index + 1).padStart(2, "0")}</span><div><small className="mosque-kind">{mosque.kind}</small><h2>{mosque.name}</h2><p>{mosque.address}</p><small>{mosque.distanceKm.toFixed(1)} km{mosque.denomination ? ` · ${mosque.denomination}` : ""}</small></div><div className="mosque-result-actions"><button type="button" onClick={() => setActiveId(mosque.id)}>View map</button><a href={`https://www.google.com/maps/dir/?api=1&destination=${mosque.lat},${mosque.lng}`} target="_blank" rel="noreferrer" aria-label={`Directions to ${mosque.name}`}>Directions ↗</a></div></article>)}
-        {!loading && !visible.length ? <div className="mosque-empty"><span aria-hidden="true">⌖</span><strong>No {filter.toLowerCase()} in this view</strong><p>Try another filter, choose a city or increase the radius.</p></div> : null}
+        {!loading && !visible.length ? <div className="mosque-empty"><span aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 43s14-11.4 14-25A14 14 0 1 0 10 18c0 13.6 14 25 14 25Z"/><circle cx="24" cy="18" r="5"/></svg></span><strong>No {filter.toLowerCase()} in this view</strong><p>Try another filter, choose a city or increase the radius.</p></div> : null}
       </div>
     </section>
   );

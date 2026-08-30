@@ -1,12 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist, Noto_Naskh_Arabic } from "next/font/google";
+import { Cormorant_Garamond, Geist, Noto_Naskh_Arabic } from "next/font/google";
 import { isClerkConfigured } from "@/lib/auth-config";
 import MediaProvider from "./media/MediaProvider";
 import SiteUtilitiesProvider from "./site/SiteUtilities";
 import PwaRegister from "./site/PwaRegister";
 import "./globals.css";
 import "./home/noor-redesign.css";
+import "./home/noor-polish.css";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -16,6 +17,12 @@ const geist = Geist({
 const notoArabic = Noto_Naskh_Arabic({
   variable: "--font-arabic",
   subsets: ["arabic"],
+});
+
+const display = Cormorant_Garamond({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -58,7 +65,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
   return (
     <html lang="en">
-      <body className={`${geist.variable} ${notoArabic.variable}`}>{content}<PwaRegister /></body>
+      <body className={`${geist.variable} ${notoArabic.variable} ${display.variable}`}>{content}<PwaRegister /></body>
     </html>
   );
 }
