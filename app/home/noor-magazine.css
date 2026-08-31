@@ -1,0 +1,236 @@
+/* NOOR homepage concept — modern Islamic editorial dashboard. */
+.noor-tabbed-home {
+  --mag-paper:#faf6ea;
+  --mag-green:#0b4035;
+  --mag-green-2:#163f36;
+  --mag-gold:#d5b45f;
+  --mag-ink:#173d35;
+  background:#f7f2e7;
+}
+.noor-tabbed-home .noor-shell-header {
+  height:76px;
+  padding-inline:clamp(20px,4vw,70px);
+  grid-template-columns:minmax(190px,230px) minmax(430px,1fr) auto;
+  gap:28px;
+  border-bottom:1px solid rgba(145,115,51,.2);
+  background:rgba(252,249,240,.97);
+  box-shadow:0 6px 26px rgba(47,55,40,.055);
+  backdrop-filter:blur(16px);
+}
+.noor-tabbed-home .reference-brand{min-width:0}
+.noor-tabbed-home .reference-logo{width:43px;height:43px}
+.noor-tabbed-home .reference-brand strong{color:var(--mag-green);font-size:24px}
+.magazine-main-nav{height:100%;display:flex;align-items:center;justify-content:center;gap:clamp(20px,2.6vw,43px)}
+.magazine-main-nav a,.magazine-main-nav button{
+  min-height:44px;padding:2px 0 0;border:0;background:transparent;color:#4b645d;
+  font:600 14px/1 var(--noor-display);text-decoration:none;white-space:nowrap;cursor:pointer;
+  position:relative;display:inline-flex;align-items:center
+}
+.magazine-main-nav a::after,.magazine-main-nav button::after{
+  content:"";position:absolute;right:50%;bottom:5px;left:50%;height:1px;background:#aa8132;
+  transition:right .18s ease,left .18s ease
+}
+.magazine-main-nav a:hover,.magazine-main-nav button:hover,.magazine-main-nav button.active{color:var(--mag-green)}
+.magazine-main-nav a:hover::after,.magazine-main-nav button:hover::after,.magazine-main-nav button.active::after{right:0;left:0}
+.noor-tabbed-home .noor-header-actions,.noor-tabbed-home .site-utilities{gap:7px}
+.noor-tabbed-home .site-utilities.compact .header-global-search,.noor-tabbed-home .header-global-search{
+  width:44px;min-width:44px;height:44px;padding:0;justify-content:center;border-radius:50%
+}
+.noor-tabbed-home .header-global-search>span,.noor-tabbed-home .header-global-search kbd{display:none}
+.noor-tabbed-home .saved-header-link{width:44px;min-width:44px;padding:0;justify-content:center;border-radius:50%}
+.noor-tabbed-home .saved-header-link>span{display:none}
+.noor-tabbed-home .theme-toggle,.noor-tabbed-home .noor-profile,.noor-tabbed-home .noor-language select{border-radius:50%}
+.noor-tabbed-home .noor-language select{width:44px;padding-inline:5px;font-size:11px}
+
+/* Scenic light canvas with the functional cards from the reference. */
+.noor-tabbed-home .noor-fixed-hero{
+  min-height:570px;padding:22px clamp(20px,4vw,70px) 99px;color:var(--mag-ink);
+  background:
+    linear-gradient(90deg,rgba(255,252,243,.99),rgba(255,251,239,.91) 46%,rgba(247,236,207,.72)),
+    url("/images/noor/hero-scene.webp") center 58%/cover no-repeat,#f3ead3
+}
+.noor-tabbed-home .noor-fixed-hero::after{
+  opacity:.18;background-size:84px 84px;
+  mask-image:linear-gradient(90deg,#000,transparent 28%,transparent 72%,#000)
+}
+.noor-tabbed-home .noor-pattern{opacity:.11}
+.noor-tabbed-home .noor-hero-inner{width:min(100%,1540px);max-width:1540px}
+.noor-greeting-row{min-height:76px}
+.noor-greeting-row>div>span{display:none}
+.noor-greeting-row h1{margin:0;color:var(--mag-ink);font-size:clamp(36px,3vw,52px);font-weight:600;line-height:.96}
+.noor-greeting-row p{margin-top:9px;color:#4f6962;font-size:15px}
+
+.noor-tabbed-home .noor-daily-status{
+  height:390px;display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));grid-template-rows:194px 178px;
+  gap:16px;overflow:visible
+}
+.noor-tabbed-home .daily-status-card{
+  min-height:0;padding:21px 24px;border:1px solid rgba(231,204,128,.36);border-radius:16px;
+  background:var(--mag-green-2);color:#fffdf4;
+  box-shadow:0 18px 42px rgba(16,51,43,.14);overflow:hidden;
+  transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease
+}
+.noor-tabbed-home .daily-status-card::before{display:block;opacity:.21;filter:saturate(.7) sepia(.12);transform:none}
+.noor-tabbed-home .daily-status-card::after{display:block;background:linear-gradient(90deg,rgba(8,55,46,.98),rgba(8,55,46,.84) 57%,rgba(8,55,46,.5))}
+.noor-tabbed-home .daily-status-card:hover{background:var(--mag-green-2);border-color:rgba(236,205,119,.72);box-shadow:0 23px 50px rgba(12,48,39,.2);transform:translateY(-2px)}
+.noor-tabbed-home .daily-status-card:hover::before{opacity:.28;transform:scale(1.015)}
+.noor-tabbed-home .daily-card-open{top:16px;right:17px;width:38px;height:38px;border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.8);background:rgba(255,255,255,.035)}
+.noor-tabbed-home .daily-card-label{color:var(--mag-gold);font-size:11px}
+.noor-tabbed-home .daily-card-meta span,.noor-tabbed-home .daily-card-source{color:rgba(255,255,255,.74);font-size:11px}
+
+/* Prayer is the single dominant action. */
+.noor-tabbed-home .prayer-summary-card{grid-column:1/8;grid-row:1/3;padding:30px 32px 25px}
+.noor-tabbed-home .prayer-summary-card::before{opacity:.16;background-position:61% 68%}
+.noor-tabbed-home .prayer-summary-card::after{background:linear-gradient(90deg,rgba(8,55,46,.99) 0%,rgba(8,55,46,.94) 52%,rgba(8,55,46,.64) 100%)}
+.noor-tabbed-home .prayer-summary-card>strong{margin-top:25px;font-size:clamp(46px,4vw,64px);font-weight:600}
+.noor-tabbed-home .prayer-countdown{margin-top:17px;font-size:clamp(30px,2.7vw,42px);letter-spacing:.075em}
+.noor-tabbed-home .countdown-labels{max-width:300px;color:rgba(255,255,255,.7);font-size:9px}
+.noor-tabbed-home .daily-card-meta{
+  width:min(100%,390px);margin-top:47px;padding-top:18px;border-top:1px solid rgba(255,255,255,.16)
+}
+.noor-tabbed-home .daily-card-meta b{color:var(--mag-gold);font-size:19px}
+.prayer-orbit{
+  position:absolute!important;z-index:2!important;right:42px;top:74px;width:190px;height:190px;
+  border:1px solid rgba(213,180,95,.22);border-radius:50%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;color:#fff
+}
+.prayer-orbit::before{
+  content:"";position:absolute;inset:12px;border:9px solid rgba(255,255,255,.12);border-top-color:#e5c875;
+  border-right-color:#e5c875;border-radius:50%;transform:rotate(25deg)
+}
+.prayer-orbit::after{
+  content:"";position:absolute;inset:31px;border:1px solid rgba(255,255,255,.09);border-radius:50%
+}
+.prayer-orbit i{position:absolute;top:-7px;width:16px;height:16px;border:1px solid #d8ba63;border-radius:50%}
+.prayer-orbit strong{position:relative;font:700 21px/1 var(--font-geist);letter-spacing:.08em;text-transform:uppercase}
+.prayer-orbit small{position:relative;margin-top:8px;color:rgba(255,255,255,.74);font-size:12px}
+
+/* Quran spans the top right, with real reading continuity. */
+.noor-tabbed-home .verse-summary-card{grid-column:8/13;grid-row:1;text-align:left;padding:22px 28px}
+.noor-tabbed-home .verse-summary-card::before{opacity:.39;background-position:95% 50%;background-size:auto 135%}
+.noor-tabbed-home .verse-summary-card::after{background:linear-gradient(90deg,rgba(8,55,46,.99) 0 49%,rgba(8,55,46,.78) 72%,rgba(8,55,46,.28))}
+.noor-tabbed-home .verse-summary-card .daily-card-label{justify-content:flex-start}
+.noor-tabbed-home .hero-ayah{width:64%;margin:9px 0 0;font-size:clamp(25px,2.1vw,34px);line-height:1.35;text-align:left}
+.noor-tabbed-home .verse-summary-card blockquote{width:64%;margin-top:1px;color:rgba(255,255,255,.86);font-size:13px;text-align:left}
+.noor-tabbed-home .verse-summary-card .daily-card-source{display:block;width:64%;margin-top:9px;text-align:left}
+.quran-progress-track{position:absolute!important;z-index:2!important;left:28px;right:28px;bottom:17px;height:4px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden}
+.quran-progress-track i{display:block;width:58%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#e3c36b,#f1d789)}
+
+/* Supporting cards keep the hierarchy quiet. */
+.noor-tabbed-home .date-summary-card{grid-column:8/11;grid-row:2;padding:21px 23px}
+.noor-tabbed-home .date-summary-card::before{background-position:72% 56%}
+.noor-tabbed-home .date-summary-card::after{background:linear-gradient(90deg,rgba(8,55,46,.98),rgba(8,55,46,.74))}
+.noor-tabbed-home .date-summary-card>strong{margin-top:16px;font-size:clamp(25px,2vw,33px);line-height:1.03}
+.noor-tabbed-home .date-summary-card>p{margin:10px 0 14px;color:rgba(255,255,255,.76);font-size:12px}
+.noor-tabbed-home .qibla-summary-card{grid-column:11/13;grid-row:2;padding:18px 16px}
+.noor-tabbed-home .qibla-summary-card::before{opacity:.25;background-position:65% center}
+.noor-tabbed-home .qibla-summary-card .mini-qibla-content{margin-top:2px;gap:4px}
+.noor-tabbed-home .mini-qibla-dial{width:88px;height:88px}
+.noor-tabbed-home .mini-qibla-copy strong{font-size:13px}
+.noor-tabbed-home .mini-qibla-copy small{font-size:9px}
+
+/* Exactly ten tools in one compact, image-led strip. */
+.noor-tabbed-home .noor-feature-shell{width:min(calc(100% - 48px),1540px);margin-top:-65px}
+.noor-tabbed-home .noor-feature-tabs{
+  min-height:124px;padding:8px;border:1px solid rgba(130,108,59,.21);border-radius:16px;
+  background:rgba(255,253,247,.98);box-shadow:0 18px 46px rgba(57,49,29,.1);
+  grid-template-columns:repeat(10,minmax(112px,1fr));gap:0;overflow-x:auto;
+  scrollbar-width:thin;scrollbar-color:rgba(172,135,55,.4) transparent
+}
+.noor-tabbed-home .noor-feature-tabs>button{
+  min-width:112px;min-height:106px;padding:12px 10px 10px;border:0;border-radius:9px;background:#f8f4e9;
+  color:var(--mag-ink);align-items:flex-start;justify-content:flex-end;gap:4px;overflow:hidden;isolation:isolate
+}
+.noor-tabbed-home .noor-feature-tabs>button+button{border-left:1px solid rgba(130,108,59,.15)}
+.noor-tabbed-home .noor-feature-tabs>button::before,
+.noor-tabbed-home .noor-feature-tabs>button:first-child::before,
+.noor-tabbed-home .noor-feature-tabs>button.active::before{
+  content:"";display:block;position:absolute;z-index:-2;inset:0;border:0;opacity:.34;
+  background-repeat:no-repeat;transition:opacity .2s ease,transform .3s ease
+}
+.noor-tabbed-home .noor-feature-tabs>button::after{
+  content:"";position:absolute;z-index:-1;inset:0;height:auto;border-radius:0;
+  background:linear-gradient(180deg,rgba(250,247,237,.08),rgba(250,247,237,.63) 55%,rgba(250,247,237,.98) 89%)
+}
+.noor-tabbed-home .noor-feature-tabs>button:hover,.noor-tabbed-home .noor-feature-tabs>button.active{
+  background:#f4eddb;color:var(--mag-ink);box-shadow:inset 0 -3px #b58c38
+}
+.noor-tabbed-home .noor-feature-tabs>button:hover::before,.noor-tabbed-home .noor-feature-tabs>button.active::before{opacity:.5;transform:scale(1.035)}
+.noor-tabbed-home .noor-feature-tabs svg,.noor-tabbed-home .noor-feature-tabs span{position:relative;z-index:2}
+.noor-tabbed-home .noor-feature-tabs svg{width:19px;height:19px;color:#8e6c26;stroke-width:1.8}
+.noor-tabbed-home .noor-feature-tabs span{max-width:100%;font:650 10.5px/1.18 var(--font-geist);text-align:left;text-wrap:balance}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="quran"]::before{background-image:url("/images/noor/quran-card.webp");background-size:cover;background-position:58% center}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="prayer-times"]::before,
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="mosque-finder"]::before{background-image:url("/images/noor/hero-scene.webp");background-size:cover}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="prayer-times"]::before{background-position:63% 60%}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="mosque-finder"]::before{background-position:80% 58%}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="daily-duas"]::before,
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="darood"]::before,
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="names"]::before{background-image:url("/images/noor/more-features/learning.webp");background-size:400% 200%}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="daily-duas"]::before{background-position:33.333% 0}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="darood"]::before{background-position:0 100%}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="names"]::before{background-position:66.667% 100%}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="zakat"]::before,
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="kaza"]::before,
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="destinations"]::before{background-image:url("/images/noor/more-features/life.webp");background-size:400% 200%}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="zakat"]::before{background-position:33.333% 0}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="kaza"]::before{background-position:33.333% 100%}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="destinations"]::before{background-position:66.667% 100%}
+.noor-tabbed-home .noor-feature-tabs>button[data-feature="lughat"]::before{background-image:url("/images/noor/more-features/support.webp");background-size:200% 200%;background-position:0 100%}
+
+/* Theme parity. */
+html.noor-dark .noor-tabbed-home{background:#0e1b17}
+html.noor-dark .noor-tabbed-home .noor-shell-header{background:#13231e}
+html.noor-dark .magazine-main-nav a,html.noor-dark .magazine-main-nav button{color:#c9d4cf}
+html.noor-dark .noor-tabbed-home .noor-fixed-hero{
+  background:linear-gradient(90deg,rgba(9,29,24,.94),rgba(9,29,24,.74) 50%,rgba(9,29,24,.42)),
+  url("/images/noor/hero-scene.webp") center 58%/cover no-repeat,#10231d
+}
+html.noor-dark .noor-tabbed-home .noor-greeting-row h1,html.noor-dark .noor-tabbed-home .noor-greeting-row p{color:#f5f1e8}
+html.noor-dark .noor-tabbed-home .noor-feature-tabs{background:#14251f}
+html.noor-dark .noor-tabbed-home .noor-feature-tabs>button{background:#192c25;color:#f3efe5}
+html.noor-dark .noor-tabbed-home .noor-feature-tabs>button::after{background:linear-gradient(180deg,rgba(25,44,37,.1),rgba(25,44,37,.68) 56%,rgba(25,44,37,.98) 90%)}
+html.noor-dark .noor-tabbed-home .noor-feature-tabs>button:hover,html.noor-dark .noor-tabbed-home .noor-feature-tabs>button.active{background:#213a31;color:#fff}
+
+@media(max-width:1220px){
+  .noor-tabbed-home .noor-shell-header{grid-template-columns:185px 1fr auto;gap:16px}
+  .magazine-main-nav{gap:18px}.magazine-main-nav a,.magazine-main-nav button{font-size:13px}
+  .noor-tabbed-home .saved-header-link,.noor-tabbed-home .noor-language{display:none}
+  .noor-tabbed-home .noor-daily-status{grid-template-columns:repeat(12,minmax(72px,1fr));overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;padding-bottom:7px}
+  .noor-tabbed-home .prayer-summary-card{min-width:600px}
+  .noor-tabbed-home .verse-summary-card{min-width:440px}
+  .noor-tabbed-home .date-summary-card{min-width:230px}
+  .noor-tabbed-home .qibla-summary-card{min-width:190px}
+  .noor-tabbed-home .daily-status-card{scroll-snap-align:start}
+  .noor-tabbed-home .noor-feature-tabs{grid-template-columns:repeat(10,116px)}
+}
+@media(max-width:980px){
+  .noor-tabbed-home .noor-shell-header{grid-template-columns:1fr auto}
+  .magazine-main-nav{display:none}
+  .noor-tabbed-home .noor-language{display:block}
+  .noor-tabbed-home .noor-fixed-hero{padding-inline:24px}
+}
+@media(max-width:700px){
+  .noor-tabbed-home .noor-shell-header{height:64px;padding-inline:14px}
+  .noor-tabbed-home .reference-logo{width:36px;height:36px}
+  .noor-tabbed-home .reference-brand strong{font-size:18px}
+  .noor-tabbed-home .reference-brand small{font-size:7px}
+  .noor-tabbed-home .noor-language,.noor-tabbed-home .noor-profile{display:none}
+  .noor-tabbed-home .site-utilities.compact .header-global-search,.noor-tabbed-home .header-global-search,.noor-tabbed-home .theme-toggle{width:38px;min-width:38px;height:38px}
+  .noor-tabbed-home .noor-fixed-hero{min-height:528px;padding:17px 14px 84px}
+  .noor-greeting-row{min-height:70px}.noor-greeting-row h1{font-size:31px}.noor-greeting-row p{font-size:12px}
+  .noor-tabbed-home .noor-daily-status{height:354px;grid-auto-flow:column;grid-auto-columns:minmax(280px,86vw);grid-template-columns:none;grid-template-rows:354px;gap:11px}
+  .noor-tabbed-home .prayer-summary-card,.noor-tabbed-home .verse-summary-card,.noor-tabbed-home .date-summary-card,.noor-tabbed-home .qibla-summary-card{grid-column:auto;grid-row:auto;min-width:0}
+  .noor-tabbed-home .prayer-summary-card{padding:24px 22px}.noor-tabbed-home .prayer-summary-card>strong{font-size:47px}
+  .noor-tabbed-home .prayer-countdown{font-size:27px}.noor-tabbed-home .daily-card-meta{margin-top:43px}
+  .prayer-orbit{right:18px;top:139px;width:128px;height:128px}.prayer-orbit::before{inset:9px;border-width:7px}.prayer-orbit strong{font-size:15px}
+  .noor-tabbed-home .verse-summary-card{padding:23px 22px}.noor-tabbed-home .hero-ayah,.noor-tabbed-home .verse-summary-card blockquote,.noor-tabbed-home .verse-summary-card .daily-card-source{width:72%}
+  .noor-tabbed-home .date-summary-card,.noor-tabbed-home .qibla-summary-card{padding:23px}
+  .noor-tabbed-home .noor-feature-shell{width:calc(100% - 20px);margin-top:-59px}
+  .noor-tabbed-home .noor-feature-tabs{min-height:108px;padding:6px;grid-template-columns:repeat(10,100px);border-radius:13px;scroll-snap-type:x proximity}
+  .noor-tabbed-home .noor-feature-tabs>button{min-width:100px;min-height:94px;padding:10px 8px 8px;scroll-snap-align:start}
+}
+@media(prefers-reduced-motion:reduce){
+  .magazine-main-nav a::after,.magazine-main-nav button::after,.noor-tabbed-home .daily-status-card,.noor-tabbed-home .noor-feature-tabs>button::before{transition:none}
+}

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import HeroDailyStatus from "./home/HeroDailyStatus";
 import HomeFeatureWorkspace, { type FeatureId, type QuranTarget } from "./home/HomeFeatureWorkspace";
-import HomePersonalRail from "./home/HomePersonalRail";
 import SiteFooter from "./site/SiteFooter";
 import { HeaderUtilities } from "./site/SiteUtilities";
 
@@ -76,7 +75,8 @@ const FEATURES: Array<{ id: FeatureId; label: string; icon: IconName }> = [
 
 const FEATURE_IDS = new Set(FEATURES.map((feature) => feature.id));
 const HERO_FEATURE_IDS = new Set<FeatureId>(["quran", "prayer-times", "qibla", "islamic-calendar"]);
-const FEATURE_STRIP = FEATURES.filter((feature) => !HERO_FEATURE_IDS.has(feature.id));
+// Qibla and Calendar stay in the hero; the launcher is one compact row of ten tools.
+const FEATURE_STRIP = FEATURES.filter((feature) => feature.id !== "qibla" && feature.id !== "islamic-calendar");
 
 type MoreFeature = {
   label: string;
@@ -249,8 +249,15 @@ export default function Home() {
         <Link className="reference-brand" href="#quran" onClick={(event) => { event.preventDefault(); activate("quran", { reveal: false }); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-label="NOOR Daily Muslim home">
           <span className="reference-logo" aria-hidden="true"><i /></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span>
         </Link>
+        <nav className="magazine-main-nav" aria-label="Primary navigation">
+          <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Home</button>
+          <button className={activeFeature === "quran" ? "active" : ""} type="button" onClick={() => activate("quran", { focus: true })}>Quran</button>
+          <Link href="/prayer-times">Prayer Times</Link>
+          <button className={activeFeature === "islamic-calendar" ? "active" : ""} type="button" onClick={() => activate("islamic-calendar", { focus: true })}>Calendar</button>
+          <button className={activeFeature === "qibla" ? "active" : ""} type="button" onClick={() => activate("qibla", { focus: true })}>Qibla</button>
+        </nav>
         <div className="noor-header-actions">
-          <HeaderUtilities />
+          <HeaderUtilities compact />
           <label className="noor-language"><span className="sr-only">Interface language; Hindi and Urdu are in beta</span><select value={locale} onChange={(event) => setLocale(event.target.value as NoorLocale)} aria-label="Interface language; Hindi and Urdu are in beta"><option value="en">EN</option><option value="ur">اردو · Beta</option><option value="hi">हिंदी · Beta</option></select></label>
           <Link className="noor-profile" href="/sign-in" aria-label="Your NOOR account"><NoorIcon name="profile" /></Link>
         </div>
@@ -270,6 +277,7 @@ export default function Home() {
             <button
               ref={(node) => { tabRefs.current[feature.id] = node; }}
               className={activeFeature === feature.id ? "active" : ""}
+              data-feature={feature.id}
               id={`tab-${feature.id}`}
               role="tab"
               aria-selected={activeFeature === feature.id}
@@ -291,8 +299,6 @@ export default function Home() {
             </button>
           ))}
         </div>
-        <HomePersonalRail locale={locale} activeFeature={activeFeature} onSelect={(feature) => activate(feature, { focus: true })} />
-
         <div className="noor-tool-anchor" id="selected-tool" ref={workspaceRef}>
           <HomeFeatureWorkspace activeFeature={activeFeature} quranTarget={quranTarget} locale={locale} />
         </div>

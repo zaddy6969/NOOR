@@ -128,6 +128,7 @@ export default function HeroDailyStatus({ locale, onPrayer, onCalendar, onQuran,
         <strong>{upcoming?.prayer ?? "Prayer"}</strong>
         <div className="prayer-countdown" aria-live="polite">{upcoming && now ? formatCountdown(upcoming.target, now) : "00 : 00 : 00"}</div>
         <div className="countdown-labels"><span>HRS</span><span>MINS</span><span>SECS</span></div>
+        <span className="prayer-orbit" aria-hidden="true"><i/><strong>{upcoming?.prayer ?? "Prayer"}</strong><small>up next</small></span>
         <div className="daily-card-meta"><b>{upcoming ? timings[upcoming.prayer] : "—"}</b><span>{location?.label ?? copy.localSchedule}</span></div>
       </button>
 
@@ -146,10 +147,12 @@ export default function HeroDailyStatus({ locale, onPrayer, onCalendar, onQuran,
           <p className="hero-ayah" lang="ar" dir="rtl">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</p>
           <blockquote>{copy.success}</blockquote>
           <span className="daily-card-source">Surah Hud · 11:88</span>
+          <span className="quran-progress-track" aria-hidden="true"><i /></span>
         </> : <>
           <p className="hero-ayah continue-reading-mark" lang="ar" dir="rtl">اقْرَأْ</p>
           <blockquote>Continue where you left off</blockquote>
           <span className="daily-card-source">{quranProgress.englishName ? `Surah ${quranProgress.englishName}` : `Surah ${quranProgress.surah}`} · {quranProgress.surah}:{quranProgress.ayah}</span>
+          <span className="quran-progress-track" aria-hidden="true"><i /></span>
         </>}
       </button>
 

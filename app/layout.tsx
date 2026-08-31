@@ -11,6 +11,7 @@ import "./globals.css";
 import "./home/noor-redesign.css";
 import "./home/noor-polish.css";
 import "./home/noor-production.css";
+import "./home/noor-magazine.css";
 
 const geist = Geist({
   variable: "--font-geist",
