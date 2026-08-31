@@ -234,3 +234,72 @@ html.noor-dark .noor-tabbed-home .noor-feature-tabs>button:hover,html.noor-dark 
 @media(prefers-reduced-motion:reduce){
   .magazine-main-nav a::after,.magazine-main-nav button::after,.noor-tabbed-home .daily-status-card,.noor-tabbed-home .noor-feature-tabs>button::before{transition:none}
 }
+
+/* Compact launcher refinement — more air between smaller, calmer tiles. */
+.noor-tabbed-home .noor-feature-shell {
+  margin-top: -49px;
+}
+.noor-tabbed-home .noor-feature-tabs {
+  min-height: 96px;
+  padding: 7px;
+  grid-template-columns: repeat(10, minmax(104px, 1fr));
+  gap: 6px;
+  border-radius: 14px;
+}
+.noor-tabbed-home .noor-feature-tabs > button {
+  min-width: 104px;
+  min-height: 80px;
+  padding: 8px 9px 7px;
+  border-radius: 8px;
+  gap: 3px;
+}
+.noor-tabbed-home .noor-feature-tabs > button + button {
+  border-left: 0;
+}
+.noor-tabbed-home .noor-feature-tabs svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.7;
+}
+.noor-tabbed-home .noor-feature-tabs span {
+  font-size: 9.5px;
+  line-height: 1.15;
+}
+.noor-tabbed-home .noor-feature-tabs > button::after {
+  background: linear-gradient(180deg, rgba(250,247,237,.04), rgba(250,247,237,.58) 51%, rgba(250,247,237,.98) 87%);
+}
+
+@media (max-width: 1220px) {
+  .noor-tabbed-home .noor-feature-tabs {
+    grid-template-columns: repeat(10, 106px);
+  }
+  .noor-tabbed-home .noor-feature-tabs > button {
+    min-width: 106px;
+  }
+}
+
+@media (max-width: 700px) {
+  .noor-tabbed-home .noor-feature-shell {
+    margin-top: -43px;
+  }
+  .noor-tabbed-home .noor-feature-tabs {
+    min-height: 86px;
+    padding: 6px;
+    grid-template-columns: repeat(10, 91px);
+    gap: 5px;
+    border-radius: 12px;
+  }
+  .noor-tabbed-home .noor-feature-tabs > button {
+    min-width: 91px;
+    min-height: 72px;
+    padding: 7px 7px 6px;
+    border-radius: 7px;
+  }
+  .noor-tabbed-home .noor-feature-tabs svg {
+    width: 15px;
+    height: 15px;
+  }
+  .noor-tabbed-home .noor-feature-tabs span {
+    font-size: 9px;
+  }
+}
