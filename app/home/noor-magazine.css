@@ -374,3 +374,34 @@ html.noor-dark .noor-tabbed-home .noor-feature-tabs>button:hover,html.noor-dark 
     font-size: 8px;
   }
 }
+
+/* Keep only the launcher compact; restore every section below to the full content width. */
+.noor-tabbed-home .noor-feature-shell {
+  width: min(calc(100% - 48px), 1540px);
+}
+.noor-tabbed-home .noor-feature-tabs {
+  width: min(100%, 1160px);
+  margin-inline: auto;
+}
+.noor-tabbed-home .noor-tool-anchor,
+.noor-tabbed-home .noor-more-features {
+  width: 100%;
+}
+
+@media (max-width: 1220px) {
+  .noor-tabbed-home .noor-feature-shell {
+    width: calc(100% - 32px);
+  }
+  .noor-tabbed-home .noor-feature-tabs {
+    width: min(100%, 1160px);
+  }
+}
+
+@media (max-width: 700px) {
+  .noor-tabbed-home .noor-feature-shell {
+    width: calc(100% - 18px);
+  }
+  .noor-tabbed-home .noor-feature-tabs {
+    width: 100%;
+  }
+}
