@@ -62,9 +62,9 @@ function applyRemote(remote: RemotePayload) {
   if (remote.quran?.notes) window.localStorage.setItem("noor-quran-notes-v1", JSON.stringify({ ...readObject("noor-quran-notes-v1"), ...remote.quran.notes }));
 }
 
-export default function SavedSync() {
+export default function SavedSync({ configured }: { configured: boolean }) {
   const [state, setState] = useState<"idle" | "syncing" | "done" | "error" | "signin">("idle");
-  const [message, setMessage] = useState("Nothing is uploaded unless you press Sync.");
+  const [message, setMessage] = useState(configured ? "Nothing is uploaded unless you press Sync." : "Account sync is unavailable until secure production sign-in is connected.");
 
   const sync = async () => {
     setState("syncing");
@@ -98,7 +98,7 @@ export default function SavedSync() {
   return (
     <aside className={`saved-sync saved-sync-${state}`} aria-label="Account sync">
       <div><strong>Optional account sync</strong><span>{message}</span></div>
-      {state === "signin" ? <Link href="/sign-in">Sign in</Link> : <button type="button" onClick={sync} disabled={state === "syncing"}>{state === "syncing" ? "Syncing…" : state === "done" ? "Sync again" : "Sync across devices"}</button>}
+      {!configured ? <span className="saved-sync-unavailable" aria-disabled="true">Not configured</span> : state === "signin" ? <Link href="/sign-in">Sign in</Link> : <button type="button" onClick={sync} disabled={state === "syncing"}>{state === "syncing" ? "Syncing…" : state === "done" ? "Sync again" : "Sync across devices"}</button>}
     </aside>
   );
 }

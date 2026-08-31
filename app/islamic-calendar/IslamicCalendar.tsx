@@ -109,7 +109,7 @@ export default function IslamicCalendar() {
       <section className="calendar-intro">
         <div>
           <p className="eyebrow">GREGORIAN + HIJRI</p>
-          <h1>Your Islamic calendar,<br/><em>day by day.</em></h1>
+          <h1>Your Islamic calendar,<br/>{" "}<em>day by day.</em></h1>
           <p>See the Hijri date beneath every Gregorian date, move between months, and review important Islamic occasions in one calm view.</p>
         </div>
         <article className="calendar-today-card">

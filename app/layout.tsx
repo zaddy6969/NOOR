@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Cormorant_Garamond, Geist, Noto_Naskh_Arabic } from "next/font/google";
 import { isClerkConfigured } from "@/lib/auth-config";
 import MediaProvider from "./media/MediaProvider";
@@ -26,8 +28,10 @@ const display = Cormorant_Garamond({
   weight: ["500", "600", "700"],
 });
 
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://noor-daily-muslim.vercel.app").replace(/\/$/, "");
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://noor-daily-muslim.vercel.app"),
+  metadataBase: new URL(siteUrl),
   applicationName: "NOOR Daily Muslim",
   title: { default: "NOOR — Daily Muslim Companion", template: "%s · NOOR" },
   description: "Prayer, Quran, Naat, Islamic learning and trusted community resources—organized simply for everyday use.",
@@ -70,19 +74,19 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       "@context": "https://schema.org",
       "@type": "Organization",
       name: "NOOR Daily Muslim",
-      url: "https://noor-daily-muslim.vercel.app",
-      logo: "https://noor-daily-muslim.vercel.app/favicon.svg",
+      url: siteUrl,
+      logo: `${siteUrl}/favicon.svg`,
       description: "A calm, privacy-conscious daily companion for prayer, Quran and trusted Islamic learning.",
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
       name: "NOOR Daily Muslim",
-      url: "https://noor-daily-muslim.vercel.app",
+      url: siteUrl,
       inLanguage: ["en", "ur", "hi"],
       potentialAction: {
         "@type": "SearchAction",
-        target: "https://noor-daily-muslim.vercel.app/?search={search_term_string}",
+        target: `${siteUrl}/?search={search_term_string}`,
         "query-input": "required name=search_term_string",
       },
     },
@@ -99,6 +103,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <a className="skip-to-content" href="#main-content">Skip to main content</a>
         <div className="site-content-root" id="main-content" tabIndex={-1}>{content}</div>
         <PwaRegister />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

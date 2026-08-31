@@ -28,7 +28,7 @@ export const salahSteps = [
   ["07", "First Sajdah", "Say Allahu Akbar and prostrate with forehead, nose, hands, knees and toes placed correctly. Say “Subhana Rabbiyal A‘la” at least three times."],
   ["08", "Jalsah and second Sajdah", "Sit calmly between the two prostrations, then perform the second Sajdah in the same way. Every Rak‘ah contains two prostrations."],
   ["09", "Next Rak‘ah", "Stand for the next Rak‘ah and recite al-Fatihah plus another Surah where required. Complete Ruku‘, Qawmah and both Sajdahs."],
-  ["10", "Qa‘dah", "After two Rak‘ahs sit and read Tashahhud. In a three- or four-Rak‘ah prayer, stand after Tashahhud; in the final sitting also read Durood Ibrahim and a Masnun dua."],
+  ["10", "Qa‘dah", "After two Rak‘ahs sit and read Tashahhud. In a three- or four-Rak‘ah prayer, stand after Tashahhud; in the final sitting also read Darood Ibrahim and a Masnun dua."],
   ["11", "Salam", "Complete the prayer by turning the face to the right and then the left, saying “Assalamu ‘alaykum wa rahmatullah” each time."],
 ];
 
@@ -69,7 +69,7 @@ export const phraseCards = [
     meaning: "All greetings, prayers and pure words belong to Allah. Peace be upon the Prophet, upon us and upon Allah’s righteous servants. We testify to faith and prophethood.",
   },
   {
-    title: "Durood Ibrahim",
+    title: "Darood Ibrahim",
     when: "In the final sitting after Tashahhud",
     arabic: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ، اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
     roman: "Allāhumma salli ‘alā Muhammadin wa ‘alā āli Muhammad, kamā sallayta ‘alā Ibrāhīma wa ‘alā āli Ibrāhīm, innaka Hamīdum Majīd. Allāhumma bārik ‘alā Muhammadin wa ‘alā āli Muhammad, kamā bārakta ‘alā Ibrāhīma wa ‘alā āli Ibrāhīm, innaka Hamīdum Majīd.",
@@ -77,7 +77,7 @@ export const phraseCards = [
   },
   {
     title: "A dua before Salam",
-    when: "After Durood in the final sitting",
+    when: "After Darood in the final sitting",
     arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
     roman: "Rabbanā ātinā fid-dunyā hasanatan wa fil-ākhirati hasanatan wa qinā ‘adhāban-nār.",
     meaning: "Our Lord, grant us good in this world and the Hereafter, and protect us from the punishment of the Fire.",

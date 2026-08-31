@@ -332,3 +332,98 @@ html.noor-dark .noor-more-feature-card .noor-more-feature-copy small { color: #5
 @media (prefers-reduced-motion: reduce) {
   .quran-study-panel, .namaz-reading-progress i, .step-mode-progress i { animation: none; transition: none; }
 }
+
+/* Production prayer center, editorial trust and resilient utility states. */
+.sr-only { width: 1px; height: 1px; padding: 0; margin: -1px; position: absolute; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.prayer-center-page { min-height: 100vh; background: var(--ivory); color: var(--ink); }
+.prayer-center-intro { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 42px 0 28px; display: grid; grid-template-columns: 1.1fr .8fr; gap: 60px; align-items: end; }
+.prayer-center-intro > div > p { margin: 0 0 9px; color: var(--gold); font-size: 11px; font-weight: 760; letter-spacing: .15em; }
+.prayer-center-intro h1 { max-width: 720px; margin: 0; font-family: Georgia, serif; font-size: clamp(40px, 5vw, 62px); font-weight: 540; letter-spacing: -.04em; line-height: .98; }
+.prayer-center-intro h1 em { color: var(--green); font-weight: 450; }
+.prayer-center-intro > p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.prayer-center { width: min(1180px, calc(100% - 48px)); margin: 0 auto 28px; display: grid; gap: 14px; }
+.prayer-center-status { min-height: 224px; padding: 28px; border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line)); border-radius: 22px; background: radial-gradient(circle at 9% 12%, color-mix(in srgb, var(--gold) 13%, transparent), transparent 30%), var(--green-deep); color: #fff; display: grid; grid-template-columns: .72fr 1.45fr; gap: 34px; align-items: center; box-shadow: 0 20px 50px rgba(15, 49, 40, .13); }
+.prayer-center-status > div:first-child > span { color: #e4c56c; font-size: 10px; font-weight: 760; letter-spacing: .14em; }
+.prayer-center-status h2 { margin: 8px 0 0; font-family: Georgia, serif; font-size: clamp(40px, 5vw, 60px); font-weight: 520; line-height: 1; }
+.prayer-center-status > div:first-child > strong { margin-top: 7px; display: block; color: #f0d682; font-family: var(--font-geist), sans-serif; font-size: 23px; font-weight: 520; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+.prayer-center-status > div:first-child > p { margin: 11px 0 0; color: rgba(255,255,255,.65); font-size: 12px; line-height: 1.5; }
+.prayer-center-today { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.prayer-center-today article { min-height: 116px; padding: 17px 11px; border: 1px solid rgba(255,255,255,.14); border-radius: 14px; background: rgba(255,255,255,.045); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; position: relative; }
+.prayer-center-today article.is-next { border-color: #d9bc68; background: rgba(217,188,104,.13); }
+.prayer-center-today span { color: rgba(255,255,255,.62); font-size: 11px; }
+.prayer-center-today strong { font-family: Georgia, serif; font-size: 25px; font-weight: 540; font-variant-numeric: tabular-nums; }
+.prayer-center-today small { padding: 3px 7px; border-radius: 10px; background: #e1c36f; color: #15372f; font-size: 9px; font-weight: 780; }
+.prayer-center-controls { padding: 17px; border: 1px solid var(--line); border-radius: 17px; background: var(--surface); display: grid; grid-template-columns: 1.05fr 1.15fr .9fr .9fr auto; gap: 10px; align-items: end; }
+.prayer-center-controls label { min-height: 54px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-soft); display: flex; flex-direction: column; gap: 3px; }
+.prayer-center-controls label > span { color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.prayer-center-controls select { min-height: 28px; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 13px; }
+.prayer-center-controls > button { min-height: 54px; padding: 0 18px; border: 0; border-radius: 27px; background: var(--green); color: #fff; font-size: 12px; font-weight: 720; cursor: pointer; }
+.prayer-center-controls > button:disabled { opacity: .58; }
+.prayer-center-controls > p { grid-column: 1 / -1; margin: 2px 3px 0; color: var(--muted); font-size: 11px; }
+.prayer-center-controls > p strong { color: var(--green); }
+.prayer-center-error { margin: 0; padding: 13px 15px; border: 1px solid color-mix(in srgb, #a34b3f 34%, var(--line)); border-radius: 11px; background: color-mix(in srgb, #a34b3f 7%, var(--surface)); color: #8a3e35; font-size: 12px; }
+.prayer-month { border: 1px solid var(--line); border-radius: 19px; background: var(--surface); overflow: hidden; }
+.prayer-month > header { min-height: 82px; padding: 15px 18px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.prayer-month > header span { color: var(--gold); font-size: 9px; font-weight: 760; letter-spacing: .14em; }
+.prayer-month > header h2 { margin: 4px 0 0; font-family: Georgia, serif; font-size: 25px; font-weight: 540; }
+.prayer-month > header > div:last-child { display: flex; gap: 6px; }
+.prayer-month > header button { min-width: 44px; min-height: 44px; padding: 0 13px; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); color: var(--green); font-size: 12px; font-weight: 680; cursor: pointer; }
+.prayer-month-scroll { overflow-x: auto; }
+.prayer-month table { width: 100%; min-width: 760px; border-collapse: collapse; }
+.prayer-month th, .prayer-month td { height: 56px; padding: 9px 14px; border-bottom: 1px solid var(--line); font-size: 12px; font-variant-numeric: tabular-nums; text-align: center; }
+.prayer-month thead th { height: 44px; background: var(--surface-soft); color: var(--muted); font-size: 10px; font-weight: 740; text-transform: uppercase; letter-spacing: .07em; position: sticky; top: 0; }
+.prayer-month tbody th { min-width: 210px; text-align: left; }
+.prayer-month tbody th strong { display: block; color: var(--ink); font-size: 12px; }
+.prayer-month tbody th span { margin-top: 3px; color: var(--muted); display: block; font-size: 10px; font-weight: 450; }
+.prayer-month tr.is-today { background: color-mix(in srgb, var(--mint) 56%, var(--surface)); box-shadow: inset 3px 0 0 var(--green); }
+.prayer-month-loading { margin: 0; padding: 24px; color: var(--muted); font-size: 12px; text-align: center; }
+.prayer-center-source { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+.review-badge { width: min(1180px, calc(100% - 48px)); min-height: 70px; margin: 18px auto 40px; padding: 13px 16px; border: 1px solid color-mix(in srgb, var(--green) 28%, var(--line)); border-radius: 14px; background: color-mix(in srgb, var(--mint) 42%, var(--surface)); display: grid; grid-template-columns: 38px 1fr auto; gap: 12px; align-items: center; }
+.review-badge-mark { width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; font-size: 14px; font-weight: 800; }
+.review-badge > div { display: flex; flex-direction: column; gap: 2px; }
+.review-badge strong { color: var(--green); font-size: 12px; }
+.review-badge > div > span, .review-badge small { color: var(--muted); font-size: 10px; line-height: 1.4; }
+.review-badge a { min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 22px; color: var(--green); display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; }
+.review-badge-compact { width: min(520px, 100%); min-height: 62px; margin: 22px 0 0; padding: 10px 12px; grid-template-columns: 34px 1fr auto; background: color-mix(in srgb, var(--surface) 80%, var(--mint)); }
+.review-badge-compact .review-badge-mark { width: 30px; height: 30px; }
+.review-badge-compact > div > span { display: none; }
+.namaz-review-wrap { width: min(1120px, calc(100% - 48px)); margin: 28px auto -38px; }
+.namaz-review-wrap .review-badge { margin: 0; }
+
+.mosque-map-fallback { min-height: 190px; margin-top: 12px; padding: 25px; border: 1px dashed color-mix(in srgb, var(--green) 35%, var(--line)); border-radius: 10px; background: var(--surface-soft); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.mosque-map-fallback > span { color: var(--gold); font-size: 35px; line-height: 1; }
+.mosque-map-fallback strong { margin-top: 8px; color: var(--ink); font-family: Georgia, serif; font-size: 18px; font-weight: 550; }
+.mosque-map-fallback p { max-width: 410px; margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.mosque-locate-row select { min-height: 34px; }
+.mosque-kind-filter button, .mosque-result-actions button, .mosque-result-actions a { min-height: 44px; }
+.professional-footer-main > div:not(.footer-identity) a,
+.topic-hero-actions a, .topic-foundation a, .topic-chapter-bar a, .topic-aside > a, .topic-footer a,
+.namaz-aside > a, .namaz-footer a, .calendar-source a, .internal-source-note a { min-height: 44px; display: inline-flex; align-items: center; }
+.saved-sync-unavailable { flex: 0 0 auto; min-height: 44px; padding: 0 14px; border: 1px solid var(--noor-line); border-radius: 22px; background: var(--noor-surface-soft); color: var(--noor-muted); display: inline-flex; align-items: center; font-size: 10px; font-weight: 680; }
+.home-quran-preview-label { color: var(--gold) !important; font-size: 9px !important; font-weight: 760; letter-spacing: .1em; }
+
+@media (max-width: 900px) {
+  .prayer-center-intro, .prayer-center-status { grid-template-columns: 1fr; gap: 24px; }
+  .prayer-center-controls { grid-template-columns: repeat(2, 1fr); }
+  .prayer-center-controls > button { grid-column: 1 / -1; }
+  .prayer-center-today article { min-height: 102px; }
+  .review-badge-compact { grid-template-columns: 34px 1fr; }
+  .review-badge-compact > a { grid-column: 2; justify-self: start; }
+}
+
+@media (max-width: 600px) {
+  .prayer-center-intro, .prayer-center, .review-badge, .namaz-review-wrap { width: calc(100% - 28px); }
+  .prayer-center-intro { padding: 30px 0 20px; gap: 14px; }
+  .prayer-center-intro h1 { font-size: 40px; }
+  .prayer-center-intro > p { font-size: 13px; }
+  .prayer-center-status { padding: 20px 15px; border-radius: 17px; }
+  .prayer-center-today { grid-template-columns: repeat(5, minmax(78px, 1fr)); overflow-x: auto; padding-bottom: 4px; }
+  .prayer-center-today article { min-width: 78px; }
+  .prayer-center-controls { padding: 12px; grid-template-columns: 1fr; }
+  .prayer-center-controls > button { grid-column: auto; }
+  .prayer-month > header { align-items: flex-start; flex-direction: column; }
+  .review-badge { grid-template-columns: 34px 1fr; }
+  .review-badge > a { grid-column: 2; justify-self: start; }
+  .namaz-review-wrap { margin-bottom: -20px; }
+}

@@ -118,6 +118,12 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
   const surah = payload?.surah;
   const playingThis = current?.kind === "quran" && current.surahNumber === surah?.number;
   const activeVerse = playingThis ? quranPlayback.activeVerseNumber : target.ayah;
+  const previewAyahs = useMemo(() => {
+    if (!surah) return [];
+    const anchor = activeVerse ?? 1;
+    const start = Math.min(Math.max(anchor - 2, 0), Math.max(0, surah.ayahs.length - 3));
+    return surah.ayahs.slice(start, start + 3);
+  }, [activeVerse, surah]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -195,7 +201,7 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
           <button type="button" onClick={toggleSurahBookmark} aria-pressed={bookmarked}>{bookmarked ? "★ Surah saved" : "☆ Save Surah"}</button>
         </div>
         <div className="home-quran-verses" ref={versesRef} aria-live="polite">
-          {surah.ayahs.map((ayah) => {
+          {previewAyahs.map((ayah) => {
             const active = activeVerse === ayah.number;
             const progress = active && playingThis ? Math.round(quranPlayback.verseProgress * 100) : 0;
             return <div ref={(node) => { verseRefs.current[ayah.number] = node; }} className={active ? "active" : ""} aria-current={active ? "true" : undefined} style={{ "--verse-progress": `${progress}%` } as React.CSSProperties} key={ayah.number}>
@@ -206,6 +212,7 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
           })}
         </div>
         <aside className="home-quran-audio">
+          <small className="home-quran-preview-label">COMPACT PREVIEW · 3 OF {surah.ayahs.length} AYAHS</small>
           <span>RECITATION</span><strong>Mishary Rashid Alafasy</strong><p>{activeVerse ? `Ayah ${surah.number}:${activeVerse} follows the audio automatically.` : "Play the complete Surah with automatic Ayah highlighting."}</p>
           <button type="button" onClick={begin}>{playingThis && quranPlayback.isPlaying ? "Playing full Surah" : "▶ Play full Surah"}</button>
           <div className="home-quran-progress"><i style={{ width: playingThis && quranPlayback.duration ? `${(quranPlayback.currentTime / quranPlayback.duration) * 100}%` : "0%" }}/></div>
@@ -219,7 +226,7 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
 
 function PrayerWorkspace() {
   const locale = useContext(LocaleContext);
-  return <><WorkspaceHeader feature="prayer-times" title="Today’s Prayer Times" description="Live local timings, Hijri date, next prayer countdown and calculation settings." href="/namaz" /><div className="workspace-prayer"><PrayerTimesStrip locale={locale} /><div className="prayer-workspace-notes"><span>Calculation method and Hanafi/standard Asr are available in settings.</span><span>Use your location for the closest schedule.</span><span>Confirm congregation times with your mosque.</span></div></div></>;
+  return <><WorkspaceHeader feature="prayer-times" title="Today’s Prayer Times" description="Live local timings, Hijri date, next prayer countdown and calculation settings." href="/prayer-times" /><div className="workspace-prayer"><PrayerTimesStrip locale={locale} /><div className="prayer-workspace-notes"><span>Calculation method and Hanafi/standard Asr are available in settings.</span><span>Use your location for the closest schedule.</span><span>Confirm congregation times with your mosque.</span></div></div></>;
 }
 
 function QiblaWorkspace() {

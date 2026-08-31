@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { HeaderUtilities } from "../../site/SiteUtilities";
 import { topicMap, topics } from "../topic-data";
+import ReviewBadge from "../../trust/ReviewBadge";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -70,6 +71,7 @@ export default async function TopicPage({ params }: PageProps) {
           <p className="eyebrow">{topic.kicker}</p>
           <h1>{topic.title}</h1>
           <p>{topic.summary}</p>
+          <ReviewBadge compact />
           <div className="topic-hero-actions">
             <a href="#guide">Start reading</a>
             <a href="#sources">Check sources</a>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { HeaderUtilities } from "../site/SiteUtilities";
 import NamazReadingProgress from "./NamazReadingProgress";
+import ReviewBadge from "../trust/ReviewBadge";
 
 const routes = [
   ["wudu", "Wudu"],
@@ -55,6 +56,7 @@ export default function FocusedGuideShell({
         {routes.map(([slug, label], index) => <Link className={current === slug ? "active" : ""} href={`/namaz/${slug}`} aria-current={current === slug ? "page" : undefined} key={slug}><span>{String(index + 1).padStart(2, "0")}</span>{label}</Link>)}
       </nav>
 
+      <div className="namaz-review-wrap"><ReviewBadge compact detail="Sources and school-specific wording checked by the NOOR editorial team" /></div>
       <article className="namaz-focus-content">{children}</article>
 
       <footer className="namaz-focus-footer"><div><strong>Need the full context?</strong><p>Open the complete guide for prayer times, Ghusl, congregation, travel, Qada, FAQs and all named sources.</p></div><Link href="/namaz">Open complete guide →</Link></footer>

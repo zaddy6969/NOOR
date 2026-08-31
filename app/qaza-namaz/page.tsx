@@ -17,7 +17,7 @@ export default function QazaNamazPage() {
     <main className="calculator-page">
       <ToolHeader title="QAZA NAMAZ" subtitle="Estimate · Plan · Complete steadily" />
       <section className="tool-page-intro">
-        <div><p>PRIVATE PRAYER PLANNER</p><h1>Make a careful estimate.<br/><em>Start from today.</em></h1></div>
+        <div><p>PRIVATE PRAYER PLANNER</p><h1>Make a careful estimate.<br/>{" "}<em>Start from today.</em></h1></div>
         <p>Count a known date range or enter an estimated number of days. Exclude days when prayer was not legally due, and include Witr when following the Hanafi ruling.</p>
       </section>
       <QazaCalculator />

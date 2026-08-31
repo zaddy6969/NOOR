@@ -58,16 +58,19 @@ async function userIdOrResponse() {
 }
 
 export async function GET() {
+  const startedAt = Date.now();
   const session = await userIdOrResponse();
   if (!session.ok) return session.response;
   try {
     return NextResponse.json({ data: await readUserSync(session.userId) });
-  } catch {
+  } catch (error) {
+    console.error(JSON.stringify({ event: "account_sync_read_failed", route: "/api/account/sync", durationMs: Date.now() - startedAt, message: error instanceof Error ? error.message : "Unknown error" }));
     return NextResponse.json({ error: "Account sync is temporarily unavailable." }, { status: 503 });
   }
 }
 
 export async function PUT(request: Request) {
+  const startedAt = Date.now();
   const session = await userIdOrResponse();
   if (!session.ok) return session.response;
   try {
@@ -75,6 +78,7 @@ export async function PUT(request: Request) {
     return NextResponse.json({ data: await writeUserSync(session.userId, payload) });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unable to sync this collection.";
+    console.error(JSON.stringify({ event: "account_sync_write_failed", route: "/api/account/sync", durationMs: Date.now() - startedAt, message }));
     return NextResponse.json({ error: message }, { status: message.includes("large") ? 413 : 400 });
   }
 }

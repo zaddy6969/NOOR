@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NOOR_CITIES, writeNoorLocation } from "../site/location-settings";
 
 type PlaceKind = "Mosque" | "Dargah";
@@ -23,6 +23,7 @@ export default function MosqueFinder() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [filter, setFilter] = useState<PlaceFilter>("Mosques");
   const [loading, setLoading] = useState(false);
+  const [mapSupported, setMapSupported] = useState<boolean | null>(null);
   const [message, setMessage] = useState("Use your location or choose a city. Permission is requested only after you tap the button.");
 
   const search = async (coordinates: Coordinates, selectedRadius = radius) => {
@@ -56,6 +57,15 @@ export default function MosqueFinder() {
   const active = visible.find((place) => place.id === activeId) ?? nearest;
   const mapPoint = active ?? center;
 
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      const canvas = document.createElement("canvas");
+      const supported = Boolean(window.WebGLRenderingContext && (canvas.getContext("webgl2") || canvas.getContext("webgl")));
+      setMapSupported(supported);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
   return (
     <section className="mosque-finder-working">
       <div className="mosque-control-card">
@@ -63,7 +73,8 @@ export default function MosqueFinder() {
         <div className="mosque-city-row"><span>OR CHOOSE A CITY</span><div>{cityPresets.map((city) => <button type="button" onClick={() => search(city)} key={city.label}>{city.label}</button>)}</div></div>
         <div className="mosque-kind-filter" role="group" aria-label="Place type">{(["Mosques", "All places", "Dargahs"] as PlaceFilter[]).map((item) => <button className={filter === item ? "active" : ""} type="button" onClick={() => setFilter(item)} key={item}>{item}</button>)}</div>
         <p className="mosque-status" role="status">{message}</p>
-        {mapPoint ? <div className="mosque-map"><iframe title={`Map of ${active?.name ?? center?.label ?? "selected area"}`} src={mapEmbedUrl(mapPoint)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div> : null}
+        {mapPoint && mapSupported ? <div className="mosque-map"><iframe title={`Map of ${active?.name ?? center?.label ?? "selected area"}`} src={mapEmbedUrl(mapPoint)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div> : null}
+        {mapPoint && mapSupported === false ? <div className="mosque-map-fallback" role="note"><span aria-hidden="true">⌖</span><strong>Map preview unavailable</strong><p>Your browser cannot display the interactive map. The nearby list and Directions links still work.</p></div> : null}
         {active && center ? <div className="mosque-nearest"><span>SELECTED PLACE · {active.kind.toUpperCase()}</span><strong>{active.name}</strong><p>{active.distanceKm.toFixed(1)} km away · {active.address}</p><a href={`https://www.google.com/maps/dir/?api=1&origin=${center.lat},${center.lng}&destination=${active.lat},${active.lng}`} target="_blank" rel="noreferrer">Open directions ↗</a></div> : null}
       </div>
       <div className="mosque-results" aria-live="polite">

@@ -14,7 +14,7 @@ export default function FirozulLughatPage() {
     <main className="directory-tool-page">
       <ToolHeader title="ISLAMIC URDU GLOSSARY" subtitle="Urdu · Roman · English" />
       <section className="compact-directory-intro">
-        <div><p>NOOR ORIGINAL GLOSSARY</p><h1>Find the word.<br/><em>Understand the meaning.</em></h1></div>
+        <div><p>NOOR ORIGINAL GLOSSARY</p><h1>Find the word.<br/>{" "}<em>Understand the meaning.</em></h1></div>
         <p>Search common Islamic terms by English, Roman Urdu or Urdu script. Every definition is concise, readable and kept inside NOOR.</p>
       </section>
       <LughatLibrary />

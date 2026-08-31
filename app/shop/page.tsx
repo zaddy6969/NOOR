@@ -14,7 +14,7 @@ export default function ShopPage() {
     <main className="directory-tool-page">
       <ToolHeader title="PRODUCT REQUEST CATALOGUE" subtitle="Browse · Save · No checkout" />
       <section className="compact-directory-intro">
-        <div><p>ISLAMIC PRODUCT IDEAS</p><h1>Browse by need.<br/><em>Save a private list.</em></h1></div>
+        <div><p>ISLAMIC PRODUCT IDEAS</p><h1>Browse by need.<br/>{" "}<em>Save a private list.</em></h1></div>
         <p>This is a request catalogue, not a live shop. Browse product ideas and save a list on this device; there are no prices, sellers, orders or payment collection.</p>
       </section>
       <ShopCatalog />

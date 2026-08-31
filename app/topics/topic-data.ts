@@ -337,23 +337,23 @@ export const faithTopics: Topic[] = [
   {
     slug: "durood",
     kicker: "REMEMBRANCE · SALAWAT",
-    title: "Durood Sharif",
-    summary: "Learn why Muslims send blessings and peace upon the Prophet ﷺ, the transmitted Durood Ibrahim, shorter valid forms, meaningful times to recite, adab and a gentle daily practice.",
+    title: "Darood Sharif",
+    summary: "Learn why Muslims send blessings and peace upon the Prophet ﷺ, the transmitted Darood Ibrahim, shorter valid forms, meaningful times to recite, adab and a gentle daily practice.",
     foundation: {
       arabic: "إِنَّ ٱللَّهَ وَمَلَـٰٓئِكَتَهُۥ يُصَلُّونَ عَلَى ٱلنَّبِىِّ",
       translation: "Indeed, Allah showers His blessings upon the Prophet, and His angels pray for him. O believers! Invoke Allah’s blessings upon him and salute him with peace.",
       reference: "Surah al-Ahzab 33:56",
       href: "https://quran.com/33/56",
     },
-    atAGlance: ["A direct Qur’anic command", "Durood Ibrahim is taught in hadith", "Recite inside and outside Salah", "Quality, love and consistency matter"],
+    atAGlance: ["A direct Qur’anic command", "Darood Ibrahim is taught in hadith", "Recite inside and outside Salah", "Quality, love and consistency matter"],
     chapters: [
       { id: "meaning", title: "Meaning and virtue", intro: "Salat upon the Prophet ﷺ is an act of obedience, love and gratitude to Allah for the gift of Prophethood.", items: [
         { title: "What we ask", body: "We ask Allah to honour, bless and grant peace to Muhammad ﷺ and his family. Allah is the giver; the servant is making dua." },
         { title: "One salawat", body: "Sahih Muslim 408 reports that whoever sends one salutation upon the Prophet ﷺ receives ten blessings from Allah." },
         { title: "Love with following", body: "True love appears through prayer, lawful conduct, mercy, truthful speech and following the Sunnah—not recitation counts alone." },
       ] },
-      { id: "forms", title: "Transmitted forms", intro: "The most complete everyday form is the Durood Ibrahim recited in the final sitting of Salah.", items: [
-        { title: "Durood Ibrahim", body: "Allahumma salli ‘ala Muhammadin wa ‘ala ali Muhammad, kama sallayta ‘ala Ibrahima wa ‘ala ali Ibrahim, innaka Hamidum Majid. Allahumma barik ‘ala Muhammadin wa ‘ala ali Muhammad, kama barakta ‘ala Ibrahima wa ‘ala ali Ibrahim, innaka Hamidum Majid." },
+      { id: "forms", title: "Transmitted forms", intro: "The most complete everyday form is the Darood Ibrahim recited in the final sitting of Salah.", items: [
+        { title: "Darood Ibrahim", body: "Allahumma salli ‘ala Muhammadin wa ‘ala ali Muhammad, kama sallayta ‘ala Ibrahima wa ‘ala ali Ibrahim, innaka Hamidum Majid. Allahumma barik ‘ala Muhammadin wa ‘ala ali Muhammad, kama barakta ‘ala Ibrahima wa ‘ala ali Ibrahim, innaka Hamidum Majid." },
         { title: "Short form", body: "Allahumma salli wa sallim ‘ala nabiyyina Muhammad—O Allah, send blessings and peace upon our Prophet Muhammad—is a clear shorter form for frequent recitation." },
         { title: "Pronunciation", body: "Learn slowly from a reliable teacher. Transliteration helps a beginner but does not fully represent Arabic sounds." },
       ] },
@@ -364,7 +364,7 @@ export const faithTopics: Topic[] = [
       ] },
     ],
     faqs: [
-      { q: "Is there only one valid Durood?", a: "No. Several sound forms are transmitted, and a clear shorter salawat is valid. Durood Ibrahim is especially complete and is recited in Salah." },
+      { q: "Is there only one valid Darood?", a: "No. Several sound forms are transmitted, and a clear shorter salawat is valid. Darood Ibrahim is especially complete and is recited in Salah." },
       { q: "Must a particular count be completed?", a: "A personal routine can help consistency, but do not present an unproven count or promised result as obligatory." },
       { q: "Can I recite in any language?", a: "You may express love and make dua in your language, while learning the transmitted Arabic forms preserves their wording and use in Salah." },
     ],

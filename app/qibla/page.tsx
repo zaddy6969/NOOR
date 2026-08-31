@@ -15,6 +15,7 @@ export default function QiblaPage() {
   return (
     <main className="qibla-page" id="top">
       <header className="quran-topbar compact-tool-topbar"><Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><div><strong>QIBLA COMPASS</strong><span>Live direction to the Kaaba</span></div><aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="topic-home-link" href="/">← Home</Link></aside></header>
+      <h1 className="sr-only">Qibla compass and direction to the Kaaba</h1>
       <QiblaCompass />
     </main>
   );

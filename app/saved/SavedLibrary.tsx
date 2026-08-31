@@ -16,7 +16,7 @@ function BookmarkMark() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5A2.5 2.5 0 0 1 8.5 2h7A2.5 2.5 0 0 1 18 4.5V22l-6-3.8L6 22Z"/></svg>;
 }
 
-export default function SavedLibrary() {
+export default function SavedLibrary({ syncConfigured }: { syncConfigured: boolean }) {
   const [collections, setCollections] = useState<SavedCollections>(EMPTY_COLLECTIONS);
   const [filter, setFilter] = useState<Filter>("all");
   const [surahs, setSurahs] = useState<SurahSummary[]>([]);
@@ -60,7 +60,7 @@ export default function SavedLibrary() {
         <div><span>PRIVATE ON THIS DEVICE</span><h1>Your saved collection</h1><p>Keep verses, Surahs, Darood and glossary words together. They remain available after refresh on this browser.</p></div>
         <strong><BookmarkMark/><b>{total}</b><small>saved {total === 1 ? "item" : "items"}</small></strong>
       </header>
-      <SavedSync />
+      <SavedSync configured={syncConfigured} />
 
       <nav className="saved-filters" aria-label="Filter saved items">
         {([

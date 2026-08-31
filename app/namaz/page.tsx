@@ -75,7 +75,7 @@ const salahSteps = [
   ["07", "First Sajdah", "Say Allahu Akbar and prostrate with forehead, nose, hands, knees and toes placed correctly. Say “Subhana Rabbiyal A‘la” at least three times."],
   ["08", "Jalsah and second Sajdah", "Sit calmly between the two prostrations, then perform the second Sajdah in the same way. Every Rak‘ah contains two prostrations."],
   ["09", "Next Rak‘ah", "Stand for the next Rak‘ah and recite al-Fatihah plus another Surah where required. Complete Ruku‘, Qawmah and both Sajdahs."],
-  ["10", "Qa‘dah", "After two Rak‘ahs sit and read Tashahhud. In a three- or four-Rak‘ah prayer, stand after Tashahhud; in the final sitting also read Durood Ibrahim and a Masnun dua."],
+  ["10", "Qa‘dah", "After two Rak‘ahs sit and read Tashahhud. In a three- or four-Rak‘ah prayer, stand after Tashahhud; in the final sitting also read Darood Ibrahim and a Masnun dua."],
   ["11", "Salam", "Complete the prayer by turning the face to the right and then the left, saying “Assalamu ‘alaykum wa rahmatullah” each time."],
 ];
 
@@ -116,7 +116,7 @@ const phraseCards = [
     meaning: "All greetings, prayers and pure words belong to Allah. Peace be upon the Prophet, upon us and upon Allah’s righteous servants. We testify to faith and prophethood.",
   },
   {
-    title: "Durood Ibrahim",
+    title: "Darood Ibrahim",
     when: "In the final sitting after Tashahhud",
     arabic: "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ، اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
     roman: "Allāhumma salli ‘alā Muhammadin wa ‘alā āli Muhammad, kamā sallayta ‘alā Ibrāhīma wa ‘alā āli Ibrāhīm, innaka Hamīdum Majīd. Allāhumma bārik ‘alā Muhammadin wa ‘alā āli Muhammad, kamā bārakta ‘alā Ibrāhīma wa ‘alā āli Ibrāhīm, innaka Hamīdum Majīd.",
@@ -124,7 +124,7 @@ const phraseCards = [
   },
   {
     title: "A dua before Salam",
-    when: "After Durood in the final sitting",
+    when: "After Darood in the final sitting",
     arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
     roman: "Rabbanā ātinā fid-dunyā hasanatan wa fil-ākhirati hasanatan wa qinā ‘adhāban-nār.",
     meaning: "Our Lord, grant us good in this world and the Hereafter, and protect us from the punishment of the Fire.",
@@ -257,7 +257,7 @@ export default function NamazPage() {
             <div className="hadith-strip"><span>PROPHETIC METHOD</span><p>“Pray as you have seen me praying.”</p><strong>Sahih al-Bukhari 631</strong></div>
             <StepLearningMode label="Salah" storageKey="noor-namaz-salah-step-v1" steps={salahSteps} />
             <div className="rakats-explainer">
-              <article><span>2 RAK‘AHS</span><p>After the second Sajdah, sit for Tashahhud, Durood and dua, then finish with Salam.</p></article>
+              <article><span>2 RAK‘AHS</span><p>After the second Sajdah, sit for Tashahhud, Darood and dua, then finish with Salam.</p></article>
               <article><span>3 RAK‘AHS</span><p>After Tashahhud in Rak‘ah two, stand. In the third Fard Rak‘ah recite al-Fatihah, then complete the final sitting.</p></article>
               <article><span>4 RAK‘AHS</span><p>After the first sitting, stand for Rak‘ahs three and four. Complete the final sitting after the fourth.</p></article>
             </div>
@@ -277,7 +277,7 @@ export default function NamazPage() {
               <article><span>WAJIB FORGOTTEN</span><h3>Sajdah Sahw may be due</h3><p>Forgetting a Wajib, delaying a Fard or certain sequence errors can require two prostrations of forgetfulness. Exact cases matter.</p></article>
               <article><span>SUNNAH MISSED</span><h3>Prayer generally remains valid</h3><p>Leaving Sunnah diminishes completeness and reward; persistent abandonment of emphasized Sunnah is serious.</p></article>
             </div>
-            <div className="sahw-method"><div><span>COMMON HANAFI METHOD</span><h3>How Sajdah Sahw is performed</h3></div><ol><li>In the final sitting, read Tashahhud.</li><li>Give one Salam to the right.</li><li>Perform two Sajdahs with the normal Takbirs.</li><li>Sit again and read Tashahhud, Durood and dua.</li><li>Finish with both Salams.</li></ol><p>Do not apply this automatically to every doubt. Ask a scholar when you are unsure what was missed.</p></div>
+            <div className="sahw-method"><div><span>COMMON HANAFI METHOD</span><h3>How Sajdah Sahw is performed</h3></div><ol><li>In the final sitting, read Tashahhud.</li><li>Give one Salam to the right.</li><li>Perform two Sajdahs with the normal Takbirs.</li><li>Sit again and read Tashahhud, Darood and dua.</li><li>Finish with both Salams.</li></ol><p>Do not apply this automatically to every doubt. Ask a scholar when you are unsure what was missed.</p></div>
             <div className="invalidators-list"><h3>Actions that can invalidate Salah</h3><div>{["Wudu breaking during prayer","Speaking ordinary words","Eating or drinking","Turning the chest away from Qibla","Substantial exposure of required ‘awrah","Excessive unrelated movement","Omitting an obligatory posture","Laughing audibly in prayer"].map((item) => <span key={item}>× {item}</span>)}</div></div>
           </section>
 
@@ -299,7 +299,7 @@ export default function NamazPage() {
               <article><span>MISSED PRAYER · QADA</span><h3>Make up Fard obligations</h3><p>Record and make up missed Fard prayers and Witr according to Hanafi rules. Repent for deliberate neglect. Long backlogs, prayer order and prohibited times need a personal plan from a scholar.</p></article>
               <article><span>TARAWIH</span><h3>Ramadan night prayer</h3><p>In the Hanafi school, twenty Rak‘ahs of Tarawih are emphasized Sunnah in Ramadan, normally offered after Isha and before or after Witr in congregation.</p></article>
               <article><span>EID SALAH</span><h3>Two Rak‘ahs with extra Takbirs</h3><p>Eid prayer is Wajib for those upon whom Jumu‘ah is obligatory in Hanafi law. Its extra Takbirs and sequence should be learned before Eid from the Imam.</p></article>
-              <article><span>JANAZAH</span><h3>A communal obligation</h3><p>Salat al-Janazah is Fard Kifayah and consists of standing, four Takbirs, praise, Durood, dua for the deceased and Salam—without Ruku‘ or Sajdah.</p></article>
+              <article><span>JANAZAH</span><h3>A communal obligation</h3><p>Salat al-Janazah is Fard Kifayah and consists of standing, four Takbirs, praise, Darood, dua for the deceased and Salam—without Ruku‘ or Sajdah.</p></article>
             </div>
           </section>
 

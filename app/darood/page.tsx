@@ -17,7 +17,7 @@ export default function DaroodPage() {
     <main className="darood-page">
       <ToolHeader title="DAROOD SHARIF" subtitle="Arabic · Roman reading · Meaning" />
       <section className="tool-page-intro darood-intro">
-        <div><p>SALAWAT LIBRARY</p><h1>Send peace and blessings<br/><em>with understanding.</em></h1></div>
+        <div><p>SALAWAT LIBRARY</p><h1>Send peace and blessings<br/>{" "}<em>with understanding.</em></h1></div>
         <p>Hadith-reported wordings and later traditional collections are labelled separately. Open only the Darood you want, then copy, save or use its private counter.</p>
       </section>
       <DaroodLibrary />

@@ -7,6 +7,7 @@ type PrayerPayload = {
 };
 
 export async function GET(request: Request) {
+  const startedAt = Date.now();
   const params = new URL(request.url).searchParams;
   const latitude = Number(params.get("latitude"));
   const longitude = Number(params.get("longitude"));
@@ -46,7 +47,13 @@ export async function GET(request: Request) {
       school,
       adjustment,
     }, { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=900" } });
-  } catch {
+  } catch (error) {
+    console.error(JSON.stringify({
+      event: "prayer_today_failed",
+      route: "/api/prayer-times",
+      durationMs: Date.now() - startedAt,
+      message: error instanceof Error ? error.message : "Unknown error",
+    }));
     return Response.json({ error: "Prayer timings are temporarily unavailable." }, { status: 502 });
   }
 }

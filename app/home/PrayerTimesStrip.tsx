@@ -3,24 +3,26 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DEFAULT_NOOR_LOCATION, locationFromCity, NOOR_CITIES, NOOR_LOCATION_EVENT, readNoorLocation, writeNoorLocation, type NoorLocation } from "../site/location-settings";
 
-type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
+export type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
 type PrayerResponse = {
   timings?: Record<PrayerName, string>;
   hijri?: string | null;
   method?: string | null;
   error?: string;
 };
-type PrayerSettings = { cityId: string; method: number; school: number; adjustment: number };
+export type PrayerSettings = { cityId: string; method: number; school: number; adjustment: number };
 type NoorLocale = "en" | "hi" | "ur";
 
-const PRAYERS: PrayerName[] = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-const METHODS = [
+export const PRAYERS: PrayerName[] = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+export const PRAYER_METHODS = [
   { id: 1, label: "Karachi" },
   { id: 3, label: "Muslim World League" },
   { id: 4, label: "Umm al-Qura" },
   { id: 5, label: "Egyptian Authority" },
 ];
-const DEFAULT_SETTINGS: PrayerSettings = { cityId: "bengaluru", method: 1, school: 1, adjustment: 0 };
+export const DEFAULT_PRAYER_SETTINGS: PrayerSettings = { cityId: "bengaluru", method: 1, school: 1, adjustment: 0 };
+const METHODS = PRAYER_METHODS;
+const DEFAULT_SETTINGS = DEFAULT_PRAYER_SETTINGS;
 const PRAYER_COPY: Record<NoorLocale, {
   names: Record<PrayerName, string>;
   next: string;

@@ -15,7 +15,7 @@ export default function SalahGuidePage() {
       <div className="hadith-strip"><span>PROPHETIC METHOD</span><p>“Pray as you have seen me praying.”</p><strong>Sahih al-Bukhari 631</strong></div>
       <StepLearningMode label="Salah" storageKey="noor-namaz-salah-step-v1" steps={salahSteps} />
       <div className="rakats-explainer">
-        <article><span>2 RAK‘AHS</span><p>After the second Sajdah, sit for Tashahhud, Durood and dua, then finish with Salam.</p></article>
+        <article><span>2 RAK‘AHS</span><p>After the second Sajdah, sit for Tashahhud, Darood and dua, then finish with Salam.</p></article>
         <article><span>3 RAK‘AHS</span><p>After Tashahhud in Rak‘ah two, stand. In the third Fard Rak‘ah recite al-Fatihah, then complete the final sitting.</p></article>
         <article><span>4 RAK‘AHS</span><p>After the first sitting, stand for Rak‘ahs three and four. Complete the final sitting after the fourth.</p></article>
       </div>

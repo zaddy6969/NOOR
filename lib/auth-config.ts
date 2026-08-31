@@ -13,3 +13,7 @@ export function isClerkProductionConfigured() {
     process.env.CLERK_SECRET_KEY?.startsWith("sk_live_"),
   );
 }
+
+export function isAccountSyncConfigured() {
+  return isClerkProductionConfigured() && Boolean(process.env.DATABASE_URL);
+}
