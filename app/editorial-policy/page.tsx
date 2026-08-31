@@ -9,6 +9,6 @@ export default function EditorialPolicyPage() {
     { title: "Differences of opinion", paragraphs: ["Where recognized Sunni legal schools or local authorities differ, NOOR labels the selected method and avoids presenting a locality-dependent answer as universal."] },
     { title: "Traditional texts and Naats", paragraphs: ["Hadith-reported salawat are separated from later traditional compositions. Poem authorship, edition status, translation and recording rights are separate questions; media remains attributed to its source platform."] },
     { title: "Review status", paragraphs: ["Static educational material may carry a review-pending notice until a qualified scholar has checked it. A general content review is not a personal fatwa and does not remove the need for local advice."] },
-    { title: "Corrections", paragraphs: ["Corrections should identify the exact page, statement and supporting primary source. Material changes are published with the website source so they can be traced through deployment history."] },
+    { id: "corrections", title: "Corrections", paragraphs: ["Corrections should identify the exact page, statement and supporting primary source. Material changes are published with the website source so they can be traced through deployment history."] },
   ]} />;
 }

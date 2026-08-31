@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import HeroDailyStatus from "./home/HeroDailyStatus";
 import HomeFeatureWorkspace, { type FeatureId, type QuranTarget } from "./home/HomeFeatureWorkspace";
+import HomePersonalRail from "./home/HomePersonalRail";
 import SiteFooter from "./site/SiteFooter";
 import { HeaderUtilities } from "./site/SiteUtilities";
 
@@ -183,6 +184,13 @@ export default function Home() {
 
   const activate = useCallback((id: FeatureId, options?: { history?: boolean; focus?: boolean; reveal?: boolean }) => {
     setActiveFeature(id);
+    try {
+      const stored = JSON.parse(window.localStorage.getItem("noor-recent-features-v1") ?? "[]") as unknown;
+      const previous = Array.isArray(stored) ? stored.filter((item): item is FeatureId => typeof item === "string" && FEATURE_IDS.has(item as FeatureId)) : [];
+      const recent = [id, ...previous.filter((item) => item !== id)].slice(0, 6);
+      window.localStorage.setItem("noor-recent-features-v1", JSON.stringify(recent));
+      window.dispatchEvent(new CustomEvent("noor:recent-features"));
+    } catch { /* personal shortcuts are optional */ }
     if (options?.history !== false && window.location.hash !== `#${id}`) window.history.pushState({ feature: id }, "", `#${id}`);
     window.requestAnimationFrame(() => {
       tabRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
@@ -279,6 +287,7 @@ export default function Home() {
             </button>
           ))}
         </div>
+        <HomePersonalRail locale={locale} activeFeature={activeFeature} onSelect={(feature) => activate(feature, { focus: true })} />
 
         <div className="noor-tool-anchor" id="selected-tool" ref={workspaceRef}>
           <HomeFeatureWorkspace activeFeature={activeFeature} quranTarget={quranTarget} locale={locale} />

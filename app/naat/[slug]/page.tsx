@@ -15,13 +15,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const entry = naatMap.get(slug);
   if (!entry) return {};
-  const title = `${entry.title} — Audio, Video & Reader | NOOR`;
+  const title = `${entry.title} — Audio, Video & Reader`;
+  const socialTitle = `${title} | NOOR`;
   return {
     title,
     description: entry.summary,
     alternates: { canonical: `/naat/${entry.slug}` },
-    openGraph: { title, description: entry.summary, images: [] },
-    twitter: { card: "summary", title, description: entry.summary, images: [] },
+    openGraph: { title: socialTitle, description: entry.summary, images: [] },
+    twitter: { card: "summary", title: socialTitle, description: entry.summary, images: [] },
   };
 }
 

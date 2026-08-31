@@ -141,11 +141,11 @@ const faq = [
   ["Can this page replace learning from a teacher?", "No. It is a structured study and revision guide. Correct Qur’an pronunciation, practical posture and case-specific rulings should be learned from qualified teachers."],
 ];
 
-function SectionHead({ number, label, title, copy }: { number: string; label: string; title: string; copy: string }) {
+function SectionHead({ number, label, title, copy, source }: { number: string; label: string; title: string; copy: string; source: string }) {
   return (
     <div className="namaz-section-head">
       <span>{number}</span>
-      <div><p>{label}</p><h2>{title}</h2><div>{copy}</div></div>
+      <div><p>{label}</p><h2>{title}</h2><div>{copy}</div><small className="namaz-source-basis">Basis · {source}</small></div>
     </div>
   );
 }
@@ -178,7 +178,7 @@ export default function NamazPage() {
           <h1>Wudu & <em>Namaz</em></h1>
           <p>A complete, calm learning path—from purification to Salam—with the five daily prayers, Arabic recitations, common mistakes and visible sources.</p>
           <div className="namaz-hero-actions"><a href="#purity">Start with Wudu</a><a href="#method">Go to prayer steps</a></div>
-          <div className="guide-status"><i>✓</i><span><strong>Reference-led guide</strong>Qur’an, hadith and recognized Sunni Hanafi material</span></div>
+          <div className="guide-status"><i>✓</i><span><strong>Reference-led guide</strong>Qur’an, hadith and recognized Sunni Hanafi material</span><Link href="/editorial-policy#corrections">Report a correction</Link></div>
         </div>
         <div className="namaz-hero-card">
           <span className="hero-card-kicker">THE FIVE DAILY PRAYERS</span>
@@ -205,7 +205,7 @@ export default function NamazPage() {
 
         <article className="namaz-content">
           <section className="namaz-section overview-section">
-            <SectionHead number="01" label="FOUNDATIONS" title="Before you begin" copy="Salah joins intention, purity, time, direction, recitation and physical worship. Learn the foundations before memorizing movements." />
+            <SectionHead number="01" label="FOUNDATIONS" title="Before you begin" copy="Salah joins intention, purity, time, direction, recitation and physical worship. Learn the foundations before memorizing movements." source="Qur’an 2:238 and 4:103" />
             <div className="evidence-card"><span>QUR’ANIC FOUNDATION</span><blockquote lang="ar" dir="rtl">حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ وَقُومُوا لِلَّهِ قَانِتِينَ</blockquote><h3>Guard the prayers and stand before Allah with devotion.</h3><Link href="/quran?surah=2&ayah=238">Read Qur’an 2:238 with context →</Link></div>
             <div className="condition-grid">
               {[
@@ -222,7 +222,7 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section" id="purity">
-            <SectionHead number="02" label="RITUAL PURITY" title="Wudu, step by step" copy="Qur’an 5:6 names the core washes of ablution. The Sunnah teaches a careful, ordered method without wasting water." />
+            <SectionHead number="02" label="RITUAL PURITY" title="Wudu, step by step" copy="Qur’an 5:6 names the core washes of ablution. The Sunnah teaches a careful, ordered method without wasting water." source="Qur’an 5:6 · Bukhari and Muslim" />
             <div className="wudu-reference"><div><span>THE FOUR FARD ACTS · HANAFI</span><h3>Face · Arms · Head · Feet</h3><p>Wash the complete face, wash both arms including elbows, wipe at least one quarter of the head, and wash both feet including ankles.</p></div><Link href="/quran?surah=5&ayah=6">Qur’an 5:6 →</Link></div>
             <StepLearningMode label="Wudu" storageKey="noor-namaz-wudu-step-v1" steps={wuduSteps} />
             <div className="two-column-cards">
@@ -234,7 +234,7 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section" id="ghusl">
-            <SectionHead number="03" label="FULL & ALTERNATIVE PURIFICATION" title="Ghusl and Tayammum" copy="When major ritual impurity applies, Wudu alone is not enough. When water is genuinely unavailable or harmful, the Shari‘ah provides Tayammum." />
+            <SectionHead number="03" label="FULL & ALTERNATIVE PURIFICATION" title="Ghusl and Tayammum" copy="When major ritual impurity applies, Wudu alone is not enough. When water is genuinely unavailable or harmful, the Shari‘ah provides Tayammum." source="Qur’an 4:43 and 5:6 · Hanafi manuals" />
             <div className="ghusl-grid">
               <article><span>GHUSL · HANAFI</span><h3>Three obligatory acts</h3><ol><li>Rinse the entire mouth thoroughly.</li><li>Rinse the soft part of the nose.</li><li>Wash the entire body so no washable area remains dry.</li></ol><p>Begin with intention and Bismillah, wash impurities, perform Wudu, then pour water over the head and whole body. Ensure roots of hair, navel, folds and skin under jewellery are reached.</p></article>
               <article><span>TAYAMMUM</span><h3>When water cannot be used</h3><ol><li>Make intention for purification.</li><li>Use clean earth or an earth-derived surface.</li><li>Strike/place hands, remove excess dust and wipe the complete face.</li><li>Repeat and wipe both arms including elbows in the Hanafi method.</li></ol><p>Tayammum ends when its excuse ends or when something that breaks Wudu occurs. Medical harm and access questions require reliable advice.</p></article>
@@ -243,7 +243,7 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section" id="times">
-            <SectionHead number="04" label="DAILY SCHEDULE" title="Prayer times and Rak‘ahs" copy="Prayer times follow the sun and change by date and location. Use a verified local timetable or mosque and understand the time windows below." />
+            <SectionHead number="04" label="DAILY SCHEDULE" title="Prayer times and Rak‘ahs" copy="Prayer times follow the sun and change by date and location. Use a verified local timetable or mosque and understand the time windows below." source="Qur’an 4:103 · Karachi calculation method" />
             <div className="time-warning"><strong>NOOR now calculates today’s timings from your location.</strong><p>Calculation methods and local mosque practice can differ, so confirm with your trusted local timetable when exact observance matters.</p></div>
             <div className="time-table"><div className="time-row time-head"><span>Prayer</span><span>Begins</span><span>Ends</span><span>Guidance</span></div>{prayerTimes.map((row) => <div className="time-row" key={row[0]}>{row.map((cell,index) => index === 0 ? <strong key={cell}>{cell}</strong> : <span key={cell}>{cell}</span>)}</div>)}</div>
             <div className="prohibited-times"><span>THREE VERY RESTRICTED PERIODS</span><p>Do not begin ordinary Salah while the sun is rising, at the exact zenith, or while it is setting. Voluntary prayer also has restrictions after Fajr until sunrise and after Asr until sunset. Exceptional prayers have separate rulings.</p></div>
@@ -253,7 +253,7 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section" id="method">
-            <SectionHead number="05" label="COMPLETE SEQUENCE" title="How to perform Salah" copy="The Prophet ﷺ instructed Muslims to pray as they saw him pray. Move calmly, allow every posture to settle and do not race through the prayer." />
+            <SectionHead number="05" label="COMPLETE SEQUENCE" title="How to perform Salah" copy="The Prophet ﷺ instructed Muslims to pray as they saw him pray. Move calmly, allow every posture to settle and do not race through the prayer." source="Sahih al-Bukhari · Hanafi method" />
             <div className="hadith-strip"><span>PROPHETIC METHOD</span><p>“Pray as you have seen me praying.”</p><strong>Sahih al-Bukhari 631</strong></div>
             <StepLearningMode label="Salah" storageKey="noor-namaz-salah-step-v1" steps={salahSteps} />
             <div className="rakats-explainer">
@@ -265,13 +265,13 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section" id="recitations">
-            <SectionHead number="06" label="ARABIC, ROMAN & MEANING" title="Essential recitations" copy="Open each card to revise the Arabic, a reading aid and a concise meaning. Transliteration helps memory but cannot replace correct pronunciation from a teacher." />
+            <SectionHead number="06" label="ARABIC, ROMAN & MEANING" title="Essential recitations" copy="Open each card to revise the Arabic, a reading aid and a concise meaning. Transliteration helps memory but cannot replace correct pronunciation from a teacher." source="Qur’an text · Hadith-reported supplications" />
             <div className="recitation-list">{phraseCards.map((phrase,index) => <details open={index === 0} key={phrase.title}><summary><span>{String(index + 1).padStart(2,"0")}</span><div><strong>{phrase.title}</strong><small>{phrase.when}</small></div><i>+</i></summary><div className="recitation-body"><p className="arabic" lang="ar" dir="rtl">{phrase.arabic}</p><p className="roman"><span>ROMAN READING AID</span>{phrase.roman}</p><p className="meaning"><span>CONCISE MEANING</span>{phrase.meaning}</p></div></details>)}</div>
             <div className="qunut-card"><span>WITR WAJIB · HANAFI</span><h3>Dua-e-Qunoot</h3><p>In the third Rak‘ah of Witr, after al-Fatihah and another Surah, say Takbir with the Hanafi hand movement and read Dua-e-Qunoot before Ruku‘. Accurate Arabic matters, so revise this guide and learn pronunciation directly from a qualified teacher.</p><strong className="contained-reference">Reference: Method of Salah — Hanafi</strong></div>
           </section>
 
           <section className="namaz-section" id="mistakes">
-            <SectionHead number="07" label="CORRECTION & VALIDITY" title="Mistakes, invalidators and Sajdah Sahw" copy="Not every mistake has the same ruling. Missing a Fard, forgetting a Wajib and leaving a Sunnah are treated differently in Hanafi law." />
+            <SectionHead number="07" label="CORRECTION & VALIDITY" title="Mistakes, invalidators and Sajdah Sahw" copy="Not every mistake has the same ruling. Missing a Fard, forgetting a Wajib and leaving a Sunnah are treated differently in Hanafi law." source="Recognized Hanafi fiqh manuals" />
             <div className="mistake-grid">
               <article><span>FARD OMITTED</span><h3>Prayer is not completed</h3><p>If an obligatory element such as Ruku‘ or a Sajdah is genuinely omitted and not corrected within its rules, Sajdah Sahw alone cannot replace it.</p></article>
               <article><span>WAJIB FORGOTTEN</span><h3>Sajdah Sahw may be due</h3><p>Forgetting a Wajib, delaying a Fard or certain sequence errors can require two prostrations of forgetfulness. Exact cases matter.</p></article>
@@ -282,7 +282,7 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section" id="congregation">
-            <SectionHead number="08" label="PRAYING TOGETHER" title="Jama‘at, Imam and Jumu‘ah" copy="Congregational prayer carries great virtue and teaches unity, order and care for others. Follow the Imam and preserve the rows." />
+            <SectionHead number="08" label="PRAYING TOGETHER" title="Jama‘at, Imam and Jumu‘ah" copy="Congregational prayer carries great virtue and teaches unity, order and care for others. Follow the Imam and preserve the rows." source="Qur’an 62:9 · Bukhari and Muslim" />
             <div className="congregation-cards">
               <article><span>BEFORE JAMA‘AT</span><ul><li>Arrive with Wudu and calmness.</li><li>Silence your phone and avoid disturbing others.</li><li>Straighten the row and close reasonable gaps.</li><li>Do not rush dangerously when Iqamah begins.</li></ul></article>
               <article><span>WITH THE IMAM</span><ul><li>Make your own intention to follow.</li><li>Do not precede the Imam’s Takbir or movement.</li><li>Follow each posture after the Imam moves.</li><li>Learn latecomer rules before completing missed Rak‘ahs.</li></ul></article>
@@ -292,7 +292,7 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section" id="special">
-            <SectionHead number="09" label="SPECIAL CIRCUMSTANCES" title="Travel, illness, Qada and special prayers" copy="Islamic law provides structured concessions, not guesswork. Use this overview, then obtain case-specific guidance." />
+            <SectionHead number="09" label="SPECIAL CIRCUMSTANCES" title="Travel, illness, Qada and special prayers" copy="Islamic law provides structured concessions, not guesswork. Use this overview, then obtain case-specific guidance." source="Qur’an 4:101 · Hanafi fiqh manuals" />
             <div className="special-grid">
               <article><span>TRAVEL · QASR</span><h3>Shortening Fard prayer</h3><p>A Hanafi Shari‘ traveller shortens the four-Rak‘ah Fard of Dhuhr, Asr and Isha to two. Fajr remains two and Maghrib remains three. Common Hanafi guidance uses a journey of roughly 92 km and an intended stay shorter than 15 days; verify your route and intention.</p><strong className="contained-reference">Reference: The Traveller’s Salah — Hanafi</strong></article>
               <article><span>ILLNESS & DISABILITY</span><h3>Pray according to ability</h3><p>Stand when able. If genuinely unable, pray sitting; if Ruku‘ or Sajdah cannot be performed, use the recognized gestures. Do not use a chair merely for convenience, and do not force a harmful posture.</p></article>
@@ -304,12 +304,12 @@ export default function NamazPage() {
           </section>
 
           <section className="namaz-section" id="faq">
-            <SectionHead number="10" label="COMMON QUESTIONS" title="Clear answers, with boundaries" copy="These answers cover common learning questions. Personal, medical and doubtful cases need a qualified scholar." />
+            <SectionHead number="10" label="COMMON QUESTIONS" title="Clear answers, with boundaries" copy="These answers cover common learning questions. Personal, medical and doubtful cases need a qualified scholar." source="Educational summary · scholar review pending" />
             <div className="namaz-faq">{faq.map(([q,a],index) => <details key={q}><summary><span>{String(index + 1).padStart(2,"0")}</span><strong>{q}</strong><i>+</i></summary><p>{a}</p></details>)}</div>
           </section>
 
           <section className="namaz-section sources-section" id="sources">
-            <SectionHead number="11" label="VISIBLE REFERENCES" title="Sources used for this guide" copy="The wording is summarized for learners. Quran references open inside NOOR; collection and manual names remain visible for verification." />
+            <SectionHead number="11" label="VISIBLE REFERENCES" title="Sources used for this guide" copy="The wording is summarized for learners. Quran references open inside NOOR; collection and manual names remain visible for verification." source="Primary texts and named Sunni Hanafi manuals" />
             <div className="source-list">
               <Link href="/quran?surah=5&ayah=6"><span>QUR’AN · 5:6</span><strong>Wudu, Ghusl and Tayammum</strong><i>→</i></Link>
               <Link href="/quran?surah=4&ayah=103"><span>QUR’AN · 4:103</span><strong>Prayer at appointed times</strong><i>→</i></Link>

@@ -82,6 +82,18 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+
+  const openSearch = useCallback(() => {
+    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSearchOpen(true);
+  }, []);
+
+  const closeSearch = useCallback((restoreFocus = true) => {
+    setSearchOpen(false);
+    if (restoreFocus) window.requestAnimationFrame(() => returnFocusRef.current?.focus());
+  }, []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -102,13 +114,13 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     const onKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        setSearchOpen(true);
+        openSearch();
       }
-      if (event.key === "Escape") setSearchOpen(false);
+      if (event.key === "Escape" && searchOpen) closeSearch();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [closeSearch, openSearch, searchOpen]);
 
   useEffect(() => {
     if (!searchOpen) return;
@@ -133,12 +145,26 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     };
   }, [query, searchOpen]);
 
-  const openSearch = useCallback(() => setSearchOpen(true), []);
   const toggleTheme = useCallback(() => setDark((value) => !value), []);
   const setTheme = useCallback((theme: "light" | "dark") => setDark(theme === "dark"), []);
 
+  const trapDialogFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([disabled]), a[href], select:not([disabled]), [tabindex]:not([tabindex='-1'])") ?? []);
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   const chooseResult = (result: SearchResult) => {
-    setSearchOpen(false);
+    closeSearch(false);
     setQuery("");
     if (window.location.pathname === "/") {
       const resultUrl = new URL(result.href, window.location.origin);
@@ -168,8 +194,8 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     <UtilitiesContext.Provider value={{ openSearch, dark, setTheme, toggleTheme }}>
       {children}
       {searchOpen ? (
-        <div className="global-search-overlay" role="dialog" aria-modal="true" aria-label="Search NOOR">
-          <button className="global-search-backdrop" type="button" onClick={() => setSearchOpen(false)} aria-label="Close search"/>
+        <div ref={dialogRef} className="global-search-overlay" role="dialog" aria-modal="true" aria-label="Search NOOR" onKeyDown={trapDialogFocus}>
+          <button className="global-search-backdrop" type="button" onClick={() => closeSearch()} aria-label="Close search"/>
           <section className="global-search-panel">
             <div className="global-search-input">
               <SearchIcon/>
@@ -183,7 +209,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
                 placeholder="Try ‘Ayat ul Kursi’, ‘mosque near me’ or 2:255…"
                 aria-label="Search topics, features, dictionary, destinations, Naats and Quran verses"
               />
-              <button type="button" onClick={() => setSearchOpen(false)}>ESC</button>
+              <button type="button" onClick={() => closeSearch()}>ESC</button>
             </div>
             <div className="global-search-status">
               <strong>{query ? "SEARCH RESULTS" : "QUICK ACCESS"}</strong>

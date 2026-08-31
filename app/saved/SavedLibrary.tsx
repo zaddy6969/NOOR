@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { daroodEntries } from "../darood/DaroodLibrary";
 import { lughatEntries } from "../firozul-lughat/lughat-data";
 import { readSavedCollections, readSavedList, SAVED_ITEMS_EVENT, SAVED_KEYS, savedItemsTotal, type SavedCollections, writeSavedList } from "../site/saved-items";
+import SavedSync from "./SavedSync";
 
 type Filter = "all" | "quran" | "darood" | "lughat";
 type SurahSummary = { number: number; englishName: string; englishNameTranslation: string };
@@ -59,6 +60,7 @@ export default function SavedLibrary() {
         <div><span>PRIVATE ON THIS DEVICE</span><h1>Your saved collection</h1><p>Keep verses, Surahs, Darood and glossary words together. They remain available after refresh on this browser.</p></div>
         <strong><BookmarkMark/><b>{total}</b><small>saved {total === 1 ? "item" : "items"}</small></strong>
       </header>
+      <SavedSync />
 
       <nav className="saved-filters" aria-label="Filter saved items">
         {([
@@ -129,7 +131,7 @@ export default function SavedLibrary() {
           </section> : null}
         </div>
       )}
-      <p className="saved-device-note">Saved items are stored only in this browser. Clearing website data will remove them.</p>
+      <p className="saved-device-note">Saved items stay in this browser by default. Account sync happens only when you choose it.</p>
       {notice ? <div className="quran-notice" role="status">{notice}</div> : null}
     </section>
   );

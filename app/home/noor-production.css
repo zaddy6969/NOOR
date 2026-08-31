@@ -49,6 +49,38 @@ button, a, summary { touch-action: manipulation; }
 .noor-more-feature-card:hover { transform: translateY(-1px); }
 .noor-more-feature-copy strong { text-wrap: balance; }
 
+/* A compact personal layer makes repeat visits faster without turning the home page into a dashboard. */
+.noor-personal-rail {
+  width: min(1240px, 100%);
+  min-height: 82px;
+  margin: 12px auto 0;
+  padding: 13px 16px;
+  border: 1px solid var(--noor-line);
+  border-radius: var(--noor-radius-md);
+  background: color-mix(in srgb, var(--noor-surface) 96%, var(--noor-gold) 4%);
+  box-shadow: var(--noor-shadow-sm);
+  display: grid;
+  grid-template-columns: minmax(150px, .72fr) auto minmax(280px, 1.35fr);
+  align-items: center;
+  gap: 18px;
+}
+.noor-personal-rail > header span,
+.noor-recent-tools > span { color: var(--noor-gold); font-size: 9px; font-weight: 760; letter-spacing: .13em; text-transform: uppercase; }
+.noor-personal-rail h2 { margin: 3px 0 0; color: var(--noor-ink); font-family: var(--noor-display); font-size: 20px; font-weight: 600; line-height: 1.1; }
+.noor-personal-metrics { padding-inline: 17px; border-inline: 1px solid var(--noor-line-soft); display: grid; grid-template-columns: repeat(3, minmax(82px, 1fr)); }
+.noor-personal-metrics > a,
+.noor-personal-metrics > button { min-height: 54px; padding: 3px 13px; border: 0; border-right: 1px solid var(--noor-line-soft); background: transparent; color: var(--noor-ink); display: flex; flex-direction: column; justify-content: center; cursor: pointer; text-align: left; }
+.noor-personal-metrics > :last-child { border-right: 0; }
+.noor-personal-metrics strong { color: var(--noor-green); font-family: var(--noor-display); font-size: 24px; font-weight: 600; line-height: 1; }
+.noor-personal-metrics strong small { margin-left: 2px; color: var(--noor-muted); font: 600 10px var(--font-geist), sans-serif; }
+.noor-personal-metrics span { margin-top: 5px; color: var(--noor-muted); font-size: 10px; }
+.noor-recent-tools { min-width: 0; display: flex; align-items: center; justify-content: flex-end; gap: 7px; }
+.noor-recent-tools > span { margin-right: 3px; white-space: nowrap; }
+.noor-recent-tools button { min-height: 38px; padding: 0 11px; border: 1px solid var(--noor-line); border-radius: 20px; background: var(--noor-surface); color: var(--noor-ink); font-size: 10px; white-space: nowrap; cursor: pointer; }
+.noor-recent-tools button:hover { border-color: var(--noor-gold); }
+.noor-recent-tools button i { margin-left: 8px; color: var(--noor-gold); font-style: normal; }
+.noor-recent-tools small { max-width: 290px; color: var(--noor-muted); font-size: 10px; line-height: 1.4; }
+
 /* Prayer trust line and calculation controls. */
 .prayer-trust-line {
   grid-column: 1 / -1;
@@ -67,6 +99,7 @@ button, a, summary { touch-action: manipulation; }
 .prayer-trust-line strong { color: var(--ink); font-weight: 650; }
 .prayer-trust-line button { min-width: 44px; min-height: 30px; border: 0; background: transparent; color: var(--green); font-size: 11px; font-weight: 720; cursor: pointer; }
 .prayer-settings-overlay .home-prayer-settings { max-height: min(760px, calc(100vh - 36px)); overflow-y: auto; }
+.topic-review a { min-height: 32px; margin-top: 5px; color: var(--green); display: inline-flex; align-items: center; font-size: 11px; font-weight: 680; }
 
 /* Qibla: no decorative block; the instrument is the interface. */
 .qibla-page { background: radial-gradient(circle at 50% 24%, rgba(216, 196, 137, .13), transparent 28%), var(--ivory); }
@@ -167,6 +200,19 @@ button, a, summary { touch-action: manipulation; }
 .namaz-section-head div > div, .condition-grid p, .wudu-reference p, .step-list p, .rule-card li, .breakers-panel li, .time-row span, .rakah-row span, .recitation-body .roman, .recitation-body .meaning, .mistake-grid p, .namaz-faq p { font-size: 12px; }
 .condition-grid h3, .step-list h3 { font-size: 20px; }
 .guide-status span, .namaz-hero-card > p, .namaz-hero-card > div small, .namaz-aside > div p { font-size: 10px; }
+.guide-status > a { min-height: 32px; margin-left: 6px; padding: 0 10px; border-left: 1px solid var(--line); color: var(--green); display: inline-flex; align-items: center; font-size: 9px; font-weight: 680; }
+.namaz-source-basis { width: fit-content; margin-top: 13px; padding: 5px 9px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-soft); color: var(--green); display: block; font-size: 9px; font-weight: 670; letter-spacing: .015em; }
+.tracker-copy p { font-size: 10px; }
+
+/* Saved stays local-first; cloud sync is an explicit user action. */
+.saved-sync { margin: 12px 0 0; padding: 14px 16px; border: 1px solid var(--noor-line); border-radius: var(--noor-radius-md); background: var(--noor-surface); display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.saved-sync > div { min-width: 0; display: grid; gap: 3px; }
+.saved-sync strong { color: var(--noor-ink); font-size: 12px; }
+.saved-sync span { color: var(--noor-muted); font-size: 10px; line-height: 1.45; }
+.saved-sync button, .saved-sync > a { flex: 0 0 auto; min-height: 38px; padding: 0 14px; border: 1px solid var(--noor-green); border-radius: 20px; background: var(--noor-green); color: #fff; display: inline-flex; align-items: center; font-size: 10px; font-weight: 680; cursor: pointer; }
+.saved-sync button:disabled { opacity: .58; cursor: progress; }
+.saved-sync-done { border-color: color-mix(in srgb, var(--noor-green) 35%, var(--noor-line)); background: color-mix(in srgb, var(--noor-surface) 82%, var(--mint)); }
+.saved-sync-error { border-color: color-mix(in srgb, var(--noor-danger) 44%, var(--noor-line)); }
 
 /* Footer and dark theme parity. */
 .site-footer a { min-height: 32px; display: inline-flex; align-items: center; }
@@ -180,16 +226,31 @@ html.noor-dark .ayah-arabic, html.noor-dark .ayah-meaning { color: var(--ink); }
 html.noor-dark .namaz-hero { background: radial-gradient(circle at 6% 12%, rgba(193,167,103,.11), transparent 26%), linear-gradient(145deg, #14231f, #101d19); }
 html.noor-dark .namaz-aside > div, html.noor-dark .fiqh-note, html.noor-dark .difference-note, html.noor-dark .sensitive-note, html.noor-dark .editorial-note, html.noor-dark .rule-card.warning, html.noor-dark .mistake-grid article:nth-child(2) { border-color: #594d2d; background: #2d281b; color: #eee1bb; }
 html.noor-dark .quran-study-panel { background: var(--surface); }
+html.noor-dark .noor-more-feature-card,
+html.noor-dark .noor-more-feature-card:hover { background: #f8f4e9; color: #17342d; }
+html.noor-dark .noor-more-feature-card:hover { background: #fffaf0; }
+html.noor-dark .noor-more-feature-card .noor-more-feature-copy strong { color: #17342d; }
+html.noor-dark .noor-more-feature-card .noor-more-feature-copy small { color: #5c6e67; }
 
 @media (max-width: 1180px) {
   .noor-daily-status { grid-template-columns: repeat(4, minmax(265px, 1fr)); overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 8px; }
   .daily-status-card { scroll-snap-align: start; }
   .namaz-quick-start { grid-template-columns: repeat(2, 1fr); }
+  .noor-personal-rail { grid-template-columns: minmax(140px, .7fr) 1.3fr; }
+  .noor-recent-tools { grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid var(--noor-line-soft); justify-content: flex-start; overflow-x: auto; }
 }
 
 @media (max-width: 760px) {
   html { scroll-padding-top: 78px; }
   .noor-daily-status { grid-auto-columns: minmax(290px, 86vw); grid-template-columns: none; }
+  .noor-personal-rail { margin-top: 9px; padding: 12px; grid-template-columns: 1fr; gap: 10px; }
+  .noor-personal-rail > header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .noor-personal-rail h2 { font-size: 17px; }
+  .noor-personal-rail > header span { order: 2; font-size: 7px; }
+  .noor-personal-metrics { padding: 0; border: 0; }
+  .noor-personal-metrics > a, .noor-personal-metrics > button { min-height: 48px; padding-inline: 10px; }
+  .noor-personal-metrics strong { font-size: 21px; }
+  .noor-recent-tools { grid-column: auto; padding-top: 9px; }
   .prayer-trust-line { align-items: flex-start; }
   .qibla-page > .qibla-compact-tool { min-height: calc(100vh - 68px); padding-top: 24px; justify-content: flex-start; }
   .qibla-location-controls { width: min(100% - 4px, 430px); }
@@ -213,6 +274,8 @@ html.noor-dark .quran-study-panel { background: var(--surface); }
   .active-learning-step { min-height: 240px; padding: 22px 18px; grid-template-columns: 1fr; gap: 13px; }
   .active-learning-step h3 { font-size: 25px; }
   .step-mode-toolbar { align-items: flex-start; }
+  .saved-sync { align-items: flex-start; flex-direction: column; }
+  .saved-sync button, .saved-sync > a { width: 100%; justify-content: center; }
 }
 
 @media (max-width: 480px) {

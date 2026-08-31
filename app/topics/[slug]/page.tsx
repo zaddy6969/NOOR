@@ -21,13 +21,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const topic = topicMap.get(slug);
   if (!topic) return {};
-  const title = `${topic.title} — Full Guide | NOOR`;
+  const title = `${topic.title} — Full Guide`;
+  const socialTitle = `${title} | NOOR`;
   return {
     title,
     description: topic.summary,
     alternates: { canonical: `/topics/${topic.slug}` },
-    openGraph: { title, description: topic.summary, images: [] },
-    twitter: { card: "summary", title, description: topic.summary, images: [] },
+    openGraph: { title: socialTitle, description: topic.summary, images: [] },
+    twitter: { card: "summary", title: socialTitle, description: topic.summary, images: [] },
   };
 }
 
@@ -36,8 +37,21 @@ export default async function TopicPage({ params }: PageProps) {
   const topic = topicMap.get(slug);
   if (!topic) notFound();
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: `${topic.title} — Full Guide`,
+    description: topic.summary,
+    mainEntityOfPage: `https://noor-daily-muslim.vercel.app/topics/${topic.slug}`,
+    author: { "@type": "Organization", name: "NOOR Daily Muslim" },
+    publisher: { "@type": "Organization", name: "NOOR Daily Muslim" },
+    dateModified: "2026-08-31",
+    inLanguage: "en",
+  };
+
   return (
     <main className="topic-page" id="top">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <header className="topic-topbar">
         <Link className="brand" href="/" aria-label="NOOR home">
           <span className="brand-mark"><span className="brand-star">✦</span></span>
@@ -127,7 +141,7 @@ export default async function TopicPage({ params }: PageProps) {
                 return internal ? <Link href={internal} key={`${source.label}-${source.href}`}>{content}</Link> : <article key={`${source.label}-${source.href}`}>{content}</article>;
               })}
             </div>
-            <div className="topic-review"><span>i</span><div><strong>Editorial responsibility</strong><p>{topic.reviewNote}</p></div></div>
+            <div className="topic-review"><span>i</span><div><strong>Editorial responsibility</strong><p>{topic.reviewNote}</p><Link href="/editorial-policy#corrections">Report a correction →</Link></div></div>
           </section>
         </article>
       </section>
