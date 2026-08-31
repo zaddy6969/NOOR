@@ -303,3 +303,74 @@ html.noor-dark .noor-tabbed-home .noor-feature-tabs>button:hover,html.noor-dark 
     font-size: 9px;
   }
 }
+
+/* Launcher scale pass — 75% of the previous visual footprint. */
+.noor-tabbed-home .noor-feature-shell {
+  width: min(calc(100% - 48px), 1160px);
+  margin-top: -38px;
+}
+.noor-tabbed-home .noor-feature-tabs {
+  min-height: 74px;
+  padding: 6px;
+  grid-template-columns: repeat(10, minmax(88px, 1fr));
+  gap: 6px;
+  border-radius: 12px;
+}
+.noor-tabbed-home .noor-feature-tabs > button {
+  min-width: 88px;
+  min-height: 60px;
+  padding: 6px 7px 5px;
+  border-radius: 7px;
+  gap: 2px;
+}
+.noor-tabbed-home .noor-feature-tabs svg {
+  width: 12px;
+  height: 12px;
+  stroke-width: 1.65;
+}
+.noor-tabbed-home .noor-feature-tabs span {
+  font-size: 8.5px;
+  line-height: 1.12;
+}
+.noor-tabbed-home .noor-feature-tabs > button::after {
+  background: linear-gradient(180deg, rgba(250,247,237,.03), rgba(250,247,237,.55) 46%, rgba(250,247,237,.98) 84%);
+}
+
+@media (max-width: 1220px) {
+  .noor-tabbed-home .noor-feature-shell {
+    width: calc(100% - 32px);
+  }
+  .noor-tabbed-home .noor-feature-tabs {
+    grid-template-columns: repeat(10, 92px);
+  }
+  .noor-tabbed-home .noor-feature-tabs > button {
+    min-width: 92px;
+  }
+}
+
+@media (max-width: 700px) {
+  .noor-tabbed-home .noor-feature-shell {
+    width: calc(100% - 18px);
+    margin-top: -33px;
+  }
+  .noor-tabbed-home .noor-feature-tabs {
+    min-height: 67px;
+    padding: 5px;
+    grid-template-columns: repeat(10, 80px);
+    gap: 5px;
+    border-radius: 10px;
+  }
+  .noor-tabbed-home .noor-feature-tabs > button {
+    min-width: 80px;
+    min-height: 54px;
+    padding: 5px 6px 4px;
+    border-radius: 6px;
+  }
+  .noor-tabbed-home .noor-feature-tabs svg {
+    width: 12px;
+    height: 12px;
+  }
+  .noor-tabbed-home .noor-feature-tabs span {
+    font-size: 8px;
+  }
+}
