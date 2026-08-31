@@ -172,6 +172,8 @@ button, a, summary { touch-action: manipulation; }
 .namaz-reading-progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--green), var(--gold)); transition: width .08s linear; }
 .namaz-chapter-bar { position: sticky; top: 76px; z-index: 45; box-shadow: 0 8px 24px rgba(26,51,43,.05); }
 .namaz-chapter-bar a { min-height: 36px; font-size: 10px; }
+.namaz-topbar nav a, .topic-topbar nav a { min-height: 36px; display: inline-flex; align-items: center; }
+.namaz-quick-start a { min-height: 32px; display: inline-flex; align-items: center; }
 .namaz-quick-start { width: min(1220px, calc(100% - 48px)); margin: 26px auto -35px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; }
 .namaz-quick-start > div { min-height: 94px; padding: 15px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); display: grid; grid-template-columns: 28px 1fr; gap: 4px 10px; align-content: center; }
 .namaz-quick-start span { grid-row: 1 / 3; width: 28px; height: 28px; border-radius: 50%; background: var(--mint); color: var(--green); display: grid; place-items: center; font-size: 9px; }
@@ -225,6 +227,36 @@ html.noor-dark .qibla-location-controls select, html.noor-dark .qibla-location-c
 html.noor-dark .ayah-arabic, html.noor-dark .ayah-meaning { color: var(--ink); }
 html.noor-dark .namaz-hero { background: radial-gradient(circle at 6% 12%, rgba(193,167,103,.11), transparent 26%), linear-gradient(145deg, #14231f, #101d19); }
 html.noor-dark .namaz-aside > div, html.noor-dark .fiqh-note, html.noor-dark .difference-note, html.noor-dark .sensitive-note, html.noor-dark .editorial-note, html.noor-dark .rule-card.warning, html.noor-dark .mistake-grid article:nth-child(2) { border-color: #594d2d; background: #2d281b; color: #eee1bb; }
+
+.professional-footer-main > div:not(.footer-identity) a { min-height: 32px; display: inline-flex; align-items: center; }
+.topic-hero-actions a, .topic-foundation a, .topic-chapter-bar a, .topic-aside > a, .topic-footer a,
+.namaz-aside > a, .namaz-footer a { min-height: 32px; display: inline-flex; align-items: center; }
+
+/* Focused prayer guides keep the complete reference available without forcing a 14k-pixel read. */
+.namaz-topbar nav a.active { color: var(--green); }
+.namaz-focus-hero { width: min(1120px, calc(100% - 48px)); min-height: 320px; margin: 0 auto; padding: 58px 0 44px; display: grid; grid-template-columns: 1.35fr .65fr; gap: 72px; align-items: center; }
+.namaz-focus-hero h1 { max-width: 760px; margin: 0; color: var(--ink); font-family: Georgia, serif; font-size: clamp(48px, 6vw, 76px); font-weight: 500; letter-spacing: -.045em; line-height: .98; }
+.namaz-focus-hero > div > p:last-child { max-width: 720px; margin: 20px 0 0; color: var(--muted); font-size: 15px; line-height: 1.75; }
+.namaz-focus-hero > aside { padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: 0 16px 38px rgba(28,51,44,.06); }
+.namaz-focus-hero > aside span { color: var(--gold); font-size: 9px; font-weight: 760; letter-spacing: .14em; }
+.namaz-focus-hero > aside strong { margin-top: 10px; color: var(--green); display: block; font-family: Georgia, serif; font-size: 18px; font-weight: 560; line-height: 1.35; }
+.namaz-focus-hero > aside p { margin: 10px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.namaz-focus-tabs { min-height: 68px; padding: 9px max(4.5vw, calc((100% - 1120px)/2)); border-block: 1px solid var(--line); background: var(--surface); display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; position: sticky; top: 78px; z-index: 38; }
+.namaz-focus-tabs a { min-height: 48px; padding: 0 14px; border: 1px solid transparent; border-radius: 12px; color: var(--muted); display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 650; }
+.namaz-focus-tabs a span { width: 25px; height: 25px; border-radius: 50%; background: var(--surface-soft); color: var(--gold); display: grid; place-items: center; font-size: 8px; }
+.namaz-focus-tabs a:hover { border-color: var(--line); color: var(--green); }
+.namaz-focus-tabs a.active { border-color: color-mix(in srgb, var(--green) 22%, var(--line)); background: var(--mint); color: var(--green); }
+.namaz-focus-content { width: min(960px, calc(100% - 48px)); margin: 0 auto; padding: 72px 0 24px; }
+.namaz-focus-section { margin: 0; padding-bottom: 52px; border-bottom: 0; }
+.namaz-focus-section > :first-child { margin-top: 0; }
+.namaz-focus-section .step-learning-mode { margin-block: 24px 30px; }
+.namaz-focus-section .subheading { margin-top: 45px; }
+.namaz-focus-footer { width: min(1120px, calc(100% - 48px)); margin: 20px auto 80px; padding: 27px 30px; border: 1px solid var(--line); border-radius: 18px; background: var(--green-deep); color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 25px; }
+.namaz-focus-footer strong { font-family: Georgia, serif; font-size: 22px; font-weight: 540; }
+.namaz-focus-footer p { margin: 6px 0 0; color: rgba(255,255,255,.65); font-size: 12px; line-height: 1.55; }
+.namaz-focus-footer a { min-height: 42px; padding: 0 17px; border: 1px solid rgba(255,255,255,.24); border-radius: 22px; color: #fff; display: inline-flex; align-items: center; flex: 0 0 auto; font-size: 11px; font-weight: 700; }
+html.noor-dark .namaz-focus-hero > aside { background: var(--surface); }
+html.noor-dark .namaz-focus-tabs a.active { background: #18352d; }
 html.noor-dark .quran-study-panel { background: var(--surface); }
 html.noor-dark .noor-more-feature-card,
 html.noor-dark .noor-more-feature-card:hover { background: #f8f4e9; color: #17342d; }
@@ -276,6 +308,14 @@ html.noor-dark .noor-more-feature-card .noor-more-feature-copy small { color: #5
   .step-mode-toolbar { align-items: flex-start; }
   .saved-sync { align-items: flex-start; flex-direction: column; }
   .saved-sync button, .saved-sync > a { width: 100%; justify-content: center; }
+  .namaz-focus-hero { width: calc(100% - 32px); min-height: 0; padding: 45px 0 35px; grid-template-columns: 1fr; gap: 26px; }
+  .namaz-focus-hero h1 { font-size: 45px; }
+  .namaz-focus-hero > div > p:last-child { font-size: 13px; }
+  .namaz-focus-tabs { top: 68px; padding: 8px 14px; display: flex; overflow-x: auto; scrollbar-width: none; }
+  .namaz-focus-tabs a { min-width: 130px; }
+  .namaz-focus-content { width: calc(100% - 28px); padding-top: 46px; }
+  .namaz-focus-footer { width: calc(100% - 28px); margin-bottom: 45px; padding: 23px; align-items: flex-start; flex-direction: column; }
+  .namaz-focus-footer a { width: 100%; justify-content: center; }
 }
 
 @media (max-width: 480px) {

@@ -168,7 +168,7 @@ export default function NamazPage() {
       <NamazReadingProgress />
       <header className="namaz-topbar">
         <Link className="brand" href="/" aria-label="Back to NOOR home"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link>
-        <nav aria-label="Prayer guide navigation"><a href="#purity">Wudu</a><a href="#times">Prayer table</a><a href="#method">How to pray</a><a href="#recitations">Recitations</a></nav>
+        <nav aria-label="Prayer guide navigation"><Link href="/namaz/wudu">Wudu</Link><a href="#times">Prayer table</a><Link href="/namaz/salah">How to pray</Link><Link href="/namaz/recitations">Recitations</Link></nav>
         <aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="namaz-home-link" href="/">← Back to NOOR</Link></aside>
       </header>
 
@@ -177,7 +177,7 @@ export default function NamazPage() {
           <p className="eyebrow"><span/> COMPLETE WORSHIP GUIDE · HANAFI</p>
           <h1>Wudu & <em>Namaz</em></h1>
           <p>A complete, calm learning path—from purification to Salam—with the five daily prayers, Arabic recitations, common mistakes and visible sources.</p>
-          <div className="namaz-hero-actions"><a href="#purity">Start with Wudu</a><a href="#method">Go to prayer steps</a></div>
+          <div className="namaz-hero-actions"><Link href="/namaz/wudu">Start with Wudu</Link><Link href="/namaz/salah">Open prayer steps</Link></div>
           <div className="guide-status"><i>✓</i><span><strong>Reference-led guide</strong>Qur’an, hadith and recognized Sunni Hanafi material</span><Link href="/editorial-policy#corrections">Report a correction</Link></div>
         </div>
         <div className="namaz-hero-card">
@@ -190,10 +190,10 @@ export default function NamazPage() {
       <div className="namaz-chapter-bar" aria-label="Guide chapters">{chapters.map(([id, name]) => <a href={`#${id}`} key={id}>{name}</a>)}</div>
 
       <section className="namaz-quick-start" aria-label="Prayer guide quick start">
-        <div><span>01</span><strong>Purify</strong><a href="#purity">Learn Wudu</a></div>
+        <div><span>01</span><strong>Purify</strong><Link href="/namaz/wudu">Learn Wudu</Link></div>
         <div><span>02</span><strong>Prepare</strong><a href="#times">Check time &amp; Rak‘ahs</a></div>
-        <div><span>03</span><strong>Pray</strong><a href="#method">Use step-by-step mode</a></div>
-        <div><span>04</span><strong>Review</strong><a href="#mistakes">Fix common mistakes</a></div>
+        <div><span>03</span><strong>Pray</strong><Link href="/namaz/salah">Use step-by-step mode</Link></div>
+        <div><span>04</span><strong>Review</strong><Link href="/namaz/mistakes">Fix common mistakes</Link></div>
       </section>
 
       <section className="namaz-guide-shell">

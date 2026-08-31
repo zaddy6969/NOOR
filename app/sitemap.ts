@@ -4,7 +4,7 @@ import { naatEntries } from "./naat/naat-data";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://noor-daily-muslim.vercel.app";
 const routes = [
-  "", "/quran", "/namaz", "/qibla", "/islamic-calendar", "/mosque-finder", "/darood", "/naat",
+  "", "/quran", "/namaz", "/namaz/wudu", "/namaz/salah", "/namaz/recitations", "/namaz/mistakes", "/qibla", "/islamic-calendar", "/mosque-finder", "/darood", "/naat",
   "/zakat-calculator", "/qaza-namaz", "/glossary", "/shop", "/destinations", "/religious-tourism",
   "/family-tree", "/matrimony", "/about", "/privacy", "/terms", "/editorial-policy",
 ];

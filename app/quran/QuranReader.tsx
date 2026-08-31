@@ -66,6 +66,7 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
   const [autoFollow, setAutoFollow] = useState(true);
   const [translation, setTranslation] = useState("en.sahih");
   const [reciter, setReciter] = useState("alafasy");
+  const [preferencesReady, setPreferencesReady] = useState(false);
   const [studyPanel, setStudyPanel] = useState<StudyPanel | null>(null);
   const [verseResults, setVerseResults] = useState<QuranSearchResult[]>([]);
   const [searchingVerses, setSearchingVerses] = useState(false);
@@ -99,6 +100,7 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
         const readingDays = JSON.parse(window.localStorage.getItem("noor-quran-reading-days-v1") ?? "[]") as string[];
         if (Array.isArray(readingDays)) setReadingStreak(calculateStreak(readingDays));
       } catch { /* keep accessible defaults */ }
+      setPreferencesReady(true);
     }, 0);
     fetch("/api/quran/surahs")
       .then((response) => response.ok ? response.json() : Promise.reject())
@@ -108,8 +110,9 @@ export default function QuranReader({ initialSurah = 1, initialAyah = null }: { 
   }, []);
 
   useEffect(() => {
+    if (!preferencesReady) return;
     window.localStorage.setItem("noor-quran-preferences-v1", JSON.stringify({ translation, reciter }));
-  }, [translation, reciter]);
+  }, [preferencesReady, translation, reciter]);
 
   useEffect(() => {
     const controller = new AbortController();

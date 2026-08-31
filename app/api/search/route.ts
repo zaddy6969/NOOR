@@ -87,12 +87,12 @@ const intentAliases: Array<{ terms: string[]; result: SearchResult }> = [
 ];
 
 const detailedGuides = [
-  ["Wudu step by step", "Purification, four Fard acts, washing hands face arms head and feet, invalidators and water barriers", "/namaz#purity"],
+  ["Wudu step by step", "Purification, four Fard acts, washing hands face arms head and feet, invalidators and water barriers", "/namaz/wudu"],
   ["Ghusl and Tayammum", "Major purification, obligatory bath, clean earth and alternative purification when water is unavailable or harmful", "/namaz#ghusl"],
   ["Prayer times and Rak‘ahs", "Fajr Dhuhr Asr Maghrib Isha, prayer windows, Sunnah Fard Wajib and daily Rak‘ah planner", "/namaz#times"],
-  ["How to perform Salah", "Niyyah, Takbir, Qiyam, Qiraat, Ruku, Qaumah, Sajdah, Tashahhud, Durood and Salam", "/namaz#method"],
-  ["Essential prayer recitations", "Arabic, Roman reading aid and English meaning for Salah duas and Surahs", "/namaz#recitations"],
-  ["Prayer mistakes and Sajdah Sahw", "Forgotten Wajib, omitted Fard, prayer invalidators and prostrations of forgetfulness", "/namaz#mistakes"],
+  ["How to perform Salah", "Niyyah, Takbir, Qiyam, Qiraat, Ruku, Qaumah, Sajdah, Tashahhud, Durood and Salam", "/namaz/salah"],
+  ["Essential prayer recitations", "Arabic, Roman reading aid and English meaning for Salah duas and Surahs", "/namaz/recitations"],
+  ["Prayer mistakes and Sajdah Sahw", "Forgotten Wajib, omitted Fard, prayer invalidators and prostrations of forgetfulness", "/namaz/mistakes"],
   ["Jama‘at and Jumu‘ah", "Congregational prayer, following the Imam, Friday prayer and latecomer guidance", "/namaz#congregation"],
   ["Travel, illness and missed prayers", "Qasr, Qada, chair prayer, disability, Tarawih, Eid and Janazah", "/namaz#special"],
   ["Islamic prayer questions", "Intention, doubts, Wudu differences, missed prayer and praying while sitting", "/namaz#faq"],

@@ -178,6 +178,7 @@ export default function Home() {
   const [quranTarget, setQuranTarget] = useState<QuranTarget>({ surah: 1, ayah: null });
   const [showAllTools, setShowAllTools] = useState(false);
   const [locale, setLocale] = useState<NoorLocale>("en");
+  const [localeReady, setLocaleReady] = useState(false);
   const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const workspaceRef = useRef<HTMLDivElement | null>(null);
   const copy = HOME_COPY[locale];
@@ -229,15 +230,18 @@ export default function Home() {
     const frame = window.requestAnimationFrame(() => {
       const saved = window.localStorage.getItem("noor-language");
       if (saved === "en" || saved === "hi" || saved === "ur") setLocale(saved);
+      setLocaleReady(true);
     });
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
+    if (!localeReady) return;
     window.localStorage.setItem("noor-language", locale);
     document.documentElement.lang = locale === "hi" ? "hi" : locale === "ur" ? "ur" : "en";
     document.documentElement.dir = locale === "ur" ? "rtl" : "ltr";
-  }, [locale]);
+    window.dispatchEvent(new CustomEvent("noor:language-change", { detail: { locale } }));
+  }, [locale, localeReady]);
 
   return (
     <main className="noor-tabbed-home" lang={locale === "hi" ? "hi" : locale === "ur" ? "ur" : "en"} dir={locale === "ur" ? "rtl" : "ltr"}>
