@@ -405,3 +405,200 @@ html.noor-dark .noor-tabbed-home .noor-feature-tabs>button:hover,html.noor-dark 
     width: 100%;
   }
 }
+
+/* Open-canvas content system — preserve features, remove boxes inside boxes. */
+.noor-tabbed-home .noor-dynamic-workspace {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.noor-tabbed-home .workspace-heading {
+  min-height: 72px;
+  padding: 10px 4px 12px;
+  border: 0;
+  background: transparent;
+}
+.noor-tabbed-home .workspace-heading > a.workspace-full-page {
+  min-height: 44px;
+  padding-inline: 4px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.noor-tabbed-home .workspace-heading > a.workspace-full-page:hover {
+  border: 0;
+  background: transparent;
+  color: var(--noor-gold);
+}
+
+/* Quran preview sits directly on the page. */
+.noor-tabbed-home .home-quran-reader {
+  column-gap: 30px;
+  background: transparent;
+}
+.noor-tabbed-home .home-quran-toolbar {
+  padding-inline: 0;
+  border: 0;
+  background: transparent;
+}
+.noor-tabbed-home .home-quran-toolbar label,
+.noor-tabbed-home .home-quran-toolbar button {
+  border: 0;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--noor-green) 5%, transparent);
+}
+.noor-tabbed-home .home-quran-toolbar label:hover,
+.noor-tabbed-home .home-quran-toolbar button:hover {
+  background: color-mix(in srgb, var(--noor-green) 9%, transparent);
+}
+.noor-tabbed-home .home-quran-verses {
+  background: transparent;
+}
+.noor-tabbed-home .home-quran-verses > div,
+.noor-tabbed-home .home-quran-verses > div:nth-child(n+3) {
+  margin-bottom: 7px;
+  border: 0 !important;
+  background-color: transparent !important;
+  background-image: none;
+  box-shadow: none;
+}
+.noor-tabbed-home .home-quran-verses > div.active {
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--noor-green) 7%, transparent), transparent) !important;
+  box-shadow: inset 3px 0 var(--noor-gold);
+}
+.noor-tabbed-home .home-quran-audio {
+  padding-inline: 0 4px !important;
+  border: 0;
+  background: transparent !important;
+}
+.noor-tabbed-home .home-quran-audio > a {
+  border: 0;
+  background: color-mix(in srgb, var(--noor-green) 6%, transparent);
+}
+.noor-tabbed-home .home-quran-audio > a:hover {
+  background: color-mix(in srgb, var(--noor-green) 11%, transparent);
+}
+
+/* More Features becomes an image-led editorial directory, not a card wall. */
+.noor-tabbed-home .noor-more-features {
+  margin-top: 32px;
+  padding: 14px 0 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.noor-tabbed-home .noor-more-features > header {
+  padding-inline: 4px;
+}
+.noor-tabbed-home .noor-more-features > header button {
+  min-height: 44px;
+  padding-inline: 4px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.noor-tabbed-home .noor-more-features > header button:hover {
+  border: 0;
+  background: transparent;
+  color: var(--noor-gold);
+}
+.noor-tabbed-home .noor-more-feature-groups {
+  padding-top: 22px;
+  border: 0;
+  gap: 34px;
+}
+.noor-tabbed-home .noor-more-feature-group h3 {
+  margin-bottom: 15px;
+}
+.noor-tabbed-home .noor-more-feature-group h3 i {
+  display: none;
+}
+.noor-tabbed-home .noor-more-feature-grid {
+  gap: 26px;
+}
+.noor-tabbed-home .noor-more-feature-card {
+  min-height: 166px;
+  padding: 14px 6px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+.noor-tabbed-home .noor-more-feature-card::before,
+.noor-tabbed-home .noor-more-feature-card::after {
+  display: none;
+}
+.noor-tabbed-home .noor-more-feature-card:hover {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+.noor-tabbed-home .noor-more-feature-copy {
+  min-height: 138px;
+}
+.noor-tabbed-home .noor-more-feature-copy b {
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--noor-gold);
+}
+.noor-tabbed-home .noor-more-feature-art {
+  width: 52%;
+}
+
+html.noor-dark .noor-tabbed-home .noor-dynamic-workspace,
+html.noor-dark .noor-tabbed-home .workspace-heading,
+html.noor-dark .noor-tabbed-home .home-quran-toolbar,
+html.noor-dark .noor-tabbed-home .home-quran-verses,
+html.noor-dark .noor-tabbed-home .home-quran-audio,
+html.noor-dark .noor-tabbed-home .noor-more-features,
+html.noor-dark .noor-tabbed-home .noor-more-feature-card,
+html.noor-dark .noor-tabbed-home .noor-more-feature-card:hover {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+html.noor-dark .noor-tabbed-home .noor-more-feature-copy strong {
+  color: var(--noor-ink);
+}
+html.noor-dark .noor-tabbed-home .noor-more-feature-copy small {
+  color: var(--noor-muted);
+}
+
+@media (max-width: 900px) {
+  .noor-tabbed-home .home-quran-reader {
+    row-gap: 16px;
+  }
+  .noor-tabbed-home .home-quran-audio {
+    padding: 16px 4px 4px !important;
+    border: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .noor-tabbed-home .workspace-heading {
+    padding-inline: 2px;
+  }
+  .noor-tabbed-home .noor-more-features {
+    padding-inline: 0;
+  }
+  .noor-tabbed-home .noor-more-feature-grid {
+    gap: 18px 14px;
+  }
+  .noor-tabbed-home .noor-more-feature-card {
+    min-height: 148px;
+    padding-inline: 4px;
+  }
+}
