@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import HeroDailyStatus from "./home/HeroDailyStatus";
 import HomeFeatureWorkspace, { type FeatureId, type QuranTarget } from "./home/HomeFeatureWorkspace";
 import SiteFooter from "./site/SiteFooter";
-import { HeaderUtilities } from "./site/SiteUtilities";
+import { HeaderUtilities, SearchLauncher } from "./site/SiteUtilities";
 
 type IconName = "book" | "clock" | "compass" | "calendar" | "mosque" | "dua" | "darood" | "zakat" | "prayer" | "dictionary" | "names" | "pin" | "home" | "grid" | "search" | "profile" | "music" | "family" | "shop" | "community" | "learn" | "info";
 type NoorLocale = "en" | "hi" | "ur";
@@ -257,7 +257,7 @@ export default function Home() {
           <button className={activeFeature === "qibla" ? "active" : ""} type="button" onClick={() => activate("qibla", { focus: true })}>Qibla</button>
         </nav>
         <div className="noor-header-actions">
-          <HeaderUtilities compact />
+          <HeaderUtilities compact showSearch={false} />
           <label className="noor-language"><span className="sr-only">Interface language; Hindi and Urdu are in beta</span><select value={locale} onChange={(event) => setLocale(event.target.value as NoorLocale)} aria-label="Interface language; Hindi and Urdu are in beta"><option value="en">EN</option><option value="ur">اردو · Beta</option><option value="hi">हिंदी · Beta</option></select></label>
           <Link className="noor-profile" href="/sign-in" aria-label="Your NOOR account"><NoorIcon name="profile" /></Link>
         </div>
@@ -272,6 +272,11 @@ export default function Home() {
       </section>
 
       <section className="noor-feature-shell" aria-label="NOOR daily features">
+        <SearchLauncher className="noor-home-search">
+          <NoorIcon name="search" />
+          <span>{copy.search}</span>
+          <kbd aria-hidden="true">⌘ K</kbd>
+        </SearchLauncher>
         <div className="noor-feature-tabs" role="tablist" aria-label="Choose a NOOR feature">
           {FEATURE_STRIP.map((feature, index) => (
             <button

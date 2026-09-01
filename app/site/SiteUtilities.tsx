@@ -117,16 +117,18 @@ function useSavedItemCount() {
   return count;
 }
 
-export function HeaderUtilities({ compact = false }: { compact?: boolean }) {
+export function HeaderUtilities({ compact = false, showSearch = true }: { compact?: boolean; showSearch?: boolean }) {
   const utilities = useContext(UtilitiesContext);
   const savedCount = useSavedItemCount();
   if (!utilities) return null;
   const copy = UTILITY_COPY[utilities.locale];
   return (
     <div className={compact ? "site-utilities compact" : "site-utilities"}>
-      <button className="header-global-search" type="button" onClick={utilities.openSearch} aria-label={copy.searchLabel}>
-        <SearchIcon/><span>{copy.search}</span><kbd>⌘ K</kbd>
-      </button>
+      {showSearch ? (
+        <button className="header-global-search" type="button" onClick={utilities.openSearch} aria-label={copy.searchLabel}>
+          <SearchIcon/><span>{copy.search}</span><kbd>⌘ K</kbd>
+        </button>
+      ) : null}
       <Link className={`saved-header-link${compact ? " compact" : ""}`} href="/saved" aria-label={copy.savedLabel(savedCount)} title={copy.saved}>
         <SavedIcon/><span>{copy.saved}</span>{savedCount > 0 ? <b aria-hidden="true">{savedCount > 99 ? "99+" : savedCount}</b> : null}
       </Link>
