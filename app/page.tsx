@@ -275,7 +275,6 @@ export default function Home() {
         <SearchLauncher className="noor-home-search">
           <NoorIcon name="search" />
           <span>{copy.search}</span>
-          <kbd aria-hidden="true">⌘ K</kbd>
         </SearchLauncher>
         <div className="noor-feature-tabs" role="tablist" aria-label="Choose a NOOR feature">
           {FEATURE_STRIP.map((feature, index) => (
