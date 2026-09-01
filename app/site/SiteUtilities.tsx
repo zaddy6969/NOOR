@@ -37,8 +37,13 @@ const UTILITY_COPY: Record<NoorLocale, {
   quick: string;
   searching: string;
   noResult: string;
-  enterHint: string;
-  scopeHint: string;
+  recent: string;
+  clearRecent: string;
+  removeRecent: string;
+  popular: string;
+  matches: string;
+  clearInput: string;
+  closeSearch: string;
 }> = {
   en: {
     search: "Search everything…",
@@ -53,8 +58,13 @@ const UTILITY_COPY: Record<NoorLocale, {
     quick: "QUICK ACCESS",
     searching: "Searching Quran and NOOR…",
     noResult: "No result found. Try a Surah name, verse reference such as 2:255, a city or a simpler spelling.",
-    enterHint: "Press Enter to open the first result",
-    scopeHint: "Quran, glossary, places and every NOOR feature",
+    recent: "Recent searches",
+    clearRecent: "Clear all",
+    removeRecent: "Remove from recent searches",
+    popular: "Popular searches",
+    matches: "Best matches",
+    clearInput: "Clear search",
+    closeSearch: "Close search",
   },
   hi: {
     search: "सब कुछ खोजें…",
@@ -69,8 +79,13 @@ const UTILITY_COPY: Record<NoorLocale, {
     quick: "जल्दी खोलें",
     searching: "क़ुरआन और नूर में खोज रहे हैं…",
     noResult: "कोई परिणाम नहीं मिला। सूरह, आयत, शहर या सरल शब्द आज़माएँ।",
-    enterHint: "पहला परिणाम खोलने के लिए Enter दबाएँ",
-    scopeHint: "क़ुरआन, शब्दकोश, स्थान और नूर की सभी सुविधाएँ",
+    recent: "हाल की खोजें",
+    clearRecent: "सभी हटाएँ",
+    removeRecent: "हाल की खोजों से हटाएँ",
+    popular: "लोकप्रिय खोजें",
+    matches: "सबसे अच्छे परिणाम",
+    clearInput: "खोज साफ़ करें",
+    closeSearch: "खोज बंद करें",
   },
   ur: {
     search: "سب کچھ تلاش کریں…",
@@ -85,8 +100,13 @@ const UTILITY_COPY: Record<NoorLocale, {
     quick: "فوری رسائی",
     searching: "قرآن اور نور میں تلاش جاری ہے…",
     noResult: "کوئی نتیجہ نہیں ملا۔ سورت، آیت، شہر یا آسان لفظ آزمائیں۔",
-    enterHint: "پہلا نتیجہ کھولنے کے لیے Enter دبائیں",
-    scopeHint: "قرآن، لغت، مقامات اور نور کی تمام سہولیات",
+    recent: "حالیہ تلاشیں",
+    clearRecent: "سب صاف کریں",
+    removeRecent: "حالیہ تلاشوں سے ہٹائیں",
+    popular: "مقبول تلاشیں",
+    matches: "بہترین نتائج",
+    clearInput: "تلاش صاف کریں",
+    closeSearch: "تلاش بند کریں",
   },
 };
 
@@ -94,6 +114,31 @@ const UtilitiesContext = createContext<UtilitiesContextValue | null>(null);
 
 function SearchIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>;
+}
+
+function CloseIcon() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>;
+}
+
+function HistoryIcon() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7v5h5"/><path d="M5.5 16a8 8 0 1 0-.8-7.7L4 12"/><path d="M12 7.5V12l3 2"/></svg>;
+}
+
+const RECENT_SEARCH_KEY = "noor-recent-searches-v1";
+const MAX_RECENT_SEARCHES = 6;
+const POPULAR_SEARCHES: Record<NoorLocale, string[]> = {
+  en: ["Ayat al-Kursi", "Prayer times", "Surah Al-Waqi‘ah", "Mosque near me", "Daily duas"],
+  hi: ["आयतुल कुर्सी", "नमाज़ के समय", "सूरह वाक़िआ", "पास की मस्जिद", "रोज़ाना दुआएँ"],
+  ur: ["آیت الکرسی", "نماز کے اوقات", "سورۃ الواقعہ", "قریب کی مسجد", "روزانہ دعائیں"],
+};
+
+function readRecentSearches() {
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(RECENT_SEARCH_KEY) ?? "[]");
+    return Array.isArray(stored) ? stored.filter((item): item is string => typeof item === "string" && item.trim().length > 0).slice(0, MAX_RECENT_SEARCHES) : [];
+  } catch {
+    return [];
+  }
 }
 
 function SavedIcon() {
@@ -155,17 +200,31 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [activeResult, setActiveResult] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
 
+  const updateSearchQuery = useCallback((value: string) => {
+    setQuery(value);
+    setResults([]);
+    setActiveResult(0);
+    setLoading(Boolean(value.trim()));
+  }, []);
+
   const openSearch = useCallback(() => {
     returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setRecentSearches(readRecentSearches());
     setSearchOpen(true);
   }, []);
 
   const closeSearch = useCallback((restoreFocus = true) => {
     setSearchOpen(false);
+    setQuery("");
+    setResults([]);
+    setLoading(false);
+    setActiveResult(0);
     if (restoreFocus) window.requestAnimationFrame(() => returnFocusRef.current?.focus());
   }, []);
 
@@ -204,11 +263,11 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     const requestedSearch = new URLSearchParams(window.location.search).get("search")?.trim();
     if (!requestedSearch) return;
     const frame = window.requestAnimationFrame(() => {
-      setQuery(requestedSearch);
+      updateSearchQuery(requestedSearch);
       openSearch();
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [openSearch]);
+  }, [openSearch, updateSearchQuery]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -230,15 +289,16 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
 
   useEffect(() => {
     if (!searchOpen) return;
+    const cleanQuery = query.trim();
+    if (!cleanQuery) return;
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      setLoading(true);
-      fetch(`/api/search?q=${encodeURIComponent(query)}`, { signal: controller.signal })
+      fetch(`/api/search?q=${encodeURIComponent(cleanQuery)}`, { signal: controller.signal })
         .then((response) => response.ok ? response.json() : Promise.reject())
         .then((payload: { results?: SearchResult[] }) => setResults(Array.isArray(payload.results) ? payload.results : []))
         .catch((error: Error) => { if (error.name !== "AbortError") setResults([]); })
         .finally(() => { if (!controller.signal.aborted) setLoading(false); });
-    }, query.trim() ? 220 : 0);
+    }, 180);
     return () => {
       window.clearTimeout(timer);
       controller.abort();
@@ -264,7 +324,31 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     }
   };
 
+  const rememberSearch = useCallback((value: string) => {
+    const clean = value.trim().replace(/\s+/g, " ");
+    if (clean.length < 2) return;
+    setRecentSearches((current) => {
+      const next = [clean, ...current.filter((item) => item.toLocaleLowerCase() !== clean.toLocaleLowerCase())].slice(0, MAX_RECENT_SEARCHES);
+      window.localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const removeRecentSearch = (value: string) => {
+    setRecentSearches((current) => {
+      const next = current.filter((item) => item !== value);
+      window.localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const clearRecentSearches = () => {
+    setRecentSearches([]);
+    window.localStorage.removeItem(RECENT_SEARCH_KEY);
+  };
+
   const chooseResult = (result: SearchResult) => {
+    rememberSearch(query);
     closeSearch(false);
     setQuery("");
     if (window.location.pathname === "/") {
@@ -298,39 +382,88 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
         <div ref={dialogRef} className="global-search-overlay" role="dialog" aria-modal="true" aria-label="Search NOOR" onKeyDown={trapDialogFocus}>
           <button className="global-search-backdrop" type="button" onClick={() => closeSearch()} aria-label="Close search"/>
           <section className="global-search-panel">
-            <div className="global-search-input">
-              <SearchIcon/>
-              <input
-                ref={inputRef}
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && results[0]) chooseResult(results[0]);
-                }}
-                placeholder={copy.placeholder}
-                aria-label="Search topics, features, dictionary, destinations, Naats and Quran verses"
-              />
-              <button type="button" onClick={() => closeSearch()}>ESC</button>
-            </div>
-            <div className="global-search-status">
-              <strong>{query ? copy.results : copy.quick}</strong>
-              <span>{loading ? copy.searching : `${results.length} results`}</span>
-            </div>
-            <div className="global-search-results">
-              {results.map((result) => (
-                <button type="button" onClick={() => chooseResult(result)} key={result.id}>
-                  <span className="global-result-type">{result.type}</span>
-                  <div>
-                    <strong>{result.title}</strong>
-                    {result.arabic ? <b lang="ar" dir="rtl">{result.arabic}</b> : null}
-                    <small>{result.description}</small>
-                  </div>
-                  <i aria-hidden="true">›</i>
-                </button>
-              ))}
-              {!loading && query.trim() && results.length === 0 ? <p>{copy.noResult}</p> : null}
-            </div>
-            <footer><span>{copy.enterHint}</span><span>{copy.scopeHint}</span></footer>
+            <header className="global-search-head">
+              <div className="global-search-field">
+                <SearchIcon/>
+                <input
+                  ref={inputRef}
+                  value={query}
+                  onChange={(event) => updateSearchQuery(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowDown" && results.length) {
+                      event.preventDefault();
+                      setActiveResult((index) => (index + 1) % results.length);
+                    } else if (event.key === "ArrowUp" && results.length) {
+                      event.preventDefault();
+                      setActiveResult((index) => (index - 1 + results.length) % results.length);
+                    } else if (event.key === "Enter" && results[activeResult]) {
+                      event.preventDefault();
+                      chooseResult(results[activeResult]);
+                    }
+                  }}
+                  placeholder={copy.placeholder}
+                  aria-label="Search topics, features, dictionary, destinations, Naats and Quran verses"
+                  aria-controls="noor-search-results"
+                  aria-activedescendant={results[activeResult] ? `noor-search-result-${activeResult}` : undefined}
+                  autoComplete="off"
+                />
+                {query ? <button className="global-search-clear" type="button" onClick={() => updateSearchQuery("")} aria-label={copy.clearInput}><CloseIcon/></button> : null}
+              </div>
+              <button className="global-search-close" type="button" onClick={() => closeSearch()} aria-label={copy.closeSearch}><CloseIcon/></button>
+            </header>
+
+            {!query.trim() ? (
+              <div className="global-search-start">
+                {recentSearches.length ? (
+                  <section className="global-search-recents" aria-labelledby="recent-searches-title">
+                    <header><strong id="recent-searches-title">{copy.recent}</strong><button type="button" onClick={clearRecentSearches}>{copy.clearRecent}</button></header>
+                    <div>
+                      {recentSearches.map((item) => (
+                        <div className="global-search-recent" key={item}>
+                          <button className="global-search-recent-query" type="button" onClick={() => updateSearchQuery(item)}><HistoryIcon/><span>{item}</span></button>
+                          <button className="global-search-recent-remove" type="button" onClick={() => removeRecentSearch(item)} aria-label={`${copy.removeRecent}: ${item}`}><CloseIcon/></button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
+                <section className="global-search-popular" aria-labelledby="popular-searches-title">
+                  <strong id="popular-searches-title">{copy.popular}</strong>
+                  <div>{POPULAR_SEARCHES[locale].map((item) => <button type="button" onClick={() => updateSearchQuery(item)} key={item}><SearchIcon/><span>{item}</span></button>)}</div>
+                </section>
+              </div>
+            ) : (
+              <>
+                <div className="global-search-status" role="status" aria-live="polite">
+                  <strong>{copy.matches}</strong>
+                  <span>{loading ? copy.searching : `${results.length} ${results.length === 1 ? "result" : "results"}`}</span>
+                </div>
+                <div className="global-search-results" id="noor-search-results" role="listbox" aria-label={copy.results}>
+                  {loading ? <div className="global-search-loading" aria-hidden="true"><span/><span/><span/></div> : null}
+                  {!loading && results.map((result, index) => (
+                    <button
+                      className={activeResult === index ? "active" : undefined}
+                      id={`noor-search-result-${index}`}
+                      role="option"
+                      aria-selected={activeResult === index}
+                      type="button"
+                      onMouseEnter={() => setActiveResult(index)}
+                      onClick={() => chooseResult(result)}
+                      key={result.id}
+                    >
+                      <span className="global-result-icon"><SearchIcon/></span>
+                      <div>
+                        <strong>{result.title}</strong>
+                        <small><span>{result.type}</span>{result.description}</small>
+                      </div>
+                      {result.arabic ? <b lang="ar" dir="rtl">{result.arabic}</b> : null}
+                      <i aria-hidden="true">↗</i>
+                    </button>
+                  ))}
+                  {!loading && results.length === 0 ? <div className="global-search-empty"><SearchIcon/><p>{copy.noResult}</p></div> : null}
+                </div>
+              </>
+            )}
           </section>
         </div>
       ) : null}
