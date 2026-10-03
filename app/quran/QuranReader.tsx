@@ -455,14 +455,26 @@ export default function QuranReader({
   useEffect(() => {
     if (!detail || detail.number !== selected || !pendingAyah || loading)
       return;
+    let cancelled = false;
+    let frame = 0;
     const timer = window.setTimeout(() => {
-      document
-        .getElementById(`ayah-${pendingAyah}`)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      rememberAyah(pendingAyah);
-      setPendingAyah(null);
+      void document.fonts.ready.then(() => {
+        if (cancelled) return;
+        frame = requestAnimationFrame(() => {
+          if (cancelled) return;
+          document
+            .getElementById(`ayah-${pendingAyah}`)
+            ?.scrollIntoView({ behavior: "instant", block: "start" });
+          rememberAyah(pendingAyah);
+          setPendingAyah(null);
+        });
+      });
     }, 120);
-    return () => window.clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+      cancelAnimationFrame(frame);
+    };
   }, [detail, selected, pendingAyah, loading, rememberAyah]);
 
   useEffect(() => {

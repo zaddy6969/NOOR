@@ -441,3 +441,9 @@
     overflow-wrap: anywhere;
   }
 }
+
+/* Exact verse navigation needs measured card heights, including offscreen verses. */
+.ayah-card {
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}
