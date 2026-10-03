@@ -42,10 +42,30 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
   const [isPlaying, setIsPlaying] = useState(false);
   const [playVersion, setPlayVersion] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const dockRef = useRef<HTMLElement>(null);
   const rangeRef = useRef<PracticeRange | null>(null);
   const roundRef = useRef(1);
   const [practice, setPractice] = useState<{ range: PracticeRange; round: number; complete: boolean } | null>(null);
   const [audioError, setAudioError] = useState("");
+  const currentKind = current?.kind;
+
+  useEffect(() => {
+    if (currentKind !== "quran") return;
+    const dock = dockRef.current;
+    if (!dock) return;
+    const scrollPage = (event: WheelEvent) => {
+      // A fixed player has no scrolling ancestor for the browser to chain to.
+      // Preserve trackpad pinch zoom and horizontal gestures.
+      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return;
+      const page = document.scrollingElement;
+      if (!page || page.scrollHeight <= page.clientHeight) return;
+      event.preventDefault();
+      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? window.innerHeight : 1;
+      window.scrollBy({ top: event.deltaY * unit, behavior: "instant" });
+    };
+    dock.addEventListener("wheel", scrollPage, { passive: false });
+    return () => dock.removeEventListener("wheel", scrollPage);
+  }, [currentKind]);
 
   const advancePractice = (audio: HTMLAudioElement, ended = false) => {
     const range = rangeRef.current;
@@ -121,7 +141,7 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
     <MediaContext.Provider value={{ current, play, close, quranPlayback }}>
       {children}
       {current ? (
-        <aside className={`media-dock media-dock-${current.kind}${collapsed ? " is-collapsed" : ""}`} aria-label="Persistent media player">
+        <aside ref={dockRef} className={`media-dock media-dock-${current.kind}${collapsed ? " is-collapsed" : ""}`} aria-label="Persistent media player">
           <header>
             <button className="media-dock-info" type="button" onClick={() => setCollapsed((value) => !value)} aria-expanded={!collapsed}>
               <span>{current.kind === "video" ? "VIDEO" : current.kind === "spotify" ? "AUDIO" : "QURAN AUDIO"}</span>
