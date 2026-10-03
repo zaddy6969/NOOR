@@ -6,7 +6,7 @@ import ReadingGoal from "./ReadingGoal";
 import PracticeControls from "./PracticeControls";
 import { JUZ_STARTS } from "@/lib/quran-structure";
 import DownloadButton from "../offline/DownloadButton";
-import { useMediaPlayer } from "../media/MediaProvider";
+import { useMediaPlayer, type MediaItem } from "../media/MediaProvider";
 import { readSavedList, SAVED_KEYS, writeSavedList } from "../site/saved-items";
 
 type SurahSummary = {
@@ -154,6 +154,19 @@ const fallbackSurahs: SurahSummary[] = [
   },
 ];
 
+function surahMediaItem(detail: SurahDetail, reciter: string): MediaItem {
+  return {
+    kind: "quran",
+    id: `quran-${detail.number}-${reciter}`,
+    title: `Surah ${detail.englishName}`,
+    subtitle: `${detail.audio.reciterName ?? "Quran recitation"} · full Surah`,
+    src: detail.audio.src,
+    surahNumber: detail.number,
+    verseTimings: detail.audio.verseTimings,
+    verses: detail.ayahs.map(({ number, arabic, english }) => ({ number, arabic, english })),
+  };
+}
+
 export default function QuranReader({
   initialSurah = 1,
   initialAyah = null,
@@ -163,7 +176,8 @@ export default function QuranReader({
   initialAyah?: number | null;
   resume?: boolean;
 }) {
-  const { current, play, quranPlayback } = useMediaPlayer();
+  const { current, play, close, quranPlayback } = useMediaPlayer();
+  const pendingReciterPlayback = useRef<{ surah: number; reciter: string } | null>(null);
   const [surahs, setSurahs] = useState<SurahSummary[]>(fallbackSurahs);
   const [selected, setSelected] = useState(initialSurah);
   const [requestVersion, setRequestVersion] = useState(0);
@@ -377,19 +391,28 @@ export default function QuranReader({
           ok: boolean;
           data: { surah?: SurahDetail; error?: string };
         }) => {
+          if (controller.signal.aborted) return;
           if (!ok || !data.surah)
             throw new Error(data.error ?? "Surah unavailable");
           setDetail(data.surah);
+          const pending = pendingReciterPlayback.current;
+          if (pending?.surah === selected && pending.reciter === reciter) {
+            pendingReciterPlayback.current = null;
+            play(surahMediaItem(data.surah, reciter));
+          }
         },
       )
       .catch((reason: Error) => {
-        if (reason.name !== "AbortError") setError(reason.message);
+        if (!controller.signal.aborted) {
+          pendingReciterPlayback.current = null;
+          setError(reason.message);
+        }
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [selected, requestVersion, translation, reciter, preferencesReady]);
+  }, [selected, requestVersion, translation, reciter, preferencesReady, play]);
 
   const activeAyahNumber =
     current?.kind === "quran" &&
@@ -790,9 +813,17 @@ export default function QuranReader({
             <select
               value={reciter}
               onChange={(event) => {
+                const nextReciter = event.target.value;
+                const switchingCurrentSurah = current?.kind === "quran" && current.surahNumber === selected;
+                // Stop the old voice immediately; resume the new voice once loaded
+                // only when the listener was already playing this Surah.
+                const resumePlayback = (switchingCurrentSurah && quranPlayback.isPlaying) ||
+                  pendingReciterPlayback.current?.surah === selected;
+                pendingReciterPlayback.current = resumePlayback ? { surah: selected, reciter: nextReciter } : null;
+                if (switchingCurrentSurah) close();
                 setLoading(true);
                 setError("");
-                setReciter(event.target.value);
+                setReciter(nextReciter);
               }}
             >
               {RECITERS.map((item) => (
@@ -885,22 +916,7 @@ export default function QuranReader({
               </div>
               <button
                 type="button"
-                onClick={() =>
-                  play({
-                    kind: "quran",
-                    id: `quran-${detail.number}-${reciter}`,
-                    title: `Surah ${detail.englishName}`,
-                    subtitle: `${detail.audio.reciterName ?? "Quran recitation"} · full Surah`,
-                    src: detail.audio.src,
-                    surahNumber: detail.number,
-                    verseTimings: detail.audio.verseTimings,
-                    verses: detail.ayahs.map(({ number, arabic, english }) => ({
-                      number,
-                      arabic,
-                      english,
-                    })),
-                  })
-                }
+                onClick={() => play(surahMediaItem(detail, reciter))}
               >
                 <span aria-hidden="true">▶</span>
                 {current?.id === `quran-${detail.number}-${reciter}`

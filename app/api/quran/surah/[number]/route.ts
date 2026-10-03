@@ -29,6 +29,7 @@ type VerseTiming = {
   duration?: number;
 };
 type ChapterAudio = {
+  chapter_id?: number;
   audio_url?: string;
   duration?: number;
   verse_timings?: VerseTiming[];
@@ -43,12 +44,14 @@ const TRANSLATIONS: Record<string, string> = {
 
 const RECITERS: Record<
   string,
-  { label: string; code: string; timingId?: number }
+  { label: string; recording: string; timingId: number }
 > = {
-  alafasy: { label: "Mishary Rashid Alafasy", code: "ar.alafasy", timingId: 7 },
-  sudais: { label: "Abdurrahman as-Sudais", code: "ar.abdurrahmaansudais" },
-  husary: { label: "Mahmoud Khalil Al-Husary", code: "ar.husary" },
-  minshawi: { label: "Muhammad Siddiq al-Minshawi", code: "ar.minshawi" },
+  // Quran Foundation's chapter reciter IDs, not its ayah recitation IDs.
+  // Each fallback is the same verified Murattal recording series as the API.
+  alafasy: { label: "Mishary Rashid Alafasy", recording: "mishari_al_afasy", timingId: 7 },
+  sudais: { label: "Abdurrahman as-Sudais", recording: "abdurrahmaan_as_sudais", timingId: 3 },
+  husary: { label: "Mahmoud Khalil Al-Husary", recording: "khalil_al_husary", timingId: 6 },
+  minshawi: { label: "Muhammad Siddiq al-Minshawi", recording: "siddiq_minshawi", timingId: 9 },
 };
 
 export async function GET(request: Request, { params }: RouteProps) {
@@ -74,20 +77,17 @@ export async function GET(request: Request, { params }: RouteProps) {
 
   try {
     const url = `https://api.alquran.cloud/v1/surah/${surahNumber}/editions/quran-uthmani,${translationId}`;
-    const timingUrl = reciter.timingId
-      ? `https://api.qurancdn.com/api/qdc/audio/reciters/${reciter.timingId}/audio_files?chapter=${surahNumber}&segments=true`
-      : null;
+    const recordingUrl = `https://download.quranicaudio.com/qdc/${reciter.recording}/murattal/${surahNumber}.mp3`;
+    const timingUrl = `https://api.qurancdn.com/api/qdc/audio/reciters/${reciter.timingId}/audio_files?chapter=${surahNumber}&segments=true`;
     const [response, timingResponse] = await Promise.all([
       fetch(url, {
         headers: { Accept: "application/json" },
         signal: AbortSignal.timeout(15000),
       }),
-      timingUrl
-        ? fetch(timingUrl, {
+      fetch(timingUrl, {
             headers: { Accept: "application/json" },
             signal: AbortSignal.timeout(15000),
-          }).catch(() => null)
-        : Promise.resolve(null),
+          }).catch(() => null),
     ]);
     if (!response.ok) throw new Error(`Quran API returned ${response.status}`);
     const payload = (await response.json()) as { data?: UpstreamSurah[] };
@@ -106,12 +106,19 @@ export async function GET(request: Request, { params }: RouteProps) {
 
     let chapterAudio: ChapterAudio | null = null;
     if (timingResponse?.ok) {
-      const timingPayload = (await timingResponse.json()) as {
-        audio_files?: ChapterAudio[];
-      };
-      chapterAudio = Array.isArray(timingPayload.audio_files)
-        ? (timingPayload.audio_files[0] ?? null)
-        : null;
+      try {
+        const timingPayload = (await timingResponse.json()) as {
+          audio_files?: ChapterAudio[];
+        };
+        // Use timings only for this exact reciter's recording and chapter.
+        chapterAudio = Array.isArray(timingPayload.audio_files)
+          ? (timingPayload.audio_files.find((file) =>
+              file.chapter_id === surahNumber && file.audio_url === recordingUrl,
+            ) ?? null)
+          : null;
+      } catch {
+        // Optional timing metadata must not prevent reading or listening.
+      }
     }
 
     const ayahs = arabicAyahs.map((ayah, index) => ({
@@ -132,10 +139,7 @@ export async function GET(request: Request, { params }: RouteProps) {
           revelationType: String(arabic.revelationType ?? ""),
           ayahs,
           audio: {
-            src: String(
-              chapterAudio?.audio_url ??
-                `https://cdn.islamic.network/quran/audio-surah/128/${reciter.code}/${surahNumber}.mp3`,
-            ),
+            src: recordingUrl,
             duration: Number(chapterAudio?.duration ?? 0),
             reciterId,
             reciterName: reciter.label,
@@ -146,7 +150,7 @@ export async function GET(request: Request, { params }: RouteProps) {
                 ),
                 from: Number(timing.timestamp_from ?? 0),
                 to: Number(timing.timestamp_to ?? 0),
-                duration: Number(timing.duration ?? 0),
+                duration: Number(timing.timestamp_to ?? 0) - Number(timing.timestamp_from ?? 0),
               }))
               .filter((timing) => timing.number > 0 && timing.to > timing.from),
           },
