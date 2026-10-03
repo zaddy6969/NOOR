@@ -1,22 +1,7 @@
 import { neon } from "@neondatabase/serverless";
+import type { SyncPayload } from "../lib/account-sync";
 
-export type NoorSyncPayload = {
-  version: 1;
-  saved: {
-    duas?: string[];
-    quranVerses: string[];
-    quranSurahs: string[];
-    darood: string[];
-    lughat: string[];
-  };
-  quran: {
-    progress: Record<string, unknown> | null;
-    preferences: Record<string, unknown>;
-    readingDays: string[];
-    notes: Record<string, string>;
-  };
-  updatedAt: string;
-};
+export type NoorSyncPayload = SyncPayload;
 
 let sqlClient: ReturnType<typeof neon> | null = null;
 let schemaReady: Promise<void> | null = null;
@@ -65,6 +50,7 @@ export async function readUserSync(clerkUserId: string) {
 export async function writeUserSync(
   clerkUserId: string,
   payload: NoorSyncPayload,
+  expectedUpdatedAt: string | null,
 ) {
   await ensureSchema();
   const sql = getSql();
@@ -72,7 +58,10 @@ export async function writeUserSync(
     INSERT INTO noor_user_sync (clerk_user_id, payload)
     VALUES (${clerkUserId}, ${JSON.stringify(payload)}::jsonb)
     ON CONFLICT (clerk_user_id) DO UPDATE SET payload = EXCLUDED.payload, updated_at = NOW()
+    WHERE ${expectedUpdatedAt}::timestamptz IS NOT NULL
+      AND date_trunc('milliseconds', noor_user_sync.updated_at) = ${expectedUpdatedAt}::timestamptz
     RETURNING updated_at
   `) as unknown as Array<{ updated_at: string }>;
+  if (!rows[0]) throw new Error("SYNC_CONFLICT");
   return { ...payload, updatedAt: new Date(rows[0].updated_at).toISOString() };
 }

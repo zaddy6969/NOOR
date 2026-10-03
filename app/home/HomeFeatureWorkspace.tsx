@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "../site/NoorSelect";
 
 import Link from "next/link";
 import { HOME_FEATURE_IDS } from "@/lib/home-features";
@@ -375,7 +376,7 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
           <div className="home-quran-toolbar">
             <label>
               <span>Surah</span>
-              <select
+              <NoorSelect aria-label="Surah"
                 value={surah.number}
                 onChange={(event) =>
                   window.dispatchEvent(
@@ -412,7 +413,7 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
                                       : "An-Nas"}
                   </option>
                 ))}
-              </select>
+              </NoorSelect>
             </label>
             <button
               type="button"
@@ -953,7 +954,7 @@ function DaroodWorkspace() {
             <button type="button" onClick={() => setCount(0)}>
               Reset
             </button>
-            <select
+            <NoorSelect
               value={goal}
               onChange={(event) => setGoal(Number(event.target.value))}
               aria-label="Daily goal"
@@ -961,7 +962,7 @@ function DaroodWorkspace() {
               <option value={33}>Goal 33</option>
               <option value={100}>Goal 100</option>
               <option value={313}>Goal 313</option>
-            </select>
+            </NoorSelect>
           </div>
         </aside>
       </div>

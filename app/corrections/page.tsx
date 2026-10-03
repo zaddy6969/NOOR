@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async function CorrectionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; kind?: string }>;
 }) {
   const query = await searchParams;
   return (
@@ -24,7 +24,7 @@ export default async function CorrectionsPage({
         <h1>Report a correction</h1>
         <p>Help us improve a reference, explanation or feature.</p>
       </section>
-      <CorrectionForm initialPage={query.page?.slice(0, 500) ?? ""} />
+      <CorrectionForm initialPage={query.page?.slice(0, 500) ?? ""} initialKind={query.kind ?? "content"} />
       <SiteFooter />
     </main>
   );

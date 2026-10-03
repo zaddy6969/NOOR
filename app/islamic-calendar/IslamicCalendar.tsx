@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "../site/NoorSelect";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
@@ -133,11 +134,11 @@ export default function IslamicCalendar() {
             <button type="button" onClick={showToday}>Today</button>
             <label>
               Local adjustment
-              <select value={adjustment} onChange={(event) => setAdjustment(Number(event.target.value))} aria-label="Adjust Hijri dates">
+              <NoorSelect value={adjustment} onChange={(event) => setAdjustment(Number(event.target.value))} aria-label="Adjust Hijri dates">
                 <option value={-1}>−1 day</option>
                 <option value={0}>No adjustment</option>
                 <option value={1}>+1 day</option>
-              </select>
+              </NoorSelect>
             </label>
           </div>
         </div>

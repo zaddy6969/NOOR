@@ -39,7 +39,7 @@ const TRANSLATIONS: Record<string, string> = {
   "en.sahih": "Saheeh International",
   "en.pickthall": "Marmaduke Pickthall",
   "ur.jalandhry": "Fateh Muhammad Jalandhry",
-  "hi.hindi": "Hindi · provider edition (translator attribution pending)",
+  "hi.hindi": "Hindi · Suhel Farooq Khan and Saifur Rahman Nadwi",
 };
 
 const RECITERS: Record<

@@ -33,6 +33,7 @@ const routes = [
   "/privacy",
   "/terms",
   "/editorial-policy",
+  "/content-review",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

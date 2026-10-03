@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import {
   readUserSync,
   writeUserSync,
-  type NoorSyncPayload,
 } from "@/db/user-sync";
+import { sanitizeSync } from "@/lib/account-sync";
 import { isClerkProductionConfigured } from "@/lib/auth-config";
 
 export const runtime = "nodejs";
@@ -14,60 +14,6 @@ function unavailable() {
     { error: "Secure account sync is not configured." },
     { status: 503 },
   );
-}
-
-function stringList(value: unknown, limit = 500) {
-  if (!Array.isArray(value)) return [];
-  return [
-    ...new Set(
-      value.filter(
-        (item): item is string =>
-          typeof item === "string" && item.length > 0 && item.length <= 120,
-      ),
-    ),
-  ].slice(0, limit);
-}
-
-function textRecord(value: unknown, limit = 500) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
-  return Object.fromEntries(
-    Object.entries(value as Record<string, unknown>)
-      .filter(([key, item]) => key.length <= 120 && typeof item === "string")
-      .slice(0, limit)
-      .map(([key, item]) => [key, String(item).slice(0, 4000)]),
-  );
-}
-
-function objectRecord(value: unknown) {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : {};
-}
-
-function sanitize(input: unknown): NoorSyncPayload {
-  const root = objectRecord(input);
-  const saved = objectRecord(root.saved);
-  const quran = objectRecord(root.quran);
-  const serialized = JSON.stringify(root);
-  if (serialized.length > 100_000) throw new Error("Sync data is too large.");
-  return {
-    version: 1,
-    saved: {
-      duas: stringList(saved.duas, 100),
-      quranVerses: stringList(saved.quranVerses),
-      quranSurahs: stringList(saved.quranSurahs, 114),
-      darood: stringList(saved.darood),
-      lughat: stringList(saved.lughat),
-    },
-    quran: {
-      progress:
-        root.quran && quran.progress ? objectRecord(quran.progress) : null,
-      preferences: objectRecord(quran.preferences),
-      readingDays: stringList(quran.readingDays, 730),
-      notes: textRecord(quran.notes),
-    },
-    updatedAt: new Date().toISOString(),
-  };
 }
 
 async function userIdOrResponse() {
@@ -90,7 +36,7 @@ export async function GET() {
   const session = await userIdOrResponse();
   if (!session.ok) return session.response;
   try {
-    return NextResponse.json({ data: await readUserSync(session.userId) });
+    return NextResponse.json({ data: await readUserSync(session.userId) }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -109,18 +55,31 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   const startedAt = Date.now();
+  const origin = request.headers.get("origin");
+  if (!origin || origin !== new URL(request.url).origin)
+    return NextResponse.json({ error: "Sync must be requested from NOOR." }, { status: 403 });
+  if (!request.headers.get("content-type")?.includes("application/json"))
+    return NextResponse.json({ error: "JSON is required." }, { status: 415 });
   const session = await userIdOrResponse();
   if (!session.ok) return session.response;
   try {
-    const payload = sanitize(await request.json());
-    return NextResponse.json({
-      data: await writeUserSync(session.userId, payload),
-    });
+    const text = await request.text();
+    if (text.length > 150000) return NextResponse.json({ error: "Sync data is too large." }, { status: 413 });
+    const input = JSON.parse(text);
+    if (!input || typeof input !== "object" || Array.isArray(input) || input.version !== 1) return NextResponse.json({ error: "Invalid sync payload version." }, { status: 400 });
+    const expectedUpdatedAt = typeof input.expectedUpdatedAt === "string" && Number.isFinite(Date.parse(input.expectedUpdatedAt)) ? input.expectedUpdatedAt : null;
+    const payload = sanitizeSync(input);
+    const current = await readUserSync(session.userId);
+    if ((current?.updatedAt ?? null) !== expectedUpdatedAt)
+      return NextResponse.json({ error: "Your account changed on another device. Sync again to merge the latest changes." }, { status: 409 });
+    if (!Object.hasOwn(payload.quran, "notes") && current?.quran.notes) payload.quran.notes = current.quran.notes;
+    return NextResponse.json({ data: await writeUserSync(session.userId, payload, expectedUpdatedAt) }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     const message =
       error instanceof Error
         ? error.message
         : "Unable to sync this collection.";
+    if (message === "SYNC_CONFLICT") return NextResponse.json({ error: "Another device synced first. Sync again to merge your changes." }, { status: 409 });
     console.error(
       JSON.stringify({
         event: "account_sync_write_failed",

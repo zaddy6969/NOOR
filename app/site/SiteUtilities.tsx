@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { readSavedCollections, SAVED_ITEMS_EVENT, savedItemsTotal } from "./saved-items";
+import NoorSelect from "./NoorSelect";
+import { translateUI } from "@/lib/ui-copy";
 
 type SearchResult = {
   id: string;
@@ -112,6 +114,20 @@ const UTILITY_COPY: Record<NoorLocale, {
 
 const UtilitiesContext = createContext<UtilitiesContextValue | null>(null);
 
+export function useNoorCopy() {
+  const utilities = useContext(UtilitiesContext);
+  const locale = utilities?.locale ?? "en";
+  return { locale, t: (text: string) => translateUI(text, locale) };
+}
+
+export function LanguageControl() {
+  const { locale, t } = useNoorCopy();
+  return <NoorSelect aria-label={t("Language")} value={locale} onChange={(event) => {
+    localStorage.setItem("noor-language", event.target.value);
+    window.dispatchEvent(new Event("noor:language-change"));
+  }}><option value="en">EN</option><option value="ur">اردو</option><option value="hi">हिंदी</option></NoorSelect>;
+}
+
 function SearchIcon() {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>;
 }
@@ -180,7 +196,7 @@ export function HeaderUtilities({ compact = false, showSearch = true }: { compac
       <button className="theme-toggle" type="button" onClick={utilities.toggleTheme} aria-label={utilities.dark ? copy.lightTheme : copy.darkTheme}>
         <span aria-hidden="true">{utilities.dark ? "☀" : "☾"}</span>
       </button>
-      <label className="header-theme-select"><span className="sr-only">{copy.theme}</span><select value={utilities.dark ? "dark" : "light"} onChange={(event) => utilities.setTheme(event.target.value as "light" | "dark")} aria-label={copy.theme}><option value="light">Light</option><option value="dark">Dark</option></select></label>
+      <label className="header-theme-select"><span className="sr-only">{copy.theme}</span><NoorSelect value={utilities.dark ? "dark" : "light"} onChange={(event) => utilities.setTheme(event.target.value as "light" | "dark")} aria-label={copy.theme}><option value="light">Light</option><option value="dark">Dark</option></NoorSelect></label>
     </div>
   );
 }
@@ -248,7 +264,10 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
   useEffect(() => {
     const syncLocale = () => {
       const saved = window.localStorage.getItem("noor-language");
-      setLocale(saved === "hi" || saved === "ur" ? saved : "en");
+      const next = saved === "hi" || saved === "ur" ? saved : "en";
+      setLocale(next);
+      document.documentElement.lang = next;
+      document.documentElement.dir = next === "ur" ? "rtl" : "ltr";
     };
     syncLocale();
     window.addEventListener("noor:language-change", syncLocale);

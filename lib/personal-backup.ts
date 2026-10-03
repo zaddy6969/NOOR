@@ -1,3 +1,6 @@
+import { validPlan } from "./quran-plan.ts";
+import { validReminders } from "./prayer-reminders.ts";
+
 export const PERSONAL_KEYS = [
   "noor-quran-bookmarks-v1",
   "noor-quran-surahs-v1",
@@ -12,6 +15,8 @@ export const PERSONAL_KEYS = [
   "noor-qaza-plan-v1",
   "noor-reading-goal-v1",
   "noor-read-ayahs-v1",
+  "noor-quran-plan-v1",
+  "noor-prayer-reminders-v1",
 ];
 const object = (value: unknown): value is Record<string, unknown> =>
   Boolean(value && typeof value === "object" && !Array.isArray(value));
@@ -29,7 +34,9 @@ export function backupEntries(input: unknown): Array<[string, string]> {
       throw new Error("Invalid backup entry.");
     const value: unknown = JSON.parse(raw);
     let valid = false;
-    if (key === "noor-reading-goal-v1")
+    if (key === "noor-quran-plan-v1") valid = validPlan(value);
+    else if (key === "noor-prayer-reminders-v1") valid = validReminders(value);
+    else if (key === "noor-reading-goal-v1")
       valid = [0, 3, 5, 10, 20].includes(value as number);
     else if (key === "noor-quran-notes-v1")
       valid =

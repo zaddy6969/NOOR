@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "../site/NoorSelect";
 import { useEffect, useState } from "react";
 import {
   NOOR_CITIES,
@@ -131,7 +132,7 @@ export default function LocationPicker({
       ) : null}
       <label>
         Quick city selection
-        <select
+        <NoorSelect
           value={location.source === "preset" ? location.id : ""}
           onChange={(event) => {
             const city = NOOR_CITIES.find(
@@ -148,7 +149,7 @@ export default function LocationPicker({
               {city.label}
             </option>
           ))}
-        </select>
+        </NoorSelect>
       </label>
       <small role="status">{message}</small>
       <small>

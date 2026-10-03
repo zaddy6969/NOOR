@@ -51,6 +51,7 @@ test(
         "/duas",
         "/offline",
         "/saved",
+        "/content-review",
         "/corrections?page=%2Ftopics%2Fpillars",
         "/prayer-times",
         "/quran?surah=2&ayah=255",
@@ -70,6 +71,14 @@ test(
       const matrimony = await (await fetch(base + "/matrimony")).text();
       assert.match(matrimony, /Public matching and introductions are closed/);
       assert.doesNotMatch(matrimony, /Private accounts are available on the connected Vercel/);
+      const wrongOrigin = await fetch(base + "/api/account/sync", { method: "PUT", headers: { origin: "https://untrusted.example", "content-type": "application/json" }, body: "{}" });
+      assert.equal(wrongOrigin.status, 403);
+      const sync = await fetch(base + "/api/account/sync");
+      assert.equal(sync.status, 503);
+      assert.match((await sync.json()).error, /not configured/);
+      const review = await (await fetch(base + "/content-review")).text();
+      assert.match(review, /Suhel Farooq Khan and Saifur Rahman Nadwi/);
+      assert.match(review, /Not appointed/);
       const missing = await fetch(base + "/api/prayer-times");
       assert.equal(missing.status, 400);
       const invalid = await fetch(

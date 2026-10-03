@@ -1,0 +1,79 @@
+.noor-select { position: relative; display: inline-block; min-width: 0; vertical-align: middle; }
+.noor-select-native { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0; pointer-events: none; padding: 0 !important; border: 0 !important; }
+.noor-select > button { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 44px; padding: 10px 14px; border: 1px solid #d9d7c9; border-radius: 12px; color: #123b32; background: #f6f3eb; font: inherit; font-size: 13px; text-align: start; cursor: pointer; }
+.noor-select > button > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.noor-select > button > span:last-child { color: #987a35; font-size: 20px; }
+.noor-select > button[aria-expanded="true"], .noor-select > button:focus-visible { border-color: #a88a42; outline: 2px solid #d8c895; outline-offset: 2px; }
+.noor-select > button:disabled { cursor: default; opacity: .55; }
+.noor-select-popup { z-index: 100000; overflow-y: auto; overscroll-behavior: auto; padding: 7px; border: 1px solid #d4c79f; border-radius: 15px; background: #fffdf6; color: #163d34; box-shadow: 0 15px 45px #102e3429; font-size: 14px; }
+.noor-select-popup [role="option"] { display: flex; justify-content: space-between; gap: 12px; align-items: center; min-height: 44px; padding: 10px 12px; border-radius: 9px; cursor: pointer; }
+.noor-select-popup [role="option"].is-active { background: #f0ebdc; }
+.noor-select-popup [role="option"][aria-selected="true"] { background: #123e33; color: #fff8df; }
+.noor-select-popup [role="option"][aria-disabled="true"] { opacity: .5; cursor: default; }
+label > .noor-select { width: 100%; }
+.quran-reader-tools .noor-select { min-width: 110px; max-width: 250px; }
+.header-utility-cluster > .noor-select { max-width: 105px; }
+.noor-language .noor-select { width: 82px; }
+.noor-language .noor-select > button { border-radius: 24px; background: transparent; }
+.header-theme-select { display: none; }
+.noor-feature-card { margin: 18px 0; padding: 22px; border: 1px solid #dbd8c9; border-radius: 18px; background: #fffdf7; color: #163c32; }
+.noor-feature-card > summary { font-weight: 650; cursor: pointer; min-height: 28px; }
+.noor-feature-card h2 { margin: 0 0 10px; font-size: 22px; }
+.noor-feature-card p { font-size: 14px; line-height: 1.7; color: #576961; }
+.noor-feature-controls { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+.noor-feature-controls label { display: grid; gap: 7px; min-width: 150px; font-size: 13px; }
+.noor-feature-card button, .plan-next > a, .review-register a { min-height: 44px; padding: 11px 16px; border-radius: 11px; border: 1px solid #c8d3c8; background: #eaf0e7; color: #164536; font: inherit; font-size: 13px; cursor: pointer; }
+.noor-feature-card button:disabled { opacity: .5; cursor: default; }
+.noor-feature-card input[type="date"] { min-height: 44px; border-radius: 10px; border: 1px solid #d5d8cc; padding: 10px; background: #f8f7ef; color: inherit; font: inherit; }
+.noor-feature-card progress { width: 100%; height: 12px; accent-color: #155b46; margin: 15px 0 6px; }
+.plan-next { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 18px 0; }
+.plan-next strong { flex: 1; min-width: 160px; }
+.plan-next > span { color: #52675e; font-size: 13px; }
+.plan-assignments { max-height: 330px; overflow: auto; padding-inline-start: 26px; }
+.plan-assignments li { padding: 12px 4px; border-bottom: 1px solid #e2e3d8; }
+.plan-assignments li > a { display: inline-block; margin-inline-end: 16px; color: #155642; }
+.plan-assignments label { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; font-size: 13px; }
+.prayer-reminders fieldset { border: 0; padding: 5px 0 14px; }
+.prayer-reminders legend { font-size: 13px; font-weight: 600; }
+.reminder-prayers { display: flex; gap: 10px; flex-wrap: wrap; }
+.reminder-prayers label { display: flex; gap: 9px; align-items: center; min-height: 44px; padding: 10px 14px; border: 1px solid #d4dccc; border-radius: 10px; }
+.reminder-prayers input, .plan-assignments input, .saved-sync input { accent-color: #155b46; width: 18px; height: 18px; }
+.feature-status { display: block; padding: 10px 12px; border-radius: 9px; background: #f1ebda; color: #69572d; font-size: 12px; }
+.install-platforms, .review-register { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.review-register > article { padding: 18px; border: 1px solid #dedbce; border-radius: 14px; }
+.review-register h3 { margin-top: 0; }
+.review-register h3 a { background: none; border: 0; padding: 0; font-size: 18px; }
+.review-register dl { font-size: 13px; line-height: 1.6; }
+.review-register dt { font-weight: 600; }
+.review-register dd { margin: 0 0 9px; color: #617167; }
+.download-progress { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 15px 0; }
+.download-progress progress { max-width: 240px; accent-color: #155b46; }
+.saved-sync { align-items: start; }
+.saved-sync > div { min-width: 0; }
+.saved-sync label { display: flex; gap: 9px; align-items: start; padding: 7px 0; font-size: 13px; }
+.saved-sync small { display: block; margin-top: 8px; }
+.correction-form pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.quran-attribution a { font-size: 12px; color: #27624c; text-decoration: underline; text-underline-offset: 3px; }
+html[dir="rtl"] .noor-select, html[dir="rtl"] .noor-feature-card, html[dir="rtl"] .daily-primary-nav { font-family: var(--font-arabic), sans-serif; }
+html[dir="rtl"] .noor-feature-card { text-align: start; }
+html[dir="rtl"] .media-dock audio, html[dir="rtl"] input[type="date"], html[dir="rtl"] input[type="time"] { direction: ltr; }
+.noor-dark .noor-select > button, .noor-dark .noor-select-popup, .noor-dark .noor-feature-card { background: #132a23; color: #edf1e5; border-color: #3d5145; }
+.noor-dark .noor-select-popup [role="option"].is-active { background: #284237; }
+.noor-dark .noor-select-popup [aria-selected="true"] { background: #3b5a47; }
+.noor-dark .noor-feature-card p, .noor-dark .review-register dd { color: #b6c6ba; }
+.noor-dark .feature-status { background: #443d25; color: #ddcf95; }
+.noor-dark .noor-feature-card button, .noor-dark .plan-next > a { background: #253e31; color: #e5edde; border-color: #4f6755; }
+@media (max-width: 760px) {
+  .noor-feature-card { padding: 16px; border-radius: 14px; }
+  .noor-feature-controls > label, .noor-feature-controls > button { flex: 1 1 145px; max-width: 100%; }
+  .install-platforms, .review-register { grid-template-columns: minmax(0, 1fr); }
+  .quran-reader-tools .noor-select { max-width: 100%; width: 100%; }
+  .quran-reader-tools { overflow: visible; }
+  .plan-next > a, .plan-next > button { flex: 1; text-align: center; }
+  .noor-feature-controls input { max-width: 100%; min-width: 0; }
+  .media-dock { max-width: calc(100vw - 24px); max-height: calc(100dvh - 100px); }
+  .media-dock audio { width: 100%; min-width: 0; }
+  .header-utility-cluster { flex-wrap: wrap; }
+  .saved-sync { flex-wrap: wrap; }
+  .noor-language .noor-select { width: 80px; }
+}

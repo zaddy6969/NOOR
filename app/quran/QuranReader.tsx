@@ -1,7 +1,11 @@
 "use client";
+import NoorSelect from "../site/NoorSelect";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import Link from "next/link";
+import CompletionPlan from "./CompletionPlan";
+import { useNoorCopy } from "../site/SiteUtilities";
 import ReadingGoal from "./ReadingGoal";
 import PracticeControls from "./PracticeControls";
 import { JUZ_STARTS } from "@/lib/quran-structure";
@@ -72,7 +76,7 @@ const TRANSLATIONS = [
   { id: "en.sahih", label: "Saheeh International" },
   { id: "en.pickthall", label: "Pickthall" },
   { id: "ur.jalandhry", label: "Urdu · Jalandhry" },
-  { id: "hi.hindi", label: "Hindi" },
+  { id: "hi.hindi", label: "Hindi · Farooq Khan & Nadwi" },
 ];
 
 const RECITERS = [
@@ -176,6 +180,7 @@ export default function QuranReader({
   initialAyah?: number | null;
   resume?: boolean;
 }) {
+  const { t } = useNoorCopy();
   const { current, play, close, quranPlayback } = useMediaPlayer();
   const pendingReciterPlayback = useRef<{ surah: number; reciter: string } | null>(null);
   const [surahs, setSurahs] = useState<SurahSummary[]>(fallbackSurahs);
@@ -766,18 +771,19 @@ export default function QuranReader({
 
       <section className="quran-reading-panel">
         <div className="quran-mode-switch" role="group" aria-label="Reader mode">
-          {(["Reading", "Listening", "Study"] as const).map((mode) => <button type="button" key={mode} aria-pressed={readerMode === mode} onClick={() => setReaderMode(mode)}>{mode}</button>)}
+          {(["Reading", "Listening", "Study"] as const).map((mode) => <button type="button" key={mode} aria-pressed={readerMode === mode} onClick={() => setReaderMode(mode)}>{t(mode)}</button>)}
         </div>
-        <p className="quran-mode-hint">{readerMode === "Reading" ? "Read Arabic with optional translation. Choose Study for word meanings, Tafsir and private notes." : readerMode === "Listening" ? "Listen to a full Surah or practise a timed selection. The player stays open as you browse." : "Explore word meanings and Tafsir, or keep private notes beside each Ayah."}</p>
+        <p className="quran-mode-hint">{t(readerMode === "Reading" ? "Read Arabic with optional translation. Choose Study for word meanings, Tafsir and private notes." : readerMode === "Listening" ? "Listen to a full Surah or practise a timed selection. The player stays open as you browse." : "Explore word meanings and Tafsir, or keep private notes beside each Ayah.")}</p>
         <ReadingGoal />
+        <CompletionPlan />
         <div className="quran-reader-tools">
-          <label><span>Jump to Juz</span><select aria-label="Jump to Juz" value="" onChange={(event) => {
+          <label><span>{t("Jump to Juz")}</span><NoorSelect aria-label="Jump to Juz" value="" onChange={(event) => {
             const start = JUZ_STARTS[Number(event.target.value) - 1];
             if (start) chooseVerseResult({ surah: start.surah, ayah: start.ayah, title: `Juz ${start.juz}`, excerpt: "" });
-          }}><option value="" disabled>Choose Juz</option>{JUZ_STARTS.map((start) => <option key={start.juz} value={start.juz}>Juz {start.juz} · {start.surah}:{start.ayah}</option>)}</select></label>
+          }}><option value="" disabled>{t("Choose Juz")}</option>{JUZ_STARTS.map((start) => <option key={start.juz} value={start.juz}>Juz {start.juz} · {start.surah}:{start.ayah}</option>)}</NoorSelect></label>
           <label>
-            <span>Jump to Ayah</span>
-            <select
+            <span>{t("Jump to Ayah")}</span>
+            <NoorSelect aria-label={t("Jump to Ayah")}
               onChange={(event) => jumpToAyah(event.target.value)}
               defaultValue=""
             >
@@ -789,11 +795,11 @@ export default function QuranReader({
                   {detail.number}:{ayah.number}
                 </option>
               ))}
-            </select>
+            </NoorSelect>
           </label>
           <label>
-            <span>Translation</span>
-            <select
+            <span>{t("Translation")}</span>
+            <NoorSelect aria-label={t("Translation")}
               value={translation}
               onChange={(event) => {
                 setLoading(true);
@@ -806,11 +812,11 @@ export default function QuranReader({
                   {item.label}
                 </option>
               ))}
-            </select>
+            </NoorSelect>
           </label>
           <label>
-            <span>Reciter</span>
-            <select
+            <span>{t("Reciter")}</span>
+            <NoorSelect aria-label={t("Reciter")}
               value={reciter}
               onChange={(event) => {
                 const nextReciter = event.target.value;
@@ -831,10 +837,10 @@ export default function QuranReader({
                   {item.label}
                 </option>
               ))}
-            </select>
+            </NoorSelect>
           </label>
           <label>
-            <span>Arabic size</span>
+            <span>{t("Arabic size")}</span>
             <input
               type="range"
               min="27"
@@ -946,6 +952,8 @@ export default function QuranReader({
                   RECITERS.find((item) => item.id === reciter)?.label}
               </span>
               <span>Reading position is saved privately on this device</span>
+              <Link href={`/corrections?page=${encodeURIComponent(`/quran?surah=${detail.number}`)}&kind=translation`}>Report a text or translation issue</Link>
+              <Link href="/content-review">Sources & review status</Link>
               <span>
                 {readingStreak
                   ? `${readingStreak}-day reading streak`

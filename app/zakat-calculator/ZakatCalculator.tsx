@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "../site/NoorSelect";
 
 import { useMemo, useState } from "react";
 
@@ -156,7 +157,7 @@ export default function ZakatCalculator() {
               <small>Enter current values in one currency</small>
             </div>
           </div>
-          <select
+          <NoorSelect
             value={currency}
             onChange={(event) => setCurrency(event.target.value)}
             aria-label="Currency"
@@ -166,7 +167,7 @@ export default function ZakatCalculator() {
                 {code} · {mark}
               </option>
             ))}
-          </select>
+          </NoorSelect>
         </div>
         <div className="calculator-field-list">
           {assetFields.map(({ key, label, help }) => (

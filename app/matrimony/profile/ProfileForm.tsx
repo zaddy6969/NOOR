@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "../../site/NoorSelect";
 
 import { useActionState } from "react";
 import type { MatrimonyProfile } from "@/db/matrimony";
@@ -16,9 +17,9 @@ export default function ProfileForm({ profile }: { profile: MatrimonyProfile | n
 
       <section className="profile-form-section"><div><span>01</span><h2>About you</h2><p>Use broad, accurate details. Do not include a phone number, email, workplace name or exact address.</p></div><div className="profile-field-grid">
         <label><span>Display name or initials</span><input name="displayName" defaultValue={profile?.displayName} maxLength={60} required aria-invalid={Boolean(state.errors.displayName)} />{state.errors.displayName && <small>{state.errors.displayName}</small>}</label>
-        <label><span>Gender</span><select name="gender" defaultValue={profile?.gender ?? "undisclosed"} aria-invalid={Boolean(state.errors.gender)}><option value="undisclosed">Prefer not to display yet</option><option value="man">Man</option><option value="woman">Woman</option></select>{state.errors.gender && <small>{state.errors.gender}</small>}</label>
+        <label><span>Gender</span><NoorSelect aria-label="Gender" name="gender" defaultValue={profile?.gender ?? "undisclosed"} aria-invalid={Boolean(state.errors.gender)}><option value="undisclosed">Prefer not to display yet</option><option value="man">Man</option><option value="woman">Woman</option></NoorSelect>{state.errors.gender && <small>{state.errors.gender}</small>}</label>
         <label><span>Birth year</span><input name="birthYear" type="number" min={currentYear - 90} max={currentYear - 18} defaultValue={profile?.birthYear ?? currentYear - 18} required aria-invalid={Boolean(state.errors.birthYear)} />{state.errors.birthYear && <small>{state.errors.birthYear}</small>}</label>
-        <label><span>Marital status</span><select name="maritalStatus" defaultValue={profile?.maritalStatus ?? "never_married"}><option value="never_married">Never married</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option><option value="other">Other / discuss privately</option></select></label>
+        <label><span>Marital status</span><NoorSelect aria-label="Marital status" name="maritalStatus" defaultValue={profile?.maritalStatus ?? "never_married"}><option value="never_married">Never married</option><option value="divorced">Divorced</option><option value="widowed">Widowed</option><option value="other">Other / discuss privately</option></NoorSelect></label>
         <label><span>City or district only</span><input name="city" defaultValue={profile?.city} maxLength={80} required aria-invalid={Boolean(state.errors.city)} />{state.errors.city && <small>{state.errors.city}</small>}</label>
         <label><span>Country</span><input name="country" defaultValue={profile?.country ?? "India"} maxLength={80} required aria-invalid={Boolean(state.errors.country)} />{state.errors.country && <small>{state.errors.country}</small>}</label>
       </div></section>

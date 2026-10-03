@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "../site/NoorSelect";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -384,7 +385,7 @@ export default function QiblaCompass({
       <div className="qibla-location-controls">
         <label>
           Location
-          <select
+          <NoorSelect
             value={selectedCity}
             onChange={(event) => chooseCity(event.target.value)}
           >
@@ -400,7 +401,7 @@ export default function QiblaCompass({
                 {city.label}
               </option>
             ))}
-          </select>
+          </NoorSelect>
         </label>
         <button
           type="button"

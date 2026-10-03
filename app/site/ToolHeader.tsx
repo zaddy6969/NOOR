@@ -1,5 +1,6 @@
+"use client";
 import Link from "next/link";
-import { HeaderUtilities } from "./SiteUtilities";
+import { useNoorCopy, LanguageControl, HeaderUtilities } from "./SiteUtilities";
 
 export default function ToolHeader({
   title,
@@ -8,6 +9,7 @@ export default function ToolHeader({
   title: string;
   subtitle: string;
 }) {
+  const { t } = useNoorCopy();
   return (
     <header className="quran-topbar compact-tool-topbar">
       <Link className="brand" href="/">
@@ -24,16 +26,17 @@ export default function ToolHeader({
         <span>{subtitle}</span>
       </div>
       <nav className="daily-primary-nav" aria-label="Primary navigation">
-        <Link href="/">Today</Link>
-        <Link href="/quran">Quran</Link>
-        <Link href="/prayer-times">Prayer</Link>
-        <Link href="/duas">Duas</Link>
-        <Link href="/#learn">Learn</Link>
+        <Link href="/">{t("Today")}</Link>
+        <Link href="/quran">{t("Quran")}</Link>
+        <Link href="/prayer-times">{t("Prayer")}</Link>
+        <Link href="/duas">{t("Duas")}</Link>
+        <Link href="/#learn">{t("Learn")}</Link>
       </nav>
       <aside className="header-utility-cluster">
         <HeaderUtilities compact />
+        <LanguageControl />
         <Link className="topic-home-link" href="/">
-          ← Home
+          ← {t("Home")}
         </Link>
       </aside>
     </header>

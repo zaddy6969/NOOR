@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "./site/NoorSelect";
 
 import Link from "next/link";
 import { HOME_FEATURE_IDS } from "@/lib/home-features";
@@ -731,17 +732,17 @@ export default function Home() {
           <HeaderUtilities compact showSearch={false} />
           <label className="noor-language">
             <span className="sr-only">
-              Interface language; Hindi and Urdu are in beta
+              Interface language
             </span>
-            <select
+            <NoorSelect
               value={locale}
               onChange={(event) => setLocale(event.target.value as NoorLocale)}
-              aria-label="Interface language; Hindi and Urdu are in beta"
+              aria-label="Interface language"
             >
               <option value="en">EN</option>
-              <option value="ur">اردو · Beta</option>
-              <option value="hi">हिंदी · Beta</option>
-            </select>
+              <option value="ur">اردو</option>
+              <option value="hi">हिंदी</option>
+            </NoorSelect>
           </label>
           <Link
             className="noor-profile"

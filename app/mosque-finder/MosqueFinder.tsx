@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "../site/NoorSelect";
 
 import { useEffect, useMemo, useState } from "react";
 import LocationPicker from "../prayer-times/LocationPicker";
@@ -77,7 +78,7 @@ export default function MosqueFinder() {
       <div className="mosque-control-card">
         <LocationPicker location={location} confirmed={confirmed} />
         <p className="mosque-status">This location is shared with Prayer Times and Qibla. Map searches send the selected coordinates to OpenStreetMap providers.</p>
-        <div className="mosque-locate-row"><label>Radius<select value={radius} onChange={(event) => setRadius(Number(event.target.value))}><option value={3000}>3 km</option><option value={5000}>5 km</option><option value={10000}>10 km</option><option value={20000}>20 km</option></select></label><button type="button" disabled={loading || !locationReady} onClick={() => setRetry((value) => value + 1)}>Refresh nearby places</button></div>
+        <div className="mosque-locate-row"><label>Radius<NoorSelect aria-label="Search radius" value={radius} onChange={(event) => setRadius(Number(event.target.value))}><option value={3000}>3 km</option><option value={5000}>5 km</option><option value={10000}>10 km</option><option value={20000}>20 km</option></NoorSelect></label><button type="button" disabled={loading || !locationReady} onClick={() => setRetry((value) => value + 1)}>Refresh nearby places</button></div>
         <div className="mosque-kind-filter" role="group" aria-label="Place type">{(["Mosques", "All places", "Dargahs"] as PlaceFilter[]).map((item) => <button className={filter === item ? "active" : ""} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)} key={item}>{item}</button>)}</div>
         <p className="mosque-status" role="status">{message}</p>
         <p className="mosque-status">OpenStreetMap is community maintained and may be incomplete. Distance is a straight-line estimate. Confirm facilities, opening hours and congregation (iqamah) times directly with the mosque.</p>

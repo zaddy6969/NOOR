@@ -1,4 +1,5 @@
 "use client";
+import { useNoorCopy } from "../site/SiteUtilities";
 import Link from "next/link";
 import { useState } from "react";
 import { downloadSurah } from "./downloads";
@@ -11,6 +12,7 @@ export default function DownloadButton({
   translation: string;
   reciter: string;
 }) {
+  const { t } = useNoorCopy();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   return (
@@ -33,9 +35,9 @@ export default function DownloadButton({
           }
         }}
       >
-        {busy ? "Downloading…" : "Download for offline reading"}
+        {t(busy ? "Downloading…" : "Download for offline reading")}
       </button>
-      <Link href="/offline">Manage downloads & audio →</Link>
+      <Link href="/offline">{t("Manage downloads & audio")} →</Link>
       <span role="status">{message}</span>
     </div>
   );

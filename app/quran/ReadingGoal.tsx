@@ -1,6 +1,9 @@
 "use client";
+import { useNoorCopy } from "../site/SiteUtilities";
+import NoorSelect from "../site/NoorSelect";
 import { useEffect, useState } from "react";
 export default function ReadingGoal() {
+  const { t } = useNoorCopy();
   const [goal, setGoal] = useState(0);
   const [todayCount, setTodayCount] = useState(0);
   const [reminderTime, setReminderTime] = useState("20:00");
@@ -76,16 +79,15 @@ export default function ReadingGoal() {
   return (
     <details className="reading-goal">
       <summary>
-        Optional daily reading goal
+        {t("Optional daily reading goal")}
         {goal ? " · " + todayCount + "/" + goal + " ayahs" : ""}
       </summary>
       <p>
-        Choose a gentle personal goal. Visible ayahs are counted on this device;
-        this measures reading activity, not recitation quality.
+        {t("Choose a gentle personal goal. Visible ayahs are counted on this device; this measures reading activity, not recitation quality.")}
       </p>
       <label>
         Daily goal
-        <select
+        <NoorSelect aria-label="Daily reading goal"
           value={goal}
           onChange={(event) => {
             const value = Number(event.target.value);
@@ -97,13 +99,13 @@ export default function ReadingGoal() {
             }
           }}
         >
-          <option value={0}>No goal</option>
+          <option value={0}>{t("No goal")}</option>
           {[3, 5, 10, 20].map((value) => (
             <option key={value} value={value}>
               {value} ayahs
             </option>
           ))}
-        </select>
+        </NoorSelect>
       </label>
       {goal ? <progress value={Math.min(todayCount, goal)} max={goal} /> : null}
       <label>

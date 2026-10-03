@@ -1,4 +1,5 @@
 "use client";
+import NoorSelect from "../site/NoorSelect";
 import { useEffect, useState } from "react";
 import { NOOR_LOCATION_EVENT } from "../site/location-settings";
 import {
@@ -11,6 +12,8 @@ import {
   scheduleQuery,
   PRAYER_METHODS,
 } from "./usePrayerSchedule";
+import PrayerReminders from "./PrayerReminders";
+import { useNoorCopy } from "../site/SiteUtilities";
 import LocationPicker from "./LocationPicker";
 
 type MonthDay = {
@@ -21,6 +24,7 @@ type MonthDay = {
   timings: PrayerTimings;
 };
 export default function PrayerTimesCenter() {
+  const { t } = useNoorCopy();
   const {
     location,
     confirmed,
@@ -154,8 +158,8 @@ export default function PrayerTimesCenter() {
         aria-label="Prayer calculation settings"
       >
         <label>
-          <span>Calculation</span>
-          <select
+          <span>{t("Calculation")}</span>
+          <NoorSelect aria-label={t("Calculation")}
             value={settings.method}
             onChange={(event) => update("method", Number(event.target.value))}
           >
@@ -164,21 +168,21 @@ export default function PrayerTimesCenter() {
                 {method.label}
               </option>
             ))}
-          </select>
+          </NoorSelect>
         </label>
         <label>
-          <span>Asr method</span>
-          <select
+          <span>{t("Asr method")}</span>
+          <NoorSelect aria-label={t("Asr method")}
             value={settings.school}
             onChange={(event) => update("school", Number(event.target.value))}
           >
             <option value={1}>Hanafi</option>
             <option value={0}>Standard</option>
-          </select>
+          </NoorSelect>
         </label>
         <label>
-          <span>Hijri adjustment</span>
-          <select
+          <span>{t("Hijri adjustment")}</span>
+          <NoorSelect aria-label={t("Hijri adjustment")}
             value={settings.adjustment}
             onChange={(event) =>
               update("adjustment", Number(event.target.value))
@@ -191,7 +195,7 @@ export default function PrayerTimesCenter() {
                   : "No adjustment"}
               </option>
             ))}
-          </select>
+          </NoorSelect>
         </label>
         <p>
           {schedule?.method ??
@@ -201,6 +205,7 @@ export default function PrayerTimesCenter() {
           {schedule?.hijri ?? "Hijri date unavailable"}
         </p>
       </section>
+      <PrayerReminders schedule={schedule} location={location.label} confirmed={confirmed} />
       <section className="prayer-month">
         <header>
           <div>

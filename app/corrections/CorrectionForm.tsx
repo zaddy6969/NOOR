@@ -1,16 +1,20 @@
 "use client";
 import { useState } from "react";
+import NoorSelect from "../site/NoorSelect";
 export default function CorrectionForm({
   initialPage = "",
+  initialKind = "content",
 }: {
   initialPage?: string;
+  initialKind?: string;
 }) {
+  const [kind, setKind] = useState(["content", "translation", "technical", "review"].includes(initialKind) ? initialKind : "content");
   const [page, setPage] = useState(initialPage);
   const [statement, setStatement] = useState("");
   const [source, setSource] = useState("");
   const [draft, setDraft] = useState("");
   const body =
-    "Page: " +
+    "Report type: " + kind + "\n\nPage: " +
     page +
     "\n\nStatement to check:\n" +
     statement +
@@ -31,6 +35,8 @@ export default function CorrectionForm({
           setDraft(body);
         }}
       >
+        <label>Report type<NoorSelect aria-label="Report type" value={kind} onChange={(event) => setKind(event.target.value)}><option value="content">Content or reference</option><option value="translation">Translation or attribution</option><option value="technical">Website problem</option><option value="review">Qualified review submission</option></NoorSelect></label>
+        {kind === "review" ? <p>Please include your name, relevant qualifications, exact review scope, date, source checks and approval or requested corrections. Publication of your name requires your agreement.</p> : null}
         <label>
           NOOR page URL or path
           <input
@@ -53,7 +59,7 @@ export default function CorrectionForm({
         <label>
           Supporting reference or source
           <input
-            required
+            required={kind !== "technical"}
             maxLength={1000}
             value={source}
             onChange={(event) => setSource(event.target.value)}
@@ -70,7 +76,7 @@ export default function CorrectionForm({
             href={
               "https://github.com/zaddy6969/NOOR/issues/new?" +
               new URLSearchParams({
-                title: "Content correction: " + page.slice(0, 100),
+                title: (kind === "review" ? "Review submission: " : "Correction: ") + page.slice(0, 100),
                 body: draft,
               })
             }
