@@ -1,0 +1,36 @@
+/* Keep all eight daily features visible without a horizontal carousel. */
+.noor-tabbed-home .noor-feature-tabs {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 8px;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+.noor-tabbed-home .noor-feature-tabs > button {
+  width: 100%;
+  min-width: 0;
+  min-height: 88px;
+  padding: 12px 8px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.noor-tabbed-home .noor-feature-tabs > button span {
+  max-width: 100%;
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1100px) {
+  .noor-tabbed-home .noor-feature-tabs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  .noor-tabbed-home .noor-feature-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

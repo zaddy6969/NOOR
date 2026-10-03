@@ -14,6 +14,7 @@ import "./home/noor-production.css";
 import "./home/noor-magazine.css";
 import "./site/daily-improvements.css";
 import "./quran/reader-controls.css";
+import "./home/feature-launcher.css";
 
 const geist = Geist({
   variable: "--font-geist",

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { HOME_FEATURE_IDS } from "@/lib/home-features";
 import ZakatCalculator from "../zakat-calculator/ZakatCalculator";
 import QazaCalculator from "../qaza-namaz/QazaCalculator";
 import DuasLibrary from "../duas/DuasLibrary";
@@ -1235,16 +1236,7 @@ function DestinationsWorkspace() {
   );
 }
 
-const STRIP_FEATURE_IDS = new Set<FeatureId>([
-  "mosque-finder",
-  "daily-duas",
-  "darood",
-  "zakat",
-  "kaza",
-  "lughat",
-  "names",
-  "destinations",
-]);
+const STRIP_FEATURE_IDS = new Set<FeatureId>(HOME_FEATURE_IDS);
 const FEATURE_REGION_LABELS: Record<FeatureId, string> = {
   quran: "Quran reader",
   "prayer-times": "Prayer times",

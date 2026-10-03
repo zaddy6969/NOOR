@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { HOME_FEATURE_IDS } from "@/lib/home-features";
 import { useCallback, useEffect, useRef, useState } from "react";
 import HeroDailyStatus from "./home/HeroDailyStatus";
 import HomeFeatureWorkspace, {
@@ -295,15 +296,9 @@ const FEATURES: Array<{ id: FeatureId; label: string; icon: IconName }> = [
 ];
 
 const FEATURE_IDS = new Set(FEATURES.map((feature) => feature.id));
-const HERO_FEATURE_IDS = new Set<FeatureId>([
-  "quran",
-  "prayer-times",
-  "qibla",
-  "islamic-calendar",
-]);
-// Qibla and Calendar stay in the hero; the launcher is one compact row of ten tools.
+// Eight visible tabs; location tools remain available in the hero and additional tools.
 const FEATURE_STRIP = FEATURES.filter((feature) =>
-  ["quran", "daily-duas", "darood"].includes(feature.id),
+  HOME_FEATURE_IDS.some((id) => id === feature.id),
 );
 
 type MoreFeature = {
@@ -813,7 +808,7 @@ export default function Home() {
               aria-controls={`panel-${feature.id}`}
               tabIndex={
                 activeFeature === feature.id ||
-                (HERO_FEATURE_IDS.has(activeFeature) && index === 0)
+                (!FEATURE_STRIP.some((item) => item.id === activeFeature) && index === 0)
                   ? 0
                   : -1
               }
