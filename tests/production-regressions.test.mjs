@@ -71,6 +71,16 @@ test(
       const matrimony = await (await fetch(base + "/matrimony")).text();
       assert.match(matrimony, /Public matching and introductions are closed/);
       assert.doesNotMatch(matrimony, /Private accounts are available on the connected Vercel/);
+      const day = new Date().toISOString().slice(0, 10);
+      const calendarParams = new URLSearchParams({ date: day, timezone: "UTC", city: "Test city", method: "Karachi", minutes: "10", prayers: "Fajr,Asr", Fajr: "05:00", Dhuhr: "12:00", Asr: "16:00", Maghrib: "18:00", Isha: "20:00" });
+      const calendar = await fetch(base + "/api/prayer-times/calendar?" + calendarParams);
+      assert.equal(calendar.status, 200);
+      assert.match(calendar.headers.get("content-type"), /text\/calendar/);
+      assert.match(calendar.headers.get("content-disposition"), /attachment/);
+      const calendarText = await calendar.text();
+      assert.equal((calendarText.match(/BEGIN:VEVENT/g) ?? []).length, 2);
+      assert.match(calendarText, /TRIGGER:-PT10M/);
+      assert.equal((await fetch(base + "/api/prayer-times/calendar?date=2020-01-01&timezone=UTC")).status, 400);
       const wrongOrigin = await fetch(base + "/api/account/sync", { method: "PUT", headers: { origin: "https://untrusted.example", "content-type": "application/json" }, body: "{}" });
       assert.equal(wrongOrigin.status, 403);
       const sync = await fetch(base + "/api/account/sync");

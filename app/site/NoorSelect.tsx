@@ -57,7 +57,7 @@ export default function NoorSelect({ children, value, defaultValue, onChange, ..
   }, [active, id, open]);
   const label = props["aria-label"] ?? props.name ?? "Choose an option";
   return <span className={`noor-select ${props.className ?? ""}`}>
-    <select {...props} className="noor-select-native" aria-hidden="true" tabIndex={-1} value={selected} onChange={onChange}>{children}</select>
+    <select {...props} className="noor-select-native" aria-hidden="true" tabIndex={-1} value={selected} onChange={onChange ?? (() => undefined)}>{children}</select>
     <button ref={button} type="button" role="combobox" aria-label={label} aria-expanded={open} aria-controls={`${id}-list`} aria-haspopup="listbox" aria-activedescendant={open ? `${id}-${active}` : undefined} disabled={props.disabled} onClick={() => open ? setOpen(false) : show()} onBlur={(event) => { if (!popup.current?.contains(event.relatedTarget as Node)) setOpen(false); }} onKeyDown={(event) => {
       if (event.key === "Escape") { setOpen(false); event.preventDefault(); }
       else if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {

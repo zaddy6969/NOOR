@@ -132,7 +132,7 @@ export default function LocationPicker({
       ) : null}
       <label>
         Quick city selection
-        <NoorSelect
+        <NoorSelect aria-label="Quick city selection"
           value={location.source === "preset" ? location.id : ""}
           onChange={(event) => {
             const city = NOOR_CITIES.find(
