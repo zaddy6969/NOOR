@@ -1,3 +1,5 @@
+import { isValidQuranReference } from "@/lib/quran-structure";
+
 type RouteProps = { params: Promise<{ surah: string; ayah: string }> };
 
 function plainText(html: string) {
@@ -20,12 +22,7 @@ export async function GET(_request: Request, { params }: RouteProps) {
   const surah = Number(values.surah);
   const ayah = Number(values.ayah);
   if (
-    !Number.isInteger(surah) ||
-    surah < 1 ||
-    surah > 114 ||
-    !Number.isInteger(ayah) ||
-    ayah < 1 ||
-    ayah > 286
+    !isValidQuranReference(surah, ayah)
   ) {
     return Response.json(
       { error: "A valid Surah and Ayah are required." },

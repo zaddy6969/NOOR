@@ -1,0 +1,9 @@
+// Verse counts and Juz starts: https://api.alquran.cloud/v1/meta (checked 2026-10-03).
+export const AYAH_COUNTS = [7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111, 43, 52, 99, 128, 111, 110, 98, 135, 112, 78, 118, 64, 77, 227, 93, 88, 69, 60, 34, 30, 73, 54, 45, 83, 182, 88, 75, 85, 54, 53, 89, 59, 37, 35, 38, 29, 18, 45, 60, 49, 62, 55, 78, 96, 29, 22, 24, 13, 14, 11, 11, 18, 12, 12, 30, 52, 52, 44, 28, 28, 20, 56, 40, 31, 50, 40, 46, 42, 29, 19, 36, 25, 22, 17, 19, 26, 30, 20, 15, 21, 11, 8, 8, 19, 5, 8, 8, 11, 11, 8, 3, 9, 5, 4, 7, 3, 6, 3, 5, 4, 5, 6] as const;
+
+export const JUZ_STARTS = [{"juz": 1, "surah": 1, "ayah": 1}, {"juz": 2, "surah": 2, "ayah": 142}, {"juz": 3, "surah": 2, "ayah": 253}, {"juz": 4, "surah": 3, "ayah": 93}, {"juz": 5, "surah": 4, "ayah": 24}, {"juz": 6, "surah": 4, "ayah": 148}, {"juz": 7, "surah": 5, "ayah": 82}, {"juz": 8, "surah": 6, "ayah": 111}, {"juz": 9, "surah": 7, "ayah": 88}, {"juz": 10, "surah": 8, "ayah": 41}, {"juz": 11, "surah": 9, "ayah": 93}, {"juz": 12, "surah": 11, "ayah": 6}, {"juz": 13, "surah": 12, "ayah": 53}, {"juz": 14, "surah": 15, "ayah": 1}, {"juz": 15, "surah": 17, "ayah": 1}, {"juz": 16, "surah": 18, "ayah": 75}, {"juz": 17, "surah": 21, "ayah": 1}, {"juz": 18, "surah": 23, "ayah": 1}, {"juz": 19, "surah": 25, "ayah": 21}, {"juz": 20, "surah": 27, "ayah": 56}, {"juz": 21, "surah": 29, "ayah": 46}, {"juz": 22, "surah": 33, "ayah": 31}, {"juz": 23, "surah": 36, "ayah": 28}, {"juz": 24, "surah": 39, "ayah": 32}, {"juz": 25, "surah": 41, "ayah": 47}, {"juz": 26, "surah": 46, "ayah": 1}, {"juz": 27, "surah": 51, "ayah": 31}, {"juz": 28, "surah": 58, "ayah": 1}, {"juz": 29, "surah": 67, "ayah": 1}, {"juz": 30, "surah": 78, "ayah": 1}] as const;
+
+export function isValidQuranReference(surah: number, ayah: number) {
+  return Number.isInteger(surah) && surah >= 1 && surah <= 114 &&
+    Number.isInteger(ayah) && ayah >= 1 && ayah <= AYAH_COUNTS[surah - 1];
+}

@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { isClerkConfigured, isClerkProductionConfigured } from "@/lib/auth-config";
+import { isClerkConfigured } from "@/lib/auth-config";
 import MatrimonyAccountActions from "./_components/MatrimonyAccountActions";
 import { HeaderUtilities } from "../site/SiteUtilities";
 
 export const metadata: Metadata = {
   title: "Private Islamic Matrimony",
-  description: "A privacy-first, family-aware Islamic matrimony account and profile flow with moderation safeguards.",
+  description: "A planned, family-aware Islamic matrimony service. Public matching and introductions are currently closed.",
   alternates: { canonical: "/matrimony" },
-  openGraph: { title: "Private Islamic Matrimony | NOOR", description: "Private profiles, family involvement and careful moderation.", images: [] },
-  twitter: { card: "summary", title: "Private Islamic Matrimony | NOOR", description: "Private profiles, family involvement and careful moderation.", images: [] },
+  openGraph: { title: "Private Islamic Matrimony | NOOR", description: "Planned private profiles and family involvement. Introductions are currently closed.", images: [] },
+  twitter: { card: "summary", title: "Private Islamic Matrimony | NOOR", description: "Planned private profiles and family involvement. Introductions are currently closed.", images: [] },
 };
 
 const steps = [
@@ -21,7 +21,6 @@ const steps = [
 
 export default function MatrimonyPage() {
   const clerkConfigured = isClerkConfigured();
-  const productionReady = isClerkProductionConfigured();
 
   return (
     <main className="matrimony-page" id="top">
@@ -35,11 +34,11 @@ export default function MatrimonyPage() {
         <div>
           <p className="eyebrow">PRIVATE · FAMILY-AWARE · SERIOUS INTENTIONS</p>
           <h1>Matrimony with dignity, not public exposure.</h1>
-          <p>Build a private profile for a future moderated introduction service. Account access and profile ownership are real; public matching remains intentionally disabled until safeguarding and human review are ready.</p>
+          <p>Build a private profile for a future moderated introduction service. Public matching remains closed while account setup, safeguarding and human review are completed.</p>
           {clerkConfigured
             ? <MatrimonyAccountActions />
-            : <div className="matrimony-setup-note"><strong>Private accounts are available on the connected Vercel production deployment.</strong><span>This alternate preview has no Clerk keys, so account controls are safely disabled here.</span></div>}
-          {!productionReady ? <div className="matrimony-launch-state"><strong>Preview status: public matching is closed.</strong><span>Production Clerk keys, a verified domain, staffed moderation and a tested reporting process are still required before introductions open.</span></div> : null}
+            : <div className="matrimony-setup-note"><strong>Private accounts are not available on this deployment.</strong><span>Account setup is incomplete. You can still read the marriage guide without an account.</span></div>}
+          <div className="matrimony-launch-state"><strong>Public matching and introductions are closed.</strong><span>Production Clerk keys, a verified domain, staffed moderation and a tested reporting process are still required before introductions open.</span></div>
         </div>
         <aside className="matrimony-privacy-card">
           <span>PRIVACY STATUS</span>

@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import ReadingGoal from "./ReadingGoal";
+import PracticeControls from "./PracticeControls";
+import { JUZ_STARTS } from "@/lib/quran-structure";
 import DownloadButton from "../offline/DownloadButton";
 import { useMediaPlayer } from "../media/MediaProvider";
 import { readSavedList, SAVED_KEYS, writeSavedList } from "../site/saved-items";
@@ -170,6 +172,7 @@ export default function QuranReader({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showMeaning, setShowMeaning] = useState(true);
+  const [readerMode, setReaderMode] = useState<"Reading" | "Listening" | "Study">("Reading");
   const [arabicSize, setArabicSize] = useState(36);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
@@ -184,6 +187,9 @@ export default function QuranReader({
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [readingStreak, setReadingStreak] = useState(0);
   const studyRef = useRef<HTMLDivElement>(null);
+  const studyRequest = useRef<AbortController | null>(null);
+  const closeStudy = useCallback(() => { studyRequest.current?.abort(); setStudyPanel(null); }, []);
+  useEffect(() => () => studyRequest.current?.abort(), []);
   const studyOpen = Boolean(studyPanel);
   useEffect(() => {
     if (!studyOpen) return;
@@ -199,7 +205,7 @@ export default function QuranReader({
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        setStudyPanel(null);
+        closeStudy();
       }
       if (event.key === "Tab") {
         const items = elements();
@@ -219,7 +225,7 @@ export default function QuranReader({
       document.removeEventListener("keydown", onKey);
       previous?.focus();
     };
-  }, [studyOpen]);
+  }, [studyOpen, closeStudy]);
 
   const rememberAyah = useCallback(
     (ayah: number) => {
@@ -403,7 +409,7 @@ export default function QuranReader({
 
   useEffect(() => {
     if (!activeAyahNumber || !detail) return;
-    window.localStorage.setItem(
+    try { window.localStorage.setItem(
       "noor-quran-progress-v1",
       JSON.stringify({
         surah: detail.number,
@@ -412,6 +418,7 @@ export default function QuranReader({
         updatedAt: new Date().toISOString(),
       }),
     );
+    } catch { /* Audio remains usable when browser storage is blocked. */ }
   }, [activeAyahNumber, detail]);
 
   const filtered = useMemo(() => {
@@ -538,6 +545,7 @@ export default function QuranReader({
   };
 
   const chooseVerseResult = (result: QuranSearchResult) => {
+    closeStudy();
     setPendingAyah(result.ayah);
     setQuery("");
     setVerseResults([]);
@@ -566,14 +574,17 @@ export default function QuranReader({
   };
 
   const copyAyah = async (ayah: Ayah) => {
-    await navigator.clipboard.writeText(
-      `${ayah.arabic}\n${ayah.english}\nQuran ${selected}:${ayah.number}`,
-    );
-    setNotice(`Copied ${selected}:${ayah.number}`);
-    window.setTimeout(() => setNotice(""), 1800);
+    try {
+      await navigator.clipboard.writeText(`${ayah.arabic}\n${ayah.english}\nQuran ${selected}:${ayah.number}`);
+      setNotice(`Copied ${selected}:${ayah.number}`);
+    } catch { setNotice("Copy is unavailable. Select the verse text to copy it manually."); }
+    window.setTimeout(() => setNotice(""), 4000);
   };
 
   const openStudy = (type: "words" | "tafsir", ayah: Ayah) => {
+    studyRequest.current?.abort();
+    const controller = new AbortController();
+    studyRequest.current = controller;
     const reference = `${selected}:${ayah.number}`;
     setStudyPanel({
       type,
@@ -589,7 +600,7 @@ export default function QuranReader({
       type === "words"
         ? `/api/quran/words/${selected}/${ayah.number}`
         : `/api/quran/tafsir/${selected}/${ayah.number}`;
-    fetch(endpoint)
+    fetch(endpoint, { signal: controller.signal })
       .then((response) =>
         response.json().then((data) => ({ ok: response.ok, data })),
       )
@@ -607,6 +618,7 @@ export default function QuranReader({
             truncated?: boolean;
           };
         }) => {
+          if (controller.signal.aborted) return;
           if (!ok) throw new Error(data.error ?? "Study resource unavailable");
           setStudyPanel({
             type,
@@ -622,16 +634,15 @@ export default function QuranReader({
           });
         },
       )
-      .catch((reason: Error) =>
-        setStudyPanel((current) =>
-          current
-            ? { ...current, loading: false, error: reason.message }
-            : null,
-        ),
-      );
+      .catch((reason: Error) => {
+        if (controller.signal.aborted) return;
+        setStudyPanel((current) => current?.reference === reference && current.type === type
+          ? { ...current, loading: false, error: reason.message } : current);
+      });
   };
 
   const openNote = (ayah: Ayah) => {
+    studyRequest.current?.abort();
     const reference = `${selected}:${ayah.number}`;
     rememberAyah(ayah.number);
     setStudyPanel({
@@ -651,8 +662,13 @@ export default function QuranReader({
     const next = { ...notes };
     if (clean) next[studyPanel.reference] = clean;
     else delete next[studyPanel.reference];
+    try {
+      window.localStorage.setItem("noor-quran-notes-v1", JSON.stringify(next));
+    } catch {
+      setStudyPanel({ ...studyPanel, error: "This browser could not save your note. Keep a copy before closing." });
+      return;
+    }
     setNotes(next);
-    window.localStorage.setItem("noor-quran-notes-v1", JSON.stringify(next));
     setNotice(
       clean
         ? `Note saved for ${studyPanel.reference}`
@@ -663,7 +679,7 @@ export default function QuranReader({
   };
 
   return (
-    <div className="quran-reader">
+    <div className={`quran-reader quran-mode-${readerMode.toLowerCase()}`}>
       <aside className="quran-sidebar">
         <div className="quran-sidebar-head">
           <span>114 SURAHS · ALL AYAHS</span>
@@ -726,8 +742,16 @@ export default function QuranReader({
       </aside>
 
       <section className="quran-reading-panel">
+        <div className="quran-mode-switch" role="group" aria-label="Reader mode">
+          {(["Reading", "Listening", "Study"] as const).map((mode) => <button type="button" key={mode} aria-pressed={readerMode === mode} onClick={() => setReaderMode(mode)}>{mode}</button>)}
+        </div>
+        <p className="quran-mode-hint">{readerMode === "Reading" ? "Read Arabic with optional translation. Choose Study for word meanings, Tafsir and private notes." : readerMode === "Listening" ? "Listen to a full Surah or practise a timed selection. The player stays open as you browse." : "Explore word meanings and Tafsir, or keep private notes beside each Ayah."}</p>
         <ReadingGoal />
         <div className="quran-reader-tools">
+          <label><span>Jump to Juz</span><select aria-label="Jump to Juz" value="" onChange={(event) => {
+            const start = JUZ_STARTS[Number(event.target.value) - 1];
+            if (start) chooseVerseResult({ surah: start.surah, ayah: start.ayah, title: `Juz ${start.juz}`, excerpt: "" });
+          }}><option value="" disabled>Choose Juz</option>{JUZ_STARTS.map((start) => <option key={start.juz} value={start.juz}>Juz {start.juz} · {start.surah}:{start.ayah}</option>)}</select></label>
           <label>
             <span>Jump to Ayah</span>
             <select
@@ -881,13 +905,14 @@ export default function QuranReader({
                 <span aria-hidden="true">▶</span>
                 {current?.id === `quran-${detail.number}-${reciter}`
                   ? detail.audio.verseTimings.length
-                    ? `Playing · Ayah ${activeAyahNumber ?? 1}`
+                    ? `${quranPlayback.isPlaying ? "Playing" : "Paused"} · Ayah ${activeAyahNumber ?? 1}`
                     : "Player open"
                   : detail.audio.verseTimings.length
                     ? "Play full Surah with auto-follow"
                     : "Play full Surah"}
               </button>
             </section>
+            {readerMode === "Listening" ? <PracticeControls key={`${detail.number}-${reciter}`} detail={detail} reciter={reciter} /> : null}
             <DownloadButton
               surah={detail.number}
               translation={translation}
@@ -939,18 +964,20 @@ export default function QuranReader({
                         </small>
                         <button
                           type="button"
+                          className="ayah-study-action"
                           onClick={() => openStudy("words", ayah)}
                         >
                           Words
                         </button>
                         <button
                           type="button"
+                          className="ayah-study-action"
                           onClick={() => openStudy("tafsir", ayah)}
                         >
                           Tafsir
                         </button>
                         <button
-                          className={notes[key] ? "saved" : ""}
+                          className={`ayah-study-action${notes[key] ? " saved" : ""}`}
                           type="button"
                           onClick={() => openNote(ayah)}
                         >
@@ -1010,7 +1037,7 @@ export default function QuranReader({
           <button
             className="quran-study-backdrop"
             type="button"
-            onClick={() => setStudyPanel(null)}
+            onClick={closeStudy}
             aria-label="Close study panel"
           />
           <section className="quran-study-panel">
@@ -1021,7 +1048,7 @@ export default function QuranReader({
               </div>
               <button
                 type="button"
-                onClick={() => setStudyPanel(null)}
+                onClick={closeStudy}
                 aria-label="Close study panel"
               >
                 ×
@@ -1113,7 +1140,7 @@ export default function QuranReader({
                 onClick={
                   studyPanel.type === "note"
                     ? saveNote
-                    : () => setStudyPanel(null)
+                    : closeStudy
                 }
               >
                 {studyPanel.type === "note" ? "Save note" : "Done"}

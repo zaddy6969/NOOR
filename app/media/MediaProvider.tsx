@@ -1,5 +1,7 @@
 "use client";
 
+import { practiceBoundary, practiceRange, type PracticeRange } from "@/lib/quran-playback";
+
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 
 export type QuranVerseTiming = { number: number; from: number; to: number; duration: number };
@@ -12,7 +14,7 @@ export type MediaItem =
 
 type MediaContextValue = {
   current: MediaItem | null;
-  play: (item: MediaItem) => void;
+  play: (item: MediaItem, options?: { range: PracticeRange }) => void;
   close: () => void;
   quranPlayback: {
     activeVerseNumber: number | null;
@@ -40,10 +42,39 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
   const [isPlaying, setIsPlaying] = useState(false);
   const [playVersion, setPlayVersion] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const rangeRef = useRef<PracticeRange | null>(null);
+  const roundRef = useRef(1);
+  const [practice, setPractice] = useState<{ range: PracticeRange; round: number; complete: boolean } | null>(null);
+  const [audioError, setAudioError] = useState("");
 
-  const play = useCallback((item: MediaItem) => {
+  const advancePractice = (audio: HTMLAudioElement, ended = false) => {
+    const range = rangeRef.current;
+    if (!range) { setCurrentTime(audio.currentTime); return; }
+    const boundary = practiceBoundary(ended ? range.to / 1000 : audio.currentTime, range, roundRef.current);
+    if (boundary.action === "continue") { setCurrentTime(audio.currentTime); return; }
+    if (boundary.action === "complete") {
+      // Clear before seeking: seeking itself can trigger another timeupdate event.
+      rangeRef.current = null;
+      audio.pause(); audio.currentTime = Math.min(boundary.seek, audio.duration || boundary.seek);
+      setIsPlaying(false);
+      setPractice({ range, round: boundary.round, complete: true });
+    } else {
+      roundRef.current = boundary.round;
+      audio.currentTime = boundary.seek;
+      setPractice({ range, round: boundary.round, complete: false });
+      if (audio.paused) void audio.play().catch(() => setAudioError("Press Play in the audio controls to continue."));
+    }
+    setCurrentTime(audio.currentTime);
+  };
+
+  const play = useCallback((item: MediaItem, options?: { range: PracticeRange }) => {
     audioRef.current?.pause();
-    setCurrentTime(0);
+    const range = item.kind === "quran" && options?.range
+      ? practiceRange(item.verseTimings, options.range.first, options.range.last, options.range.repeats) : null;
+    rangeRef.current = range; roundRef.current = 1;
+    setPractice(range ? { range, round: 1, complete: false } : null);
+    setAudioError("");
+    setCurrentTime(range ? range.from / 1000 : 0);
     setDuration(0);
     setIsPlaying(false);
     setPlayVersion((version) => version + 1);
@@ -53,6 +84,7 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
 
   const close = useCallback(() => {
     audioRef.current?.pause();
+    rangeRef.current = null; setPractice(null); setAudioError("");
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
@@ -71,13 +103,13 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
   }, [current, currentTime, duration, isPlaying]);
 
   useEffect(() => {
-    if (!current || current.kind !== "quran" || !("mediaSession" in navigator)) return;
+    if (!current || current.kind !== "quran" || !("mediaSession" in navigator) || typeof MediaMetadata === "undefined") return;
     navigator.mediaSession.metadata = new MediaMetadata({
       title: quranPlayback.activeVerseNumber ? `${current.title} · Ayah ${quranPlayback.activeVerseNumber}` : current.title,
       artist: quranPlayback.activeVerse?.english ?? current.subtitle,
       album: "NOOR Quran",
     });
-    navigator.mediaSession.setActionHandler("play", () => audioRef.current?.play());
+    navigator.mediaSession.setActionHandler("play", () => { void audioRef.current?.play().catch(() => setAudioError("Press Play in the audio controls to continue.")); });
     navigator.mediaSession.setActionHandler("pause", () => audioRef.current?.pause());
     return () => {
       navigator.mediaSession.setActionHandler("play", null);
@@ -101,10 +133,12 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
           </header>
           {current.kind === "quran" ? (<>
             {!collapsed && quranPlayback.activeVerse ? <div className="media-quran-caption">
-              <span>NOW RECITING · {current.surahNumber}:{quranPlayback.activeVerse.number}</span>
+              <span>{isPlaying ? "NOW RECITING" : "PAUSED"} · {current.surahNumber}:{quranPlayback.activeVerse.number}</span>
               <b lang="ar" dir="rtl">{quranPlayback.activeVerse.arabic}</b>
               <p>{quranPlayback.activeVerse.english}</p>
             </div> : null}
+            {practice ? <p className="media-practice-status" role="status">Ayahs {current.surahNumber}:{practice.range.first}–{practice.range.last} · {practice.complete ? "Practice complete" : `Repetition ${practice.round} of ${practice.range.repeats}`}</p> : null}
+            {audioError ? <p className="media-practice-status" role="alert">{audioError}</p> : null}
             <audio
               className={collapsed ? "media-audio-hidden" : ""}
               ref={audioRef}
@@ -114,11 +148,12 @@ export default function MediaProvider({ children }: { children: React.ReactNode 
               preload="metadata"
               src={current.src}
               aria-label={`${current.title}, ${current.subtitle}`}
-              onLoadedMetadata={(event) => setDuration(event.currentTarget.duration || 0)}
-              onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+              onLoadedMetadata={(event) => { const audio = event.currentTarget; setDuration(audio.duration || 0); if (rangeRef.current) audio.currentTime = rangeRef.current.from / 1000; }}
+              onTimeUpdate={(event) => advancePractice(event.currentTarget)}
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
-              onEnded={() => setIsPlaying(false)}
+              onEnded={(event) => { setIsPlaying(false); if (rangeRef.current) advancePractice(event.currentTarget, true); }}
+              onError={() => { setIsPlaying(false); setAudioError("Audio could not be loaded. Check your connection or try another reciter."); }}
             />
           </>) : null}
           {!collapsed && current.kind === "spotify" ? (

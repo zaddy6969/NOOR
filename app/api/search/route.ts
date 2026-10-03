@@ -1,3 +1,5 @@
+import { isValidQuranReference } from "@/lib/quran-structure";
+
 import { naatEntries } from "../../naat/naat-data";
 import { topics } from "../../topics/topic-data";
 import { lughatEntries } from "../../firozul-lughat/lughat-data";
@@ -785,7 +787,8 @@ async function quranResults(
   if (reference) {
     const surah = Number(reference[1]);
     const ayah = Number(reference[2]);
-    if (surah >= 1 && surah <= 114 && ayah >= 1 && ayah <= 286) {
+    if (!isValidQuranReference(surah, ayah)) return [];
+    if (isValidQuranReference(surah, ayah)) {
       return [
         {
           id: `quran-${surah}-${ayah}`,
@@ -882,6 +885,7 @@ export async function GET(request: Request) {
 
   if (/^(?:quran\s*)?\d{1,3}(?:\s*[:.]\s*|\s+)\d{1,3}$/i.test(query)) {
     const exact = await quranResults(query, false);
+    if (!exact.length) return Response.json({ results: [], error: "This Surah does not contain that Ayah." }, { status: 400 });
     return Response.json(
       {
         results: exact.map(({ score, ...item }) => {

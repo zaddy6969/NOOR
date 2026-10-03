@@ -1,3 +1,4 @@
+import { isValidQuranReference } from "@/lib/quran-structure";
 import type { Metadata } from "next";
 import ToolHeader from "../site/ToolHeader";
 import QuranReader from "./QuranReader";
@@ -33,7 +34,7 @@ export default async function QuranPage({ searchParams }: PageProps) {
       ? requestedSurah
       : 1;
   const initialAyah =
-    Number.isInteger(requestedAyah) && requestedAyah >= 1
+    isValidQuranReference(initialSurah, requestedAyah)
       ? requestedAyah
       : null;
   return (

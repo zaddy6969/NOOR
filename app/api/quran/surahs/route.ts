@@ -2,7 +2,7 @@ const upstream = "https://api.alquran.cloud/v1/surah";
 
 export async function GET() {
   try {
-    const response = await fetch(upstream, { headers: { Accept: "application/json" } });
+    const response = await fetch(upstream, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(10000) });
     if (!response.ok) throw new Error(`Quran API returned ${response.status}`);
     const payload = await response.json() as { data?: unknown };
     if (!Array.isArray(payload.data)) throw new Error("Unexpected Quran API response");

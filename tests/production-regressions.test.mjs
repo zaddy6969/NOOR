@@ -63,6 +63,13 @@ test(
       const exact = await (await fetch(base + "/api/search?q=2%3A255")).json();
       assert.equal(exact.results.length, 1);
       assert.equal(exact.results[0].href, "/quran?surah=2&ayah=255");
+      for (const path of ["/api/search?q=114%3A7", "/api/quran/search?q=1%3A8", "/api/quran/words/114/7", "/api/quran/tafsir/1/8", "/api/qibla", "/api/qibla?latitude=&longitude=77", "/api/mosques?lat=&lng=77"]) {
+        const invalidReference = await fetch(base + path);
+        assert.equal(invalidReference.status, 400, path);
+      }
+      const matrimony = await (await fetch(base + "/matrimony")).text();
+      assert.match(matrimony, /Public matching and introductions are closed/);
+      assert.doesNotMatch(matrimony, /Private accounts are available on the connected Vercel/);
       const missing = await fetch(base + "/api/prayer-times");
       assert.equal(missing.status, 400);
       const invalid = await fetch(

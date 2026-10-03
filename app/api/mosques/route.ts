@@ -22,7 +22,7 @@ type MosqueResult = {
 };
 
 function numberParam(value: string | null, minimum: number, maximum: number) {
-  if (value === null) return null;
+  if (value === null || !value.trim()) return null;
   const number = Number(value);
   return Number.isFinite(number) && number >= minimum && number <= maximum ? number : null;
 }
@@ -58,6 +58,7 @@ export async function GET(request: Request) {
       body: new URLSearchParams({ data: query }),
       headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "NOOR-Daily-Muslim/1.0 mosque-finder" },
       cache: "no-store",
+      signal: AbortSignal.timeout(25000),
     });
     if (!response.ok) throw new Error(`Map service returned ${response.status}`);
     const payload = await response.json() as { elements?: OverpassElement[] };

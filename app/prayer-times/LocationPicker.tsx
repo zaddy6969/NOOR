@@ -88,7 +88,7 @@ export default function LocationPicker({
     );
   };
   return (
-    <section className="location-picker" aria-label="Choose prayer location">
+    <section className="location-picker" aria-label="Choose location">
       <p>
         <strong>{location.label}</strong>
         {!confirmed

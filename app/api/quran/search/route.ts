@@ -1,3 +1,5 @@
+import { isValidQuranReference } from "@/lib/quran-structure";
+
 type SearchMatch = {
   numberInSurah?: number;
   text?: string;
@@ -17,7 +19,8 @@ export async function GET(request: Request) {
   if (direct) {
     const surah = Number(direct[1]);
     const ayah = Number(direct[2]);
-    if (surah >= 1 && surah <= 114 && ayah >= 1 && ayah <= 286)
+    if (!isValidQuranReference(surah, ayah)) return Response.json({ results: [], error: "This Surah does not contain that Ayah." }, { status: 400 });
+    if (isValidQuranReference(surah, ayah))
       return Response.json({
         results: [
           {
