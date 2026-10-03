@@ -13,6 +13,7 @@ import "./home/noor-polish.css";
 import "./home/noor-production.css";
 import "./home/noor-magazine.css";
 import "./site/daily-improvements.css";
+import "./quran/reader-controls.css";
 
 const geist = Geist({
   variable: "--font-geist",
