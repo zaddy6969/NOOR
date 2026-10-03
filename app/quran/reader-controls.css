@@ -1,4 +1,6 @@
 /* Reader modes keep study tools nearby without crowding everyday reading. */
+/* Rounded clipping must not create a scroll container in the fixed player. */
+.media-dock { overflow: clip; }
 .quran-mode-switch { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .quran-mode-switch button { min-height: 44px; padding: 10px 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
 .quran-mode-switch button[aria-pressed="true"] { background: var(--green); color: white; border-color: var(--green); }
