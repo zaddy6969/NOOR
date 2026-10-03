@@ -1,26 +1,57 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_NOOR_LOCATION, NOOR_CITIES, NOOR_LOCATION_EVENT, readNoorLocation, writeNoorLocation } from "../site/location-settings";
+import {
+  DEFAULT_NOOR_LOCATION,
+  NOOR_CITIES,
+  NOOR_LOCATION_EVENT,
+  readNoorLocation,
+  writeNoorLocation,
+} from "../site/location-settings";
 
 const KAABA = { latitude: 21.4225, longitude: 39.8262 };
 
-type UserLocation = { latitude: number; longitude: number; accuracy: number | null; label: string };
-type CompassEvent = DeviceOrientationEvent & { webkitCompassHeading?: number; webkitCompassAccuracy?: number };
-type PermissionedOrientationEvent = typeof DeviceOrientationEvent & { requestPermission?: () => Promise<"granted" | "denied"> };
-type SensorMode = "idle" | "waiting" | "absolute" | "relative" | "blocked" | "unavailable";
+type UserLocation = {
+  latitude: number;
+  longitude: number;
+  accuracy: number | null;
+  label: string;
+};
+type CompassEvent = DeviceOrientationEvent & {
+  webkitCompassHeading?: number;
+  webkitCompassAccuracy?: number;
+};
+type PermissionedOrientationEvent = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<"granted" | "denied">;
+};
+type SensorMode =
+  | "idle"
+  | "waiting"
+  | "absolute"
+  | "relative"
+  | "blocked"
+  | "unavailable";
 
-function toRadians(value: number) { return value * Math.PI / 180; }
-function toDegrees(value: number) { return value * 180 / Math.PI; }
-function normalize(value: number) { return (value % 360 + 360) % 360; }
+function toRadians(value: number) {
+  return (value * Math.PI) / 180;
+}
+function toDegrees(value: number) {
+  return (value * 180) / Math.PI;
+}
+function normalize(value: number) {
+  return ((value % 360) + 360) % 360;
+}
 
 function qiblaBearing(latitude: number, longitude: number) {
   const startLatitude = toRadians(latitude);
   const kaabaLatitude = toRadians(KAABA.latitude);
   const longitudeDifference = toRadians(KAABA.longitude - longitude);
   const y = Math.sin(longitudeDifference) * Math.cos(kaabaLatitude);
-  const x = Math.cos(startLatitude) * Math.sin(kaabaLatitude)
-    - Math.sin(startLatitude) * Math.cos(kaabaLatitude) * Math.cos(longitudeDifference);
+  const x =
+    Math.cos(startLatitude) * Math.sin(kaabaLatitude) -
+    Math.sin(startLatitude) *
+      Math.cos(kaabaLatitude) *
+      Math.cos(longitudeDifference);
   return normalize(toDegrees(Math.atan2(y, x)));
 }
 
@@ -31,16 +62,46 @@ function screenAngle() {
 
 function cardinalDirection(bearing: number) {
   if (bearing >= 279.5 && bearing <= 280.7) return "WNW";
-  const points = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  const points = [
+    "N",
+    "NNE",
+    "NE",
+    "ENE",
+    "E",
+    "ESE",
+    "SE",
+    "SSE",
+    "S",
+    "SSW",
+    "SW",
+    "WSW",
+    "W",
+    "WNW",
+    "NW",
+    "NNW",
+  ];
   return points[Math.round(normalize(bearing) / 22.5) % 16];
 }
 
-export default function QiblaCompass({ minimal = false }: { minimal?: boolean }) {
-  const [location, setLocation] = useState<UserLocation>(() => DEFAULT_NOOR_LOCATION);
-  const [selectedCity, setSelectedCity] = useState<string>(DEFAULT_NOOR_LOCATION.id);
-  const [verifiedBearing, setVerifiedBearing] = useState<number | null>(null);
+export default function QiblaCompass({
+  minimal = false,
+}: {
+  minimal?: boolean;
+}) {
+  const [location, setLocation] = useState<UserLocation>(
+    () => DEFAULT_NOOR_LOCATION,
+  );
+  const [selectedCity, setSelectedCity] = useState<string>(
+    DEFAULT_NOOR_LOCATION.id,
+  );
+  const [verifiedBearing, setVerifiedBearing] = useState<{
+    key: string;
+    bearing: number;
+  } | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
-  const [locationState, setLocationState] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [locationState, setLocationState] = useState<
+    "idle" | "loading" | "ready" | "error"
+  >("idle");
   const [locationError, setLocationError] = useState("");
   const [orientationEnabled, setOrientationEnabled] = useState(false);
   const [needsPermission, setNeedsPermission] = useState(false);
@@ -60,8 +121,10 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
       setSelectedCity(saved.id === "current" ? "live" : saved.id);
       setLocation(saved);
       if (!("DeviceOrientationEvent" in window)) return;
-      const OrientationEvent = window.DeviceOrientationEvent as PermissionedOrientationEvent;
-      if (typeof OrientationEvent.requestPermission === "function") setNeedsPermission(true);
+      const OrientationEvent =
+        window.DeviceOrientationEvent as PermissionedOrientationEvent;
+      if (typeof OrientationEvent.requestPermission === "function")
+        setNeedsPermission(true);
       else {
         setSensorMode("waiting");
         setOrientationEnabled(true);
@@ -73,16 +136,26 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
       setLocation(saved);
     };
     window.addEventListener(NOOR_LOCATION_EVENT, sync);
-    return () => { window.cancelAnimationFrame(frame); window.removeEventListener(NOOR_LOCATION_EVENT, sync); };
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener(NOOR_LOCATION_EVENT, sync);
+    };
   }, []);
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch(`/api/qibla?latitude=${location.latitude}&longitude=${location.longitude}`, { signal: controller.signal })
-      .then((response) => response.ok ? response.json() : Promise.reject())
+    fetch(
+      `/api/qibla?latitude=${location.latitude}&longitude=${location.longitude}`,
+      { signal: controller.signal },
+    )
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
       .then((payload: { direction?: number }) => {
         const direction = Number(payload.direction);
-        if (Number.isFinite(direction)) setVerifiedBearing(normalize(direction));
+        if (Number.isFinite(direction))
+          setVerifiedBearing({
+            key: `${location.latitude}:${location.longitude}`,
+            bearing: normalize(direction),
+          });
       })
       .catch(() => undefined);
     return () => controller.abort();
@@ -99,7 +172,14 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setVerifiedBearing(null);
-        const liveLocation = { id: "current", latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy, label: "Current location", source: "device" as const };
+        const liveLocation = {
+          id: "current",
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          label: "Current location",
+          source: "device" as const,
+        };
         setLocation(liveLocation);
         setSelectedCity("live");
         setLocationState("ready");
@@ -107,9 +187,11 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
       },
       (error) => {
         setLocationState("error");
-        setLocationError(error.code === error.PERMISSION_DENIED
-          ? "Location was blocked. Choose a city or allow it in browser settings."
-          : "Location could not be found. Choose a city and try again later.");
+        setLocationError(
+          error.code === error.PERMISSION_DENIED
+            ? "Location was blocked. Choose a city or allow it in browser settings."
+            : "Location could not be found. Choose a city and try again later.",
+        );
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 120000 },
     );
@@ -128,10 +210,12 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
         next = normalize(event.webkitCompassHeading + screenAngle());
         hasAbsoluteRef.current = true;
         setSensorMode("absolute");
-        if (typeof event.webkitCompassAccuracy === "number") setSensorAccuracy(event.webkitCompassAccuracy);
+        if (typeof event.webkitCompassAccuracy === "number")
+          setSensorAccuracy(event.webkitCompassAccuracy);
       } else if (typeof event.alpha === "number") {
         const rawHeading = normalize(360 - event.alpha + screenAngle());
-        const isAbsolute = event.absolute || rawEvent.type === "deviceorientationabsolute";
+        const isAbsolute =
+          event.absolute || rawEvent.type === "deviceorientationabsolute";
         if (isAbsolute) {
           next = rawHeading;
           hasAbsoluteRef.current = true;
@@ -147,25 +231,45 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
       gotReadingRef.current = true;
       window.clearTimeout(readingTimeout);
       const previous = headingRef.current;
-      const smoothed = previous === null ? next : normalize(previous + ((((next - previous + 540) % 360) - 180) * 0.22));
+      const smoothed =
+        previous === null
+          ? next
+          : normalize(
+              previous + (((next - previous + 540) % 360) - 180) * 0.22,
+            );
       headingRef.current = smoothed;
       setHeading(smoothed);
     };
-    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+    window.addEventListener(
+      "deviceorientationabsolute",
+      handleOrientation,
+      true,
+    );
     window.addEventListener("deviceorientation", handleOrientation, true);
     return () => {
       window.clearTimeout(readingTimeout);
-      window.removeEventListener("deviceorientationabsolute", handleOrientation, true);
+      window.removeEventListener(
+        "deviceorientationabsolute",
+        handleOrientation,
+        true,
+      );
       window.removeEventListener("deviceorientation", handleOrientation, true);
     };
   }, [orientationEnabled, sensorAttempt]);
 
-  const calculatedBearing = useMemo(() => qiblaBearing(location.latitude, location.longitude), [location.latitude, location.longitude]);
-  const bearing = verifiedBearing ?? calculatedBearing;
+  const calculatedBearing = useMemo(
+    () => qiblaBearing(location.latitude, location.longitude),
+    [location.latitude, location.longitude],
+  );
+  const bearing =
+    verifiedBearing?.key === `${location.latitude}:${location.longitude}`
+      ? verifiedBearing.bearing
+      : calculatedBearing;
   const bearingLabel = bearing.toFixed(2);
   const qiblaRotation = normalize(bearing - (heading ?? 0));
   const northRotation = heading === null ? 0 : -heading;
-  const signedTurn = heading === null ? null : ((bearing - heading + 540) % 360) - 180;
+  const signedTurn =
+    heading === null ? null : ((bearing - heading + 540) % 360) - 180;
   const aligned = signedTurn !== null && Math.abs(signedTurn) <= 4;
   const weakSensor = sensorAccuracy !== null && sensorAccuracy > 30;
 
@@ -178,7 +282,8 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
       calibrationOffsetRef.current = 0;
       hasAbsoluteRef.current = false;
       setRelativeCalibrated(false);
-      const OrientationEvent = window.DeviceOrientationEvent as PermissionedOrientationEvent;
+      const OrientationEvent =
+        window.DeviceOrientationEvent as PermissionedOrientationEvent;
       const permission = await OrientationEvent.requestPermission?.();
       if (permission === "denied") {
         setSensorMode("blocked");
@@ -203,7 +308,8 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
   }
 
   function chooseCity(id: string) {
-    const city = NOOR_CITIES.find((item) => item.id === id) ?? DEFAULT_NOOR_LOCATION;
+    const city =
+      NOOR_CITIES.find((item) => item.id === id) ?? DEFAULT_NOOR_LOCATION;
     setSelectedCity(city.id);
     setVerifiedBearing(null);
     setLocation({ ...city, accuracy: null });
@@ -212,27 +318,63 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
     writeNoorLocation(city);
   }
 
-  const status = sensorMode === "relative" && !relativeCalibrated
-    ? "Point phone north, then calibrate"
-    : heading === null
-    ? `${bearingLabel}° ${cardinalDirection(bearing)} from true north`
-    : aligned
-      ? "Qibla aligned"
-      : `Turn ${Math.abs(Math.round(signedTurn ?? 0))}° ${(signedTurn ?? 0) > 0 ? "right" : "left"}`;
+  const status =
+    sensorMode === "relative" && !relativeCalibrated
+      ? "Point phone north, then calibrate"
+      : heading === null
+        ? `${bearingLabel}° ${cardinalDirection(bearing)} from true north`
+        : aligned
+          ? "Qibla aligned"
+          : `Turn ${Math.abs(Math.round(signedTurn ?? 0))}° ${(signedTurn ?? 0) > 0 ? "right" : "left"}`;
 
   if (minimal) {
     return (
-      <section className="qibla-compact-tool qibla-minimal-tool" aria-label="Qibla compass">
-        <div className={`qibla-compact-face${aligned ? " is-aligned" : ""}`} aria-label={`Qibla bearing ${bearingLabel} degrees ${cardinalDirection(bearing)}`}>
-          <div className="qibla-dial" style={{ transform: `rotate(${northRotation}deg)` }}>
+      <section
+        className="qibla-compact-tool qibla-minimal-tool"
+        aria-label="Qibla compass"
+      >
+        <div
+          className={`qibla-compact-face${aligned ? " is-aligned" : ""}`}
+          aria-label={`Qibla bearing ${bearingLabel} degrees ${cardinalDirection(bearing)}`}
+        >
+          <div
+            className="qibla-dial"
+            style={{ transform: `rotate(${northRotation}deg)` }}
+          >
             <span className="qibla-ticks" />
-            <b className="qibla-cardinal qibla-n">N</b><b className="qibla-cardinal qibla-e">E</b><b className="qibla-cardinal qibla-s">S</b><b className="qibla-cardinal qibla-w">W</b>
+            <b className="qibla-cardinal qibla-n">N</b>
+            <b className="qibla-cardinal qibla-e">E</b>
+            <b className="qibla-cardinal qibla-s">S</b>
+            <b className="qibla-cardinal qibla-w">W</b>
           </div>
-          <span className="north-needle" style={{ transform: `translate(-50%, -50%) rotate(${northRotation}deg)` }} aria-hidden="true"><i /><i /></span>
-          <span className="qibla-red-arrow" style={{ transform: `translate(-50%, -50%) rotate(${qiblaRotation}deg)` }} aria-hidden="true"><i /><b className="kaaba-marker"><span /></b></span>
+          <span
+            className="north-needle"
+            style={{
+              transform: `translate(-50%, -50%) rotate(${northRotation}deg)`,
+            }}
+            aria-hidden="true"
+          >
+            <i />
+            <i />
+          </span>
+          <span
+            className="qibla-red-arrow"
+            style={{
+              transform: `translate(-50%, -50%) rotate(${qiblaRotation}deg)`,
+            }}
+            aria-hidden="true"
+          >
+            <i />
+            <b className="kaaba-marker">
+              <span />
+            </b>
+          </span>
           <span className="qibla-pin" aria-hidden="true" />
         </div>
-        <span className="sr-only" role="status">{status}. {location.label}. Qibla {bearingLabel} degrees {cardinalDirection(bearing)}.</span>
+        <span className="sr-only" role="status">
+          {status}. {location.label}. Qibla {bearingLabel} degrees{" "}
+          {cardinalDirection(bearing)}.
+        </span>
       </section>
     );
   }
@@ -240,39 +382,146 @@ export default function QiblaCompass({ minimal = false }: { minimal?: boolean })
   return (
     <section className="qibla-compact-tool">
       <div className="qibla-location-controls">
-        <label>Location<select value={selectedCity} onChange={(event) => chooseCity(event.target.value)}><option value="live" disabled>Current location</option>{NOOR_CITIES.map((city) => <option value={city.id} key={city.id}>{city.label}</option>)}</select></label>
-        <button type="button" onClick={findLocation} disabled={locationState === "loading"}>{locationState === "loading" ? "Locating…" : "Use my location"}</button>
+        <label>
+          Location
+          <select
+            value={selectedCity}
+            onChange={(event) => chooseCity(event.target.value)}
+          >
+            <option value="live" disabled>
+              Current location
+            </option>
+            {selectedCity !== "live" &&
+            !NOOR_CITIES.some((city) => city.id === selectedCity) ? (
+              <option value={selectedCity}>{location.label}</option>
+            ) : null}
+            {NOOR_CITIES.map((city) => (
+              <option value={city.id} key={city.id}>
+                {city.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          type="button"
+          onClick={findLocation}
+          disabled={locationState === "loading"}
+        >
+          {locationState === "loading" ? "Locating…" : "Use my location"}
+        </button>
       </div>
 
-      <div className={`qibla-compact-face${aligned ? " is-aligned" : ""}`} aria-label={`Qibla bearing ${bearingLabel} degrees ${cardinalDirection(bearing)}`}>
-        <div className="qibla-dial" style={{ transform: `rotate(${northRotation}deg)` }}>
+      <div
+        className={`qibla-compact-face${aligned ? " is-aligned" : ""}`}
+        aria-label={`Qibla bearing ${bearingLabel} degrees ${cardinalDirection(bearing)}`}
+      >
+        <div
+          className="qibla-dial"
+          style={{ transform: `rotate(${northRotation}deg)` }}
+        >
           <span className="qibla-ticks" />
-          <b className="qibla-cardinal qibla-n">N</b><b className="qibla-cardinal qibla-e">E</b><b className="qibla-cardinal qibla-s">S</b><b className="qibla-cardinal qibla-w">W</b>
+          <b className="qibla-cardinal qibla-n">N</b>
+          <b className="qibla-cardinal qibla-e">E</b>
+          <b className="qibla-cardinal qibla-s">S</b>
+          <b className="qibla-cardinal qibla-w">W</b>
         </div>
-        <span className="north-needle" style={{ transform: `translate(-50%, -50%) rotate(${northRotation}deg)` }} aria-hidden="true"><i /><i /></span>
-        <span className="qibla-red-arrow" style={{ transform: `translate(-50%, -50%) rotate(${qiblaRotation}deg)` }} aria-hidden="true"><i /><b className="kaaba-marker"><span /></b></span>
+        <span
+          className="north-needle"
+          style={{
+            transform: `translate(-50%, -50%) rotate(${northRotation}deg)`,
+          }}
+          aria-hidden="true"
+        >
+          <i />
+          <i />
+        </span>
+        <span
+          className="qibla-red-arrow"
+          style={{
+            transform: `translate(-50%, -50%) rotate(${qiblaRotation}deg)`,
+          }}
+          aria-hidden="true"
+        >
+          <i />
+          <b className="kaaba-marker">
+            <span />
+          </b>
+        </span>
         <span className="qibla-pin" aria-hidden="true" />
       </div>
 
       <div className="qibla-compact-readout" role="status">
         <strong>{status}</strong>
-        <span>{location.label} · Qibla {bearingLabel}° {cardinalDirection(bearing)}{heading === null ? " · bearing mode" : ` · phone heading ${Math.round(heading)}°`}</span>
-        {sensorMode === "absolute" ? <small className="qibla-sensor-ok">Live compass · true-north sensor</small> : null}
-        {sensorMode === "relative" && relativeCalibrated ? <small className="qibla-sensor-ok">Live compass · north calibrated</small> : null}
-        {sensorMode === "relative" && !relativeCalibrated ? <small>Phone movement detected. Face the top of the phone north, then tap Calibrate north.</small> : null}
-        {sensorMode === "waiting" ? <small>Starting phone compass…</small> : null}
-        {sensorMode === "blocked" ? <small>Motion access is blocked. Allow motion/orientation in browser settings, then retry.</small> : null}
-        {sensorMode === "unavailable" ? <small>No sensor reading received. Retry in Chrome/Safari on a phone with compass access.</small> : null}
-        {location.accuracy ? <small>Location accuracy ±{Math.round(location.accuracy)} m</small> : null}
-        {weakSensor ? <small>Low compass accuracy — move the phone in a figure eight.</small> : null}
+        <span>
+          {location.label} · Qibla {bearingLabel}° {cardinalDirection(bearing)}
+          {heading === null
+            ? " · bearing mode"
+            : ` · phone heading ${Math.round(heading)}°`}
+        </span>
+        {sensorMode === "absolute" ? (
+          <small className="qibla-sensor-ok">
+            Live compass · true-north sensor
+          </small>
+        ) : null}
+        {sensorMode === "relative" && relativeCalibrated ? (
+          <small className="qibla-sensor-ok">
+            Live compass · north calibrated
+          </small>
+        ) : null}
+        {sensorMode === "relative" && !relativeCalibrated ? (
+          <small>
+            Phone movement detected. Face the top of the phone north, then tap
+            Calibrate north.
+          </small>
+        ) : null}
+        {sensorMode === "waiting" ? (
+          <small>Starting phone compass…</small>
+        ) : null}
+        {sensorMode === "blocked" ? (
+          <small>
+            Motion access is blocked. Allow motion/orientation in browser
+            settings, then retry.
+          </small>
+        ) : null}
+        {sensorMode === "unavailable" ? (
+          <small>
+            No sensor reading received. Retry in Chrome/Safari on a phone with
+            compass access.
+          </small>
+        ) : null}
+        {location.accuracy ? (
+          <small>Location accuracy ±{Math.round(location.accuracy)} m</small>
+        ) : null}
+        {weakSensor ? (
+          <small>
+            Low compass accuracy — move the phone in a figure eight.
+          </small>
+        ) : null}
         {locationError ? <small>{locationError}</small> : null}
       </div>
 
       <div className="qibla-compact-actions">
-        <button type="button" onClick={enableCompass}>{needsPermission ? "Enable live compass" : heading === null ? "Start live compass" : "Restart compass"}</button>
-        {sensorMode === "relative" && !relativeCalibrated ? <button type="button" className="qibla-calibrate" onClick={calibrateNorth}>Calibrate north</button> : null}
+        <button type="button" onClick={enableCompass}>
+          {needsPermission
+            ? "Enable live compass"
+            : heading === null
+              ? "Start live compass"
+              : "Restart compass"}
+        </button>
+        {sensorMode === "relative" && !relativeCalibrated ? (
+          <button
+            type="button"
+            className="qibla-calibrate"
+            onClick={calibrateNorth}
+          >
+            Calibrate north
+          </button>
+        ) : null}
       </div>
-      <p className="qibla-one-line">Hold the phone flat. Keep it away from magnets and recalibrate after rotating the screen.</p>
+      <p className="qibla-one-line">
+        Hold the phone flat. Keep it away from magnets and recalibrate after
+        rotating the screen.
+      </p>
     </section>
   );
 }

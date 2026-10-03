@@ -12,6 +12,7 @@ import "./home/noor-redesign.css";
 import "./home/noor-polish.css";
 import "./home/noor-production.css";
 import "./home/noor-magazine.css";
+import "./site/daily-improvements.css";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -29,27 +30,46 @@ const display = Cormorant_Garamond({
   weight: ["500", "600", "700"],
 });
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://noor-daily-muslim.vercel.app").replace(/\/$/, "");
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://noor-daily-muslim.vercel.app"
+).replace(/\/$/, "");
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: "NOOR Daily Muslim",
   title: { default: "NOOR — Daily Muslim Companion", template: "%s · NOOR" },
-  description: "Prayer, Quran, Naat, Islamic learning and trusted community resources—organized simply for everyday use.",
-  keywords: ["Quran", "prayer times", "Qibla compass", "Islamic calendar", "Darood", "Muslim daily app"],
+  description:
+    "Prayer, Quran, Naat, Islamic learning and trusted community resources—organized simply for everyday use.",
+  keywords: [
+    "Quran",
+    "prayer times",
+    "Qibla compass",
+    "Islamic calendar",
+    "Darood",
+    "Muslim daily app",
+  ],
   alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
   robots: { index: true, follow: true },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
   openGraph: {
     title: "NOOR — Daily Muslim Companion",
-    description: "Faith, Quran, Naat and trusted community resources in one peaceful place.",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "NOOR Daily Muslim Companion" }],
+    description:
+      "Faith, Quran, Naat and trusted community resources in one peaceful place.",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "NOOR Daily Muslim Companion",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "NOOR — Daily Muslim Companion",
-    description: "Faith, Quran, Naat and trusted community resources in one peaceful place.",
+    description:
+      "Faith, Quran, Naat and trusted community resources in one peaceful place.",
     images: ["/og.png"],
   },
 };
@@ -64,11 +84,19 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const application = <SiteUtilitiesProvider><MediaProvider>{children}</MediaProvider></SiteUtilitiesProvider>;
-  const content = isClerkConfigured()
-    ? <ClerkProvider dynamic>{application}</ClerkProvider>
-    : application;
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  const application = (
+    <SiteUtilitiesProvider>
+      <MediaProvider>{children}</MediaProvider>
+    </SiteUtilitiesProvider>
+  );
+  const content = isClerkConfigured() ? (
+    <ClerkProvider dynamic>{application}</ClerkProvider>
+  ) : (
+    application
+  );
 
   const structuredData = [
     {
@@ -77,7 +105,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       name: "NOOR Daily Muslim",
       url: siteUrl,
       logo: `${siteUrl}/favicon.svg`,
-      description: "A calm, privacy-conscious daily companion for prayer, Quran and trusted Islamic learning.",
+      description:
+        "A calm, privacy-conscious daily companion for prayer, Quran and trusted Islamic learning.",
     },
     {
       "@context": "https://schema.org",
@@ -96,13 +125,29 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {process.env.VERCEL_ENV !== "production" ? <meta name="codex-preview" content="development" /> : null}
-        <script dangerouslySetInnerHTML={{ __html: "try{var t=localStorage.getItem('noor-theme-v2');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('noor-dark')}catch(e){}" }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+        {process.env.VERCEL_ENV !== "production" ? (
+          <meta name="codex-preview" content="development" />
+        ) : null}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('noor-theme-v2');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('noor-dark')}catch(e){}",
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </head>
-      <body className={`${geist.variable} ${notoArabic.variable} ${display.variable}`}>
-        <a className="skip-to-content" href="#main-content">Skip to main content</a>
-        <div className="site-content-root" id="main-content" tabIndex={-1}>{content}</div>
+      <body
+        className={`${geist.variable} ${notoArabic.variable} ${display.variable}`}
+      >
+        <a className="skip-to-content" href="#main-content">
+          Skip to main content
+        </a>
+        <div className="site-content-root" id="main-content" tabIndex={-1}>
+          {content}
+        </div>
         <PwaRegister />
         <Analytics />
         <SpeedInsights />

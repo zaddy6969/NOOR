@@ -159,7 +159,6 @@ export default function NamazPage() {
     mainEntityOfPage: "https://noor-daily-muslim.vercel.app/namaz",
     author: { "@type": "Organization", name: "NOOR Daily Muslim" },
     publisher: { "@type": "Organization", name: "NOOR Daily Muslim", logo: { "@type": "ImageObject", url: "https://noor-daily-muslim.vercel.app/favicon.svg" } },
-    dateModified: "2026-08-30",
     inLanguage: "en",
   };
   return (

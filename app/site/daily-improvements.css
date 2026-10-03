@@ -1,0 +1,390 @@
+/* Shared daily layout and accessibility improvements. */
+.daily-location-line,
+.daily-ayah-link {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin: 1rem 0;
+  font-size: 14px;
+}
+.daily-location-line a,
+.daily-ayah-link a {
+  color: #185044;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.daily-ayah-link span[lang="ar"] {
+  font-size: 24px;
+  display: inline-block;
+  margin-inline-end: 12px;
+}
+.noor-tabbed-home .noor-daily-status {
+  gap: 16px;
+}
+.noor-tabbed-home .daily-status-card {
+  min-height: 190px;
+  padding: 24px;
+  text-align: start;
+}
+.noor-tabbed-home .daily-status-card strong {
+  font-size: 26px;
+  line-height: 1.35;
+}
+.noor-tabbed-home .prayer-countdown {
+  font-size: 30px;
+  margin: 12px 0;
+}
+.noor-tabbed-home .daily-card-meta {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  margin-top: 12px;
+  gap: 6px;
+}
+.noor-tabbed-home .noor-fixed-hero {
+  padding-bottom: 28px;
+  min-height: 0;
+}
+.noor-tabbed-home .noor-feature-tabs {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  overflow-x: auto;
+}
+.noor-tabbed-home .noor-feature-tabs button {
+  min-height: 64px;
+  min-width: 150px;
+  padding: 12px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background-image: none !important;
+}
+.noor-tabbed-home .noor-feature-tabs button span {
+  font-size: 15px;
+}
+.noor-tabbed-home .noor-feature-tabs button:before,
+.noor-tabbed-home .noor-feature-tabs button:after {
+  display: none !important;
+}
+.noor-tabbed-home .noor-feature-tabs button svg {
+  display: block !important;
+  width: 28px;
+  height: 28px;
+}
+.daily-tools {
+  margin: 16px 0;
+  border: 1px solid #d3ded6;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
+}
+.daily-tools summary {
+  cursor: pointer;
+  font-weight: 650;
+  min-height: 30px;
+}
+.daily-tools > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.daily-tools button,
+.daily-tools a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  text-align: start;
+  background: #f3f7f2;
+  border: 0;
+  border-radius: 10px;
+  color: #174b40;
+  min-height: 44px;
+}
+.daily-tools svg {
+  width: 22px;
+  height: 22px;
+}
+.daily-primary-nav {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+.daily-primary-nav a {
+  padding: 10px 0;
+  color: inherit;
+}
+.location-picker,
+.offline-manager,
+.correction-form,
+.personal-data-controls {
+  max-width: 1120px;
+  margin: 24px auto;
+  padding: 24px;
+  border: 1px solid #d3ded6;
+  border-radius: 18px;
+  background: #fff;
+  color: #193e34;
+}
+.location-picker > div,
+.offline-controls,
+.personal-data-controls > div {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: end;
+}
+.location-picker label,
+.offline-controls label,
+.correction-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  margin: 12px 0;
+}
+.location-picker input,
+.location-picker select,
+.offline-controls select,
+.correction-form input,
+.correction-form textarea {
+  padding: 12px;
+  border: 1px solid #adbfb2;
+  border-radius: 8px;
+  min-height: 44px;
+  background: #fff;
+  color: #173f34;
+  max-width: 100%;
+}
+.location-picker input {
+  min-width: 260px;
+}
+.location-picker button,
+.offline-manager button,
+.correction-form button,
+.personal-data-controls button,
+.download-button button {
+  padding: 12px 16px;
+  min-height: 44px;
+  border: 1px solid #bacfc1;
+  background: #eaf2e8;
+  color: #164539;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.location-picker ul,
+.offline-manager ul {
+  list-style: none;
+  padding: 0;
+}
+.location-picker li button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  text-align: start;
+  margin: 6px 0;
+}
+.location-picker small,
+.offline-manager small {
+  display: block;
+  margin-top: 8px;
+}
+.correction-form textarea {
+  min-height: 140px;
+}
+.correction-form pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 16px;
+  background: #f0f5ef;
+}
+.primary-action {
+  display: inline-block;
+  padding: 12px 16px;
+  background: #174f40;
+  color: white !important;
+  border-radius: 8px;
+}
+.content-status {
+  font-size: 14px !important;
+  line-height: 1.7;
+  padding: 12px;
+  background: #f6f0dd;
+  border-radius: 8px;
+}
+.daily-duas-page {
+  max-width: 1120px;
+  margin: 24px auto;
+  padding: 0 20px;
+}
+.download-button {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: #f2f6ee;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+.download-button span {
+  font-size: 13px;
+}
+.offline-manager li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #d3ded6;
+}
+.offline-manager li strong {
+  flex: 1;
+  min-width: 220px;
+}
+.file-action {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+.workspace-duas article a,
+.topic-source-list a {
+  color: #185044;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.noor-more-feature-art {
+  opacity: 0.5;
+}
+:where(button, a, input, select, textarea, summary):focus-visible {
+  outline: 3px solid #947018;
+  outline-offset: 4px;
+}
+.noor-dark .daily-tools,
+.noor-dark .location-picker,
+.noor-dark .offline-manager,
+.noor-dark .correction-form,
+.noor-dark .personal-data-controls {
+  background: #142e25;
+  color: #e4eddf;
+  border-color: #45614e;
+}
+.noor-dark .daily-location-line a,
+.noor-dark .daily-ayah-link a,
+.noor-dark .workspace-duas article a,
+.noor-dark .topic-source-list a {
+  color: #d3dda5;
+}
+.noor-dark .download-button,
+.noor-dark .content-status,
+.noor-dark .correction-form pre {
+  background: #233e30;
+  color: #e8efdd;
+}
+@media (max-width: 900px) {
+  .compact-tool-topbar {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+  .daily-primary-nav {
+    order: 4;
+    width: 100%;
+    justify-content: center;
+  }
+  .daily-location-line,
+  .daily-ayah-link {
+    flex-wrap: wrap;
+  }
+  .daily-ayah-link {
+    font-size: 13px;
+  }
+  .noor-tabbed-home .daily-status-card {
+    min-height: 165px;
+    padding: 18px;
+  }
+  .noor-tabbed-home .daily-status-card strong {
+    font-size: 22px;
+  }
+  .noor-tabbed-home .noor-feature-tabs button {
+    min-width: 140px;
+  }
+  .noor-mobile-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .noor-mobile-nav a svg {
+    width: 22px;
+    height: 22px;
+  }
+  .location-picker,
+  .offline-manager,
+  .correction-form,
+  .personal-data-controls {
+    margin: 16px;
+    padding: 18px;
+  }
+  .location-picker input {
+    min-width: 0;
+    width: 100%;
+  }
+  .daily-primary-nav {
+    gap: 20px;
+  }
+}
+@media print {
+  header,
+  nav,
+  footer,
+  button,
+  .site-utilities,
+  .calculator-form-card {
+    display: none !important;
+  }
+  .working-calculator {
+    display: block;
+  }
+  .calculator-result-card {
+    box-shadow: none;
+    border: 1px solid #aaa;
+  }
+}
+
+.reading-goal {
+  padding: 16px;
+  border: 1px solid #d3ded6;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.reading-goal summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.reading-goal label {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  margin: 12px;
+}
+.reading-goal select,
+.reading-goal input,
+.reading-goal button {
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid #adbfb2;
+  border-radius: 8px;
+}
+.reading-goal p {
+  font-size: 14px;
+  line-height: 1.7;
+}

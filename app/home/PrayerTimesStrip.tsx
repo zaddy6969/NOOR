@@ -1,179 +1,87 @@
 "use client";
-
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { DEFAULT_NOOR_LOCATION, locationFromCity, NOOR_CITIES, NOOR_LOCATION_EVENT, readNoorLocation, writeNoorLocation, type NoorLocation } from "../site/location-settings";
-
-export type PrayerName = "Fajr" | "Dhuhr" | "Asr" | "Maghrib" | "Isha";
-type PrayerResponse = {
-  timings?: Record<PrayerName, string>;
-  hijri?: string | null;
-  method?: string | null;
-  error?: string;
-};
-export type PrayerSettings = { cityId: string; method: number; school: number; adjustment: number };
-type NoorLocale = "en" | "hi" | "ur";
-
-export const PRAYERS: PrayerName[] = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-export const PRAYER_METHODS = [
-  { id: 1, label: "Karachi" },
-  { id: 3, label: "Muslim World League" },
-  { id: 4, label: "Umm al-Qura" },
-  { id: 5, label: "Egyptian Authority" },
-];
-export const DEFAULT_PRAYER_SETTINGS: PrayerSettings = { cityId: "bengaluru", method: 1, school: 1, adjustment: 0 };
-const METHODS = PRAYER_METHODS;
-const DEFAULT_SETTINGS = DEFAULT_PRAYER_SETTINGS;
-const PRAYER_COPY: Record<NoorLocale, {
-  names: Record<PrayerName, string>;
-  next: string;
-  useLocation: string;
-  locating: string;
-  settings: string;
-}> = {
-  en: { names: { Fajr: "Fajr", Dhuhr: "Dhuhr", Asr: "Asr", Maghrib: "Maghrib", Isha: "Isha" }, next: "NEXT PRAYER", useLocation: "Use my location", locating: "Locating…", settings: "Open prayer settings" },
-  hi: { names: { Fajr: "फ़ज्र", Dhuhr: "ज़ुहर", Asr: "अस्र", Maghrib: "मग़रिब", Isha: "ईशा" }, next: "अगली नमाज़", useLocation: "मेरी लोकेशन", locating: "लोकेशन…", settings: "नमाज़ सेटिंग खोलें" },
-  ur: { names: { Fajr: "فجر", Dhuhr: "ظہر", Asr: "عصر", Maghrib: "مغرب", Isha: "عشاء" }, next: "اگلی نماز", useLocation: "میرا مقام", locating: "مقام…", settings: "نماز کی ترتیبات کھولیں" },
-};
-
-function nextPrayer(timings: PrayerResponse["timings"], now: Date | null) {
-  if (!timings || !now) return null;
-  for (const prayer of PRAYERS) {
-    const [hours, minutes] = timings[prayer].split(":").map(Number);
-    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) continue;
-    const prayerDate = new Date(now);
-    prayerDate.setHours(hours, minutes, 0, 0);
-    if (prayerDate > now) return { prayer, target: prayerDate };
-  }
-  const [hours, minutes] = timings.Fajr.split(":").map(Number);
-  const tomorrow = new Date(now);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(hours, minutes, 0, 0);
-  return { prayer: "Fajr" as PrayerName, target: tomorrow };
-}
-
-function PrayerIcon({ prayer }: { prayer: PrayerName }) {
-  const svgProps = { viewBox: "0 0 24 24", "aria-hidden": true, fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
-  if (prayer === "Isha") return <svg {...svgProps}><path d="M20 15.5A8 8 0 1 1 11.5 4 6.3 6.3 0 0 0 20 15.5Z"/><path d="M19 4v4m-2-2h4"/></svg>;
-  if (prayer === "Dhuhr") return <svg {...svgProps}><circle cx="12" cy="12" r="4"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9 7 7m10 10 2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>;
-  return <svg {...svgProps}><path d="M3 18h18M5 15h14M7 12a5 5 0 0 1 10 0"/><path d={prayer === "Fajr" ? "M12 3v3m-5-1 2 2m8-2-2 2" : prayer === "Asr" ? "M4 8h16" : "M6 10h12"}/></svg>;
-}
-
-function PinIcon() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>;
-}
-
-function SettingsIcon() {
-  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06-2.83 2.83-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1v.1h-4v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.87.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1-.4h-.1v-4H3A1.7 1.7 0 0 0 4.6 8.5a1.7 1.7 0 0 0-.34-1.87l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1v-.1h4V3A1.7 1.7 0 0 0 15.5 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.4 9c.16.37.37.7.6 1 .27.27.62.4 1 .4h.1v4H21a1.7 1.7 0 0 0-1.6.6Z"/></svg>;
-}
-
-export default function PrayerTimesStrip({ locale = "en" }: { locale?: NoorLocale }) {
-  const [data, setData] = useState<PrayerResponse | null>(null);
-  const [settings, setSettings] = useState<PrayerSettings>(DEFAULT_SETTINGS);
-  const [location, setLocation] = useState<NoorLocation>(DEFAULT_NOOR_LOCATION);
-  const [loading, setLoading] = useState(true);
-  const [locating, setLocating] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [now, setNow] = useState<Date | null>(null);
-
-  const load = useCallback((city: NoorLocation, nextSettings: PrayerSettings) => {
-    setLoading(true);
-    setLocation(city);
-    fetch(`/api/prayer-times?latitude=${city.latitude}&longitude=${city.longitude}&method=${nextSettings.method}&school=${nextSettings.school}&adjustment=${nextSettings.adjustment}`)
-      .then(async (response) => {
-        const payload = await response.json() as PrayerResponse;
-        if (!response.ok) throw new Error(payload.error ?? "Prayer timings are unavailable.");
-        return payload;
-      })
-      .then(setData)
-      .catch((error: Error) => setData({ error: error.message }))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      let saved = DEFAULT_SETTINGS;
-      try {
-        const parsed = JSON.parse(window.localStorage.getItem("noor-prayer-settings-v1") ?? "null") as Partial<PrayerSettings> | null;
-        if (parsed && NOOR_CITIES.some((city) => city.id === parsed.cityId) && METHODS.some((method) => method.id === parsed.method) && (parsed.school === 0 || parsed.school === 1)) {
-          saved = { ...DEFAULT_SETTINGS, ...parsed, adjustment: Number.isInteger(parsed.adjustment) ? Number(parsed.adjustment) : 0 } as PrayerSettings;
-        }
-      } catch { saved = DEFAULT_SETTINGS; }
-      const sharedLocation = readNoorLocation();
-      setSettings(saved);
-      load(sharedLocation, saved);
-      setNow(new Date());
-    });
-    const timer = window.setInterval(() => setNow(new Date()), 1000);
-    return () => { window.cancelAnimationFrame(frame); window.clearInterval(timer); };
-  }, [load]);
-
-  useEffect(() => {
-    const syncLocation = () => {
-      let currentSettings = DEFAULT_SETTINGS;
-      try { currentSettings = { ...DEFAULT_SETTINGS, ...JSON.parse(window.localStorage.getItem("noor-prayer-settings-v1") ?? "{}") } as PrayerSettings; } catch { /* use defaults */ }
-      setSettings(currentSettings);
-      load(readNoorLocation(), currentSettings);
-    };
-    window.addEventListener(NOOR_LOCATION_EVENT, syncLocation);
-    return () => window.removeEventListener(NOOR_LOCATION_EVENT, syncLocation);
-  }, [load]);
-
-  useEffect(() => {
-    if (!settingsOpen) return;
-    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") setSettingsOpen(false); };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [settingsOpen]);
-
-  const updateSettings = (next: PrayerSettings) => {
-    setSettings(next);
-    window.localStorage.setItem("noor-prayer-settings-v1", JSON.stringify(next));
-    const selected = locationFromCity(next.cityId);
-    writeNoorLocation(selected);
-  };
-
-  const useLocation = () => {
-    if (!("geolocation" in navigator)) { setData({ error: "Location is unavailable in this browser. Choose a city instead." }); return; }
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const liveLocation: NoorLocation = { id: "current", label: "Current location", latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy, source: "device" };
-        writeNoorLocation(liveLocation);
-        setLocating(false);
-      },
-      () => { setData({ error: "Location permission was not available. Choose a city instead." }); setLocating(false); },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
-    );
-  };
-
-  const upcoming = useMemo(() => nextPrayer(data?.timings, now), [data?.timings, now]);
-  const copy = PRAYER_COPY[locale];
-  const methodLabel = METHODS.find((method) => method.id === settings.method)?.label ?? data?.method ?? "Calculated";
-  const schoolLabel = settings.school === 1 ? "Hanafi" : "Standard";
-  const countdown = useMemo(() => {
-    if (!upcoming || !now) return "—";
-    const seconds = Math.max(0, Math.floor((upcoming.target.getTime() - now.getTime()) / 1000));
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remaining = seconds % 60;
-    return [hours, minutes, remaining].map((value) => String(value).padStart(2, "0")).join(":");
-  }, [now, upcoming]);
-
+import Link from "next/link";
+import { formatCountdown, PRAYERS } from "../../lib/prayer-schedule";
+import { usePrayerSchedule } from "../prayer-times/usePrayerSchedule";
+export { PRAYERS, type PrayerName } from "../../lib/prayer-schedule";
+export {
+  DEFAULT_PRAYER_SETTINGS,
+  PRAYER_METHODS,
+  type PrayerSettings,
+} from "../prayer-times/usePrayerSchedule";
+export default function PrayerTimesStrip({
+  locale = "en",
+}: {
+  locale?: "en" | "hi" | "ur";
+}) {
+  const {
+    location,
+    confirmed,
+    schedule,
+    now,
+    upcoming,
+    loading,
+    error,
+    cached,
+    retry,
+  } = usePrayerSchedule();
+  const label =
+    locale === "ur"
+      ? "نماز کے اوقات"
+      : locale === "hi"
+        ? "नमाज़ के समय"
+        : "Prayer times";
   return (
-    <section className="home-prayer-strip" id="prayer-times" aria-label="Today’s five prayer timings">
-      <div className="home-prayer-label"><PinIcon/><span><strong>{location.label}</strong><small>{data?.hijri ?? "Local prayer schedule"}</small></span></div>
-      <div className="home-prayer-times">{PRAYERS.map((prayer) => <div className={upcoming?.prayer === prayer ? "is-next" : ""} key={prayer}><PrayerIcon prayer={prayer}/><span>{copy.names[prayer]}</span><strong>{loading ? "…" : data?.timings?.[prayer] ?? "—"}</strong></div>)}</div>
-      <div className="home-prayer-next"><span>{copy.next}</span><strong>{upcoming ? copy.names[upcoming.prayer] : "Prayer"}</strong><small>{countdown}</small></div>
-      <div className="home-prayer-actions"><button type="button" onClick={useLocation} disabled={locating}><PinIcon/>{locating ? copy.locating : copy.useLocation}</button><button className="secondary" type="button" onClick={() => setSettingsOpen(true)} aria-label={copy.settings}><SettingsIcon/></button></div>
-      <div className="prayer-trust-line"><span>Calculation: <strong>{methodLabel}</strong> · <strong>{schoolLabel}</strong> · <strong>{location.label}</strong>{settings.adjustment ? ` · Hijri ${settings.adjustment > 0 ? "+" : ""}${settings.adjustment}` : ""}</span><button type="button" onClick={() => setSettingsOpen(true)}>Edit</button></div>
-      {data?.error ? <p className="home-prayer-error" role="alert">{data.error}</p> : null}
-      {settingsOpen ? <div className="prayer-settings-overlay" role="dialog" aria-modal="true" aria-label="Prayer time settings"><button className="prayer-settings-backdrop" type="button" onClick={() => setSettingsOpen(false)} aria-label="Close prayer settings"/><div className="home-prayer-settings"><header><div><span>PRAYER SETTINGS</span><strong>Choose your calculation</strong></div><button type="button" onClick={() => setSettingsOpen(false)} aria-label="Close">×</button></header>
-        <label><span>City</span><select value={location.id === "current" ? settings.cityId : location.id} onChange={(event) => updateSettings({ ...settings, cityId: event.target.value })}>{NOOR_CITIES.map((city) => <option value={city.id} key={city.id}>{city.label}</option>)}</select></label>
-        <label><span>Calculation method</span><select value={settings.method} onChange={(event) => updateSettings({ ...settings, method: Number(event.target.value) })}>{METHODS.map((method) => <option value={method.id} key={method.id}>{method.label}</option>)}</select></label>
-        <label><span>Asr method</span><select value={settings.school} onChange={(event) => updateSettings({ ...settings, school: Number(event.target.value) })}><option value={1}>Hanafi</option><option value={0}>Standard</option></select></label>
-        <label><span>Hijri date adjustment</span><select value={settings.adjustment} onChange={(event) => updateSettings({ ...settings, adjustment: Number(event.target.value) })}><option value={-2}>−2 days</option><option value={-1}>−1 day</option><option value={0}>No adjustment</option><option value={1}>+1 day</option><option value={2}>+2 days</option></select></label>
-        <small>{data?.method ?? "Calculated prayer times"} · confirm congregation times with your mosque.</small>
-      </div></div> : null}
+    <section className="home-prayer-strip" aria-label={label}>
+      <div className="home-prayer-label">
+        <span>
+          <strong>
+            {location.label}
+            {!confirmed ? " · default city" : ""}
+          </strong>
+          <small>{schedule?.timezone ?? "Checking local schedule"}</small>
+        </span>
+      </div>
+      <div className="home-prayer-times">
+        {PRAYERS.map((prayer) => (
+          <div
+            key={prayer}
+            className={upcoming?.prayer === prayer ? "is-next" : ""}
+          >
+            <span>{prayer}</span>
+            <strong>
+              {loading ? "…" : (schedule?.timings[prayer] ?? "—")}
+            </strong>
+          </div>
+        ))}
+      </div>
+      <div className="home-prayer-next">
+        <span>NEXT PRAYER</span>
+        <strong>{upcoming?.prayer ?? "Unavailable"}</strong>
+        <small aria-hidden="true">
+          {upcoming && now ? formatCountdown(upcoming.target, now) : "—"}
+        </small>
+        <small>
+          {upcoming?.tomorrow ? "Tomorrow · " + upcoming.time : upcoming?.time}
+        </small>
+      </div>
+      <div className="home-prayer-actions">
+        <Link href="/prayer-times">Change city & settings →</Link>
+      </div>
+      <div className="prayer-trust-line">
+        {schedule
+          ? schedule.method +
+            " · " +
+            (cached ? "Saved schedule for today" : "AlAdhan calculation")
+          : ""}
+      </div>
+      {error ? (
+        <p role="alert" className="home-prayer-error">
+          {error}{" "}
+          <button type="button" onClick={() => void retry()}>
+            Retry
+          </button>
+        </p>
+      ) : null}
     </section>
   );
 }

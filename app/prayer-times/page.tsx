@@ -19,7 +19,7 @@ export default function PrayerTimesPage() {
         <p>One location powers NOOR’s prayer, Qibla and mosque tools. Review the calculation method and always confirm congregation times with your local mosque.</p>
       </section>
       <PrayerTimesCenter />
-      <ReviewBadge label="Calculation reviewed" detail="Methods and source labels checked by the NOOR editorial team" />
+      <ReviewBadge label="Calculation settings" detail="AlAdhan method and Asr settings are visible. Confirm congregation times locally." />
       <SiteFooter />
     </main>
   );

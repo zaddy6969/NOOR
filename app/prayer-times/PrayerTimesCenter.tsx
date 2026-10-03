@@ -1,177 +1,309 @@
 "use client";
-
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { NOOR_LOCATION_EVENT } from "../site/location-settings";
 import {
-  DEFAULT_NOOR_LOCATION,
-  locationFromCity,
-  NOOR_CITIES,
-  NOOR_LOCATION_EVENT,
-  readNoorLocation,
-  writeNoorLocation,
-  type NoorLocation,
-} from "../site/location-settings";
-import { DEFAULT_PRAYER_SETTINGS, PRAYER_METHODS, PRAYERS, type PrayerName, type PrayerSettings } from "../home/PrayerTimesStrip";
+  formatCountdown,
+  PRAYERS,
+  type PrayerTimings,
+} from "../../lib/prayer-schedule";
+import {
+  usePrayerSchedule,
+  scheduleQuery,
+  PRAYER_METHODS,
+} from "./usePrayerSchedule";
+import LocationPicker from "./LocationPicker";
 
-type TodayResponse = {
-  timings?: Record<PrayerName, string>;
-  date?: string;
-  hijri?: string | null;
-  timezone?: string;
-  method?: string;
-  error?: string;
+type MonthDay = {
+  gregorianDate: string;
+  gregorianDay: number;
+  weekday: string;
+  hijriLabel: string;
+  timings: PrayerTimings;
 };
-type MonthDay = { gregorianDate: string; gregorianDay: number; weekday: string; hijriDate: string; hijriLabel: string; timings: Record<PrayerName, string> };
-type MonthResponse = { days?: MonthDay[]; error?: string };
-
-const SETTINGS_KEY = "noor-prayer-settings-v1";
-const MONTH_FORMAT = new Intl.DateTimeFormat("en-IN", { month: "long", year: "numeric" });
-
-function readSettings() {
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(SETTINGS_KEY) ?? "null") as Partial<PrayerSettings> | null;
-    if (!parsed || !NOOR_CITIES.some((city) => city.id === parsed.cityId) || !PRAYER_METHODS.some((method) => method.id === parsed.method) || (parsed.school !== 0 && parsed.school !== 1)) return DEFAULT_PRAYER_SETTINGS;
-    return { ...DEFAULT_PRAYER_SETTINGS, ...parsed, adjustment: Number.isInteger(parsed.adjustment) ? Number(parsed.adjustment) : 0 } as PrayerSettings;
-  } catch { return DEFAULT_PRAYER_SETTINGS; }
-}
-
-function nextPrayer(timings: TodayResponse["timings"], now: Date) {
-  if (!timings) return null;
-  for (const prayer of PRAYERS) {
-    const [hours, minutes] = timings[prayer].split(":").map(Number);
-    const target = new Date(now);
-    target.setHours(hours, minutes, 0, 0);
-    if (target > now) return { prayer, target };
-  }
-  const [hours, minutes] = timings.Fajr.split(":").map(Number);
-  const target = new Date(now);
-  target.setDate(target.getDate() + 1);
-  target.setHours(hours, minutes, 0, 0);
-  return { prayer: "Fajr" as PrayerName, target };
-}
-
-function apiQuery(location: NoorLocation, settings: PrayerSettings) {
-  return `latitude=${location.latitude}&longitude=${location.longitude}&method=${settings.method}&school=${settings.school}&adjustment=${settings.adjustment}`;
-}
-
 export default function PrayerTimesCenter() {
-  const [location, setLocation] = useState<NoorLocation>(DEFAULT_NOOR_LOCATION);
-  const [settings, setSettings] = useState<PrayerSettings>(DEFAULT_PRAYER_SETTINGS);
-  const [today, setToday] = useState<TodayResponse | null>(null);
-  const [monthData, setMonthData] = useState<MonthResponse | null>(null);
-  const [view, setView] = useState(() => ({ month: new Date().getMonth() + 1, year: new Date().getFullYear() }));
-  const [now, setNow] = useState(() => new Date());
-  const [loading, setLoading] = useState(true);
-  const [locating, setLocating] = useState(false);
-
-  const load = useCallback(async (nextLocation: NoorLocation, nextSettings: PrayerSettings, nextView: typeof view) => {
-    setLoading(true);
-    const query = apiQuery(nextLocation, nextSettings);
-    try {
-      const [todayResponse, monthResponse] = await Promise.all([
-        fetch(`/api/prayer-times?${query}`),
-        fetch(`/api/prayer-times/month?${query}&year=${nextView.year}&month=${nextView.month}`),
-      ]);
-      const [todayPayload, monthPayload] = await Promise.all([todayResponse.json() as Promise<TodayResponse>, monthResponse.json() as Promise<MonthResponse>]);
-      if (!todayResponse.ok) throw new Error(todayPayload.error ?? "Today’s prayer times are unavailable.");
-      setToday(todayPayload);
-      setMonthData(monthResponse.ok ? monthPayload : { error: monthPayload.error ?? "Monthly schedule unavailable." });
-    } catch (error) {
-      setToday({ error: error instanceof Error ? error.message : "Prayer times are unavailable." });
-      setMonthData(null);
-    } finally { setLoading(false); }
-  }, []);
-
+  const {
+    location,
+    confirmed,
+    settings,
+    schedule,
+    now,
+    upcoming,
+    cached,
+    loading,
+    error,
+    retry,
+  } = usePrayerSchedule();
+  const [view, setView] = useState<{ year: number; month: number } | null>(
+    null,
+  );
+  const [monthData, setMonthData] = useState<MonthDay[]>([]);
+  const [monthError, setMonthError] = useState("");
+  const [monthLoading, setMonthLoading] = useState(false);
+  const [monthRetry, setMonthRetry] = useState(0);
   useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      const savedSettings = readSettings();
-      const savedLocation = readNoorLocation();
-      setSettings(savedSettings);
-      setLocation(savedLocation);
-      void load(savedLocation, savedSettings, view);
+    if (!schedule || view) return;
+    const frame = requestAnimationFrame(() => {
+      const [year, month] = schedule.dateISO.split("-").map(Number);
+      setView({ year, month });
     });
-    const timer = window.setInterval(() => setNow(new Date()), 1000);
-    const syncLocation = () => {
-      const nextLocation = readNoorLocation();
-      const nextSettings = readSettings();
-      setLocation(nextLocation);
-      setSettings(nextSettings);
-      void load(nextLocation, nextSettings, view);
+    return () => cancelAnimationFrame(frame);
+  }, [schedule, view]);
+  const query = scheduleQuery(location, settings);
+  useEffect(() => {
+    if (!view) return;
+    const active = new AbortController();
+    const frame = requestAnimationFrame(() => {
+      setMonthLoading(true);
+      setMonthError("");
+      setMonthData([]);
+    });
+    fetch(
+      "/api/prayer-times/month?" +
+        query +
+        "&year=" +
+        view.year +
+        "&month=" +
+        view.month,
+      { signal: active.signal },
+    )
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok)
+          throw new Error(payload.error ?? "Monthly schedule unavailable.");
+        if (!active.signal.aborted) setMonthData(payload.days ?? []);
+      })
+      .catch((reason) => {
+        if (!active.signal.aborted) setMonthError(reason.message);
+      })
+      .finally(() => {
+        if (!active.signal.aborted) setMonthLoading(false);
+      });
+    return () => {
+      cancelAnimationFrame(frame);
+      active.abort();
     };
-    window.addEventListener(NOOR_LOCATION_EVENT, syncLocation);
-    return () => { window.cancelAnimationFrame(frame); window.clearInterval(timer); window.removeEventListener(NOOR_LOCATION_EVENT, syncLocation); };
-  }, [load, view]);
-
-  const upcoming = useMemo(() => nextPrayer(today?.timings, now), [now, today?.timings]);
-  const countdown = useMemo(() => {
-    if (!upcoming) return "—";
-    const seconds = Math.max(0, Math.floor((upcoming.target.getTime() - now.getTime()) / 1000));
-    return [Math.floor(seconds / 3600), Math.floor((seconds % 3600) / 60), seconds % 60].map((part) => String(part).padStart(2, "0")).join(":");
-  }, [now, upcoming]);
-  const methodLabel = PRAYER_METHODS.find((method) => method.id === settings.method)?.label ?? today?.method ?? "Calculated";
-  const todayKey = [String(now.getDate()).padStart(2, "0"), String(now.getMonth() + 1).padStart(2, "0"), now.getFullYear()].join("-");
-
-  const updateSettings = (next: PrayerSettings, nextLocation = location) => {
-    setSettings(next);
-    window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
-    setLocation(nextLocation);
-    if (nextLocation.source === "preset") writeNoorLocation(nextLocation);
-    else void load(nextLocation, next, view);
-  };
-
-  const selectCity = (cityId: string) => {
-    const next = { ...settings, cityId };
-    updateSettings(next, locationFromCity(cityId));
-  };
-
-  const useLocation = () => {
-    if (!navigator.geolocation) { setToday({ error: "Location is unavailable in this browser. Choose a city instead." }); return; }
-    setLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        writeNoorLocation({ id: "current", label: "Current location", latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy, source: "device" });
-        setLocating(false);
-      },
-      () => { setToday({ error: "Location permission was not available. Choose a city instead." }); setLocating(false); },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 },
+  }, [query, view, monthRetry]);
+  const update = (key: "method" | "school" | "adjustment", value: number) => {
+    localStorage.setItem(
+      "noor-prayer-settings-v1",
+      JSON.stringify({ ...settings, [key]: value }),
     );
+    window.dispatchEvent(new Event(NOOR_LOCATION_EVENT));
   };
-
-  const changeMonth = (delta: number) => setView((current) => {
-    const date = new Date(current.year, current.month - 1 + delta, 1);
-    return { year: date.getFullYear(), month: date.getMonth() + 1 };
-  });
-
+  const changeMonth = (delta: number) =>
+    setView((current) => {
+      const date = new Date(
+        current?.year ?? new Date().getFullYear(),
+        (current?.month ?? new Date().getMonth() + 1) - 1 + delta,
+        1,
+      );
+      return { year: date.getFullYear(), month: date.getMonth() + 1 };
+    });
   return (
     <section className="prayer-center" aria-busy={loading}>
       <div className="prayer-center-status">
-        <div><span>NEXT PRAYER · {location.label.toUpperCase()}</span><h2>{upcoming?.prayer ?? "Prayer"}</h2><strong>{countdown}</strong><p>{today?.hijri ?? "Local prayer schedule"} · {today?.timezone ?? "Local time"}</p></div>
-        <div className="prayer-center-today" aria-label="Today’s prayer times">
-          {PRAYERS.map((prayer) => <article className={upcoming?.prayer === prayer ? "is-next" : ""} key={prayer}><span>{prayer}</span><strong>{loading ? "…" : today?.timings?.[prayer] ?? "—"}</strong>{upcoming?.prayer === prayer ? <small>Next</small> : null}</article>)}
+        <div>
+          <span>NEXT PRAYER · {location.label.toUpperCase()}</span>
+          <h2>{loading ? "Loading…" : (upcoming?.prayer ?? "Unavailable")}</h2>
+          <strong aria-hidden="true">
+            {upcoming && now ? formatCountdown(upcoming.target, now) : "—"}
+          </strong>
+          <p>
+            {upcoming
+              ? upcoming.time + (upcoming.tomorrow ? " tomorrow" : " today")
+              : "No verified next-prayer time available."}
+          </p>
+          <p>
+            {schedule
+              ? schedule.dateISO +
+                " · " +
+                schedule.timezone +
+                (cached ? " · saved schedule for today" : " · live schedule")
+              : "Select your location below."}
+          </p>
+        </div>
+        <div className="prayer-center-today">
+          {PRAYERS.map((prayer) => (
+            <article
+              className={
+                upcoming?.prayer === prayer && !upcoming.tomorrow
+                  ? "is-next"
+                  : ""
+              }
+              key={prayer}
+            >
+              <span>{prayer}</span>
+              <strong>
+                {loading ? "…" : (schedule?.timings[prayer] ?? "—")}
+              </strong>
+            </article>
+          ))}
         </div>
       </div>
-
-      <section className="prayer-center-controls" aria-label="Prayer calculation settings">
-        <label><span>City</span><select value={location.source === "preset" ? location.id : settings.cityId} onChange={(event) => selectCity(event.target.value)}>{NOOR_CITIES.map((city) => <option value={city.id} key={city.id}>{city.label}</option>)}</select></label>
-        <label><span>Calculation</span><select value={settings.method} onChange={(event) => updateSettings({ ...settings, method: Number(event.target.value) })}>{PRAYER_METHODS.map((method) => <option value={method.id} key={method.id}>{method.label}</option>)}</select></label>
-        <label><span>Asr method</span><select value={settings.school} onChange={(event) => updateSettings({ ...settings, school: Number(event.target.value) })}><option value={1}>Hanafi</option><option value={0}>Standard</option></select></label>
-        <label><span>Hijri adjustment</span><select value={settings.adjustment} onChange={(event) => updateSettings({ ...settings, adjustment: Number(event.target.value) })}><option value={-2}>−2 days</option><option value={-1}>−1 day</option><option value={0}>No adjustment</option><option value={1}>+1 day</option><option value={2}>+2 days</option></select></label>
-        <button type="button" onClick={useLocation} disabled={locating}>{locating ? "Locating…" : "Use my location"}</button>
-        <p>Calculation: <strong>{methodLabel}</strong> · <strong>{settings.school === 1 ? "Hanafi" : "Standard"}</strong> · <strong>{location.label}</strong></p>
+      {error ? (
+        <div className="prayer-center-error" role="alert">
+          <p>{error}</p>
+          <button type="button" onClick={() => void retry()}>
+            Retry prayer times
+          </button>
+        </div>
+      ) : null}
+      <LocationPicker location={location} confirmed={confirmed} />
+      <section
+        className="prayer-center-controls"
+        aria-label="Prayer calculation settings"
+      >
+        <label>
+          <span>Calculation</span>
+          <select
+            value={settings.method}
+            onChange={(event) => update("method", Number(event.target.value))}
+          >
+            {PRAYER_METHODS.map((method) => (
+              <option value={method.id} key={method.id}>
+                {method.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span>Asr method</span>
+          <select
+            value={settings.school}
+            onChange={(event) => update("school", Number(event.target.value))}
+          >
+            <option value={1}>Hanafi</option>
+            <option value={0}>Standard</option>
+          </select>
+        </label>
+        <label>
+          <span>Hijri adjustment</span>
+          <select
+            value={settings.adjustment}
+            onChange={(event) =>
+              update("adjustment", Number(event.target.value))
+            }
+          >
+            {[-2, -1, 0, 1, 2].map((value) => (
+              <option key={value} value={value}>
+                {value
+                  ? (value > 0 ? "+" : "") + value + " days"
+                  : "No adjustment"}
+              </option>
+            ))}
+          </select>
+        </label>
+        <p>
+          {schedule?.method ??
+            PRAYER_METHODS.find((item) => item.id === settings.method)
+              ?.label}{" "}
+          · {settings.school === 1 ? "Hanafi" : "Standard"} Asr ·{" "}
+          {schedule?.hijri ?? "Hijri date unavailable"}
+        </p>
       </section>
-
-      {today?.error ? <p className="prayer-center-error" role="alert">{today.error}</p> : null}
-
       <section className="prayer-month">
-        <header><div><span>MONTHLY SCHEDULE</span><h2>{MONTH_FORMAT.format(new Date(view.year, view.month - 1, 1))}</h2></div><div><button type="button" onClick={() => changeMonth(-1)} aria-label="Previous month">←</button><button type="button" onClick={() => setView({ month: new Date().getMonth() + 1, year: new Date().getFullYear() })}>Today</button><button type="button" onClick={() => changeMonth(1)} aria-label="Next month">→</button></div></header>
+        <header>
+          <div>
+            <span>MONTHLY SCHEDULE</span>
+            <h2>
+              {view
+                ? new Intl.DateTimeFormat("en-IN", {
+                    month: "long",
+                    year: "numeric",
+                  }).format(new Date(view.year, view.month - 1, 1))
+                : "Choose a location to load"}
+            </h2>
+          </div>
+          <div>
+            <button
+              type="button"
+              onClick={() => changeMonth(-1)}
+              aria-label="Previous month"
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (schedule) {
+                  const [year, month] = schedule.dateISO.split("-").map(Number);
+                  setView({ year, month });
+                }
+              }}
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={() => changeMonth(1)}
+              aria-label="Next month"
+            >
+              →
+            </button>
+          </div>
+        </header>
         <div className="prayer-month-scroll">
-          <table><thead><tr><th scope="col">Date</th>{PRAYERS.map((prayer) => <th scope="col" key={prayer}>{prayer}</th>)}</tr></thead><tbody>
-            {monthData?.days?.map((day) => <tr className={day.gregorianDate === todayKey ? "is-today" : ""} key={day.gregorianDate}><th scope="row"><strong>{day.weekday}, {day.gregorianDay}</strong><span>{day.hijriLabel}</span></th>{PRAYERS.map((prayer) => <td key={prayer}>{day.timings[prayer]}</td>)}</tr>)}
-          </tbody></table>
-          {!loading && monthData?.error ? <p className="prayer-center-error" role="alert">{monthData.error}</p> : null}
-          {loading ? <p className="prayer-month-loading" role="status">Loading monthly prayer times…</p> : null}
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                {PRAYERS.map((prayer) => (
+                  <th scope="col" key={prayer}>
+                    {prayer}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {monthData.map((day) => (
+                <tr
+                  className={
+                    day.gregorianDate ===
+                    schedule?.dateISO.split("-").reverse().join("-")
+                      ? "is-today"
+                      : ""
+                  }
+                  key={day.gregorianDate}
+                >
+                  <th scope="row">
+                    <strong>
+                      {day.weekday}, {day.gregorianDay}
+                    </strong>
+                    <span>{day.hijriLabel}</span>
+                  </th>
+                  {PRAYERS.map((prayer) => (
+                    <td key={prayer}>{day.timings[prayer]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {monthLoading ? <p role="status">Loading monthly schedule…</p> : null}
+          {monthError ? (
+            <p role="alert">
+              {monthError}{" "}
+              <button
+                type="button"
+                onClick={() => setMonthRetry((value) => value + 1)}
+              >
+                Retry monthly schedule
+              </button>
+            </p>
+          ) : null}
         </div>
       </section>
-      <p className="prayer-center-source">Times are calculated by AlAdhan / Islamic Network. Calculation results are not mosque iqamah times; verify local congregation times directly.</p>
+      <p className="prayer-center-source">
+        Calculated by AlAdhan / Islamic Network. Times use the selected
+        location’s timezone. Calculated times are not mosque iqamah times;
+        confirm congregation times locally.
+        {schedule
+          ? " Retrieved " +
+            new Date(schedule.calculatedAt).toLocaleString("en-GB", {
+              timeZone: schedule.timezone,
+            }) +
+            "."
+          : ""}
+      </p>
     </section>
   );
 }
