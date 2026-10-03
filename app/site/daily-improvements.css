@@ -21,10 +21,22 @@
 }
 .noor-tabbed-home .noor-daily-status {
   gap: 16px;
+  height: auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: auto;
+  grid-auto-flow: row;
+  overflow: visible;
 }
 .noor-tabbed-home .daily-status-card {
-  min-height: 190px;
+  grid-column: auto;
+  grid-row: auto;
+  min-width: 0;
+  min-height: 230px;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
   text-align: start;
 }
 .noor-tabbed-home .daily-status-card strong {
@@ -36,7 +48,8 @@
   margin: 12px 0;
 }
 .noor-tabbed-home .daily-card-meta {
-  position: static;
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -387,4 +400,44 @@
 .reading-goal p {
   font-size: 14px;
   line-height: 1.7;
+}
+
+.noor-tabbed-home .daily-status-card > strong {
+  margin-top: 12px;
+}
+.noor-tabbed-home .daily-status-card p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+.noor-tabbed-home .daily-card-source {
+  display: block;
+  width: 100%;
+  line-height: 1.5;
+}
+.noor-tabbed-home .verse-summary-card .daily-card-source {
+  width: 100%;
+}
+.noor-tabbed-home .noor-feature-shell {
+  margin-top: 20px;
+}
+@media (max-width: 1100px) {
+  .noor-tabbed-home .noor-daily-status {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .noor-tabbed-home .noor-daily-status {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    height: auto;
+    overflow: visible;
+  }
+  .noor-tabbed-home .daily-status-card {
+    min-height: 0;
+    padding: 20px;
+  }
+  .daily-ayah-link a {
+    overflow-wrap: anywhere;
+  }
 }
