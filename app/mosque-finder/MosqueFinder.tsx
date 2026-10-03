@@ -26,6 +26,7 @@ export default function MosqueFinder() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [filter, setFilter] = useState<PlaceFilter>("Mosques");
   const [loading, setLoading] = useState(false);
+  const [mapSupported, setMapSupported] = useState<boolean | null>(null);
   const [message, setMessage] = useState("Loading your selected location…");
 
   useEffect(() => {
@@ -34,7 +35,12 @@ export default function MosqueFinder() {
       try { setConfirmed(Boolean(window.localStorage.getItem(NOOR_LOCATION_KEY))); } catch { setConfirmed(false); }
       setLocationReady(true);
     };
-    const frame = requestAnimationFrame(refresh);
+    const frame = requestAnimationFrame(() => {
+      refresh();
+      // OpenStreetMap's current embedded map requires WebGL. Keep the list usable without it.
+      const canvas = document.createElement("canvas");
+      setMapSupported(Boolean(canvas.getContext("webgl2") || canvas.getContext("webgl")));
+    });
     const storage = (event: StorageEvent) => { if (event.key === NOOR_LOCATION_KEY || event.key === null) refresh(); };
     window.addEventListener(NOOR_LOCATION_EVENT, refresh);
     window.addEventListener("storage", storage);
@@ -75,8 +81,10 @@ export default function MosqueFinder() {
         <div className="mosque-kind-filter" role="group" aria-label="Place type">{(["Mosques", "All places", "Dargahs"] as PlaceFilter[]).map((item) => <button className={filter === item ? "active" : ""} type="button" aria-pressed={filter === item} onClick={() => setFilter(item)} key={item}>{item}</button>)}</div>
         <p className="mosque-status" role="status">{message}</p>
         <p className="mosque-status">OpenStreetMap is community maintained and may be incomplete. Distance is a straight-line estimate. Confirm facilities, opening hours and congregation (iqamah) times directly with the mosque.</p>
-        {locationReady && mapPoint ? <div className="mosque-map"><iframe title={`Map of ${active?.name ?? center?.label ?? "selected area"}`} src={mapEmbedUrl(mapPoint)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div> : null}
+        {locationReady && mapPoint && mapSupported ? <div className="mosque-map"><iframe title={`Map of ${active?.name ?? center?.label ?? "selected area"}`} src={mapEmbedUrl(mapPoint)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div> : null}
 
+        {locationReady && mapSupported === false ? <div className="mosque-map-fallback" role="note"><strong>Embedded map unavailable in this browser</strong><p>The nearby list and Directions links still work. Open a place’s map record to view or correct its details.</p></div> : null}
+        {locationReady && mapPoint ? <p className="mosque-status"><a href={`https://www.openstreetmap.org/?mlat=${mapPoint.lat}&mlon=${mapPoint.lng}#map=16/${mapPoint.lat}/${mapPoint.lng}`} target="_blank" rel="noreferrer">Open area in OpenStreetMap ↗</a></p> : null}
         {active && center ? <div className="mosque-nearest"><span>SELECTED PLACE · {active.kind.toUpperCase()}</span><strong>{active.name}</strong><p>{active.distanceKm.toFixed(1)} km away · {active.address}</p><a href={`https://www.google.com/maps/dir/?api=1&origin=${center.lat},${center.lng}&destination=${active.lat},${active.lng}`} target="_blank" rel="noreferrer">Open directions ↗</a></div> : null}
       </div>
       <div className="mosque-results" aria-live="polite">
