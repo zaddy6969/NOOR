@@ -56,28 +56,28 @@ export default function PrayerTimesCenter() {
       setMonthLoading(true);
       setMonthError("");
       setMonthData([]);
+      void fetch(
+        "/api/prayer-times/month?" +
+          query +
+          "&year=" +
+          view.year +
+          "&month=" +
+          view.month,
+        { signal: active.signal },
+      )
+        .then(async (response) => {
+          const payload = await response.json();
+          if (!response.ok)
+            throw new Error(payload.error ?? "Monthly schedule unavailable.");
+          if (!active.signal.aborted) setMonthData(payload.days ?? []);
+        })
+        .catch((reason) => {
+          if (!active.signal.aborted) setMonthError(reason.message);
+        })
+        .finally(() => {
+          if (!active.signal.aborted) setMonthLoading(false);
+        });
     });
-    fetch(
-      "/api/prayer-times/month?" +
-        query +
-        "&year=" +
-        view.year +
-        "&month=" +
-        view.month,
-      { signal: active.signal },
-    )
-      .then(async (response) => {
-        const payload = await response.json();
-        if (!response.ok)
-          throw new Error(payload.error ?? "Monthly schedule unavailable.");
-        if (!active.signal.aborted) setMonthData(payload.days ?? []);
-      })
-      .catch((reason) => {
-        if (!active.signal.aborted) setMonthError(reason.message);
-      })
-      .finally(() => {
-        if (!active.signal.aborted) setMonthLoading(false);
-      });
     return () => {
       cancelAnimationFrame(frame);
       active.abort();

@@ -180,10 +180,9 @@ export default function QuranReader({
   const [studyPanel, setStudyPanel] = useState<StudyPanel | null>(null);
   const [verseResults, setVerseResults] = useState<QuranSearchResult[]>([]);
   const [searchingVerses, setSearchingVerses] = useState(false);
-  const [pendingAyah, setPendingAyah] = useState<number | null>(null);
+  const [pendingAyah, setPendingAyah] = useState<number | null>(initialAyah);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [readingStreak, setReadingStreak] = useState(0);
-  const initialScrollDone = useRef(false);
   const studyRef = useRef<HTMLDivElement>(null);
   const studyOpen = Boolean(studyPanel);
   useEffect(() => {
@@ -386,24 +385,6 @@ export default function QuranReader({
     return () => controller.abort();
   }, [selected, requestVersion, translation, reciter, preferencesReady]);
 
-  useEffect(() => {
-    if (
-      !detail ||
-      detail.number !== initialSurah ||
-      !initialAyah ||
-      initialScrollDone.current
-    )
-      return;
-    const timer = window.setTimeout(() => {
-      const target = document.getElementById(`ayah-${initialAyah}`);
-      if (target) {
-        initialScrollDone.current = true;
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    }, 120);
-    return () => window.clearTimeout(timer);
-  }, [detail, initialAyah, initialSurah]);
-
   const activeAyahNumber =
     current?.kind === "quran" &&
     current.id === `quran-${detail?.number}-${reciter}`
@@ -485,34 +466,53 @@ export default function QuranReader({
   }, [detail, selected, pendingAyah, loading, rememberAyah]);
 
   useEffect(() => {
-    if (
-      !detail ||
-      loading ||
-      pendingAyah ||
-      typeof IntersectionObserver === "undefined"
-    )
-      return;
+    if (!detail || loading || pendingAyah) return;
+    let userScrolled = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort(
-            (a, b) => a.boundingClientRect.top - b.boundingClientRect.top,
-          )[0];
-        if (!visible) return;
-        clearTimeout(timer);
-        const ayah = Number(visible.target.id.replace("ayah-", ""));
-        timer = setTimeout(() => rememberAyah(ayah), 1000);
-      },
-      { threshold: 0.5 },
-    );
-    document
-      .querySelectorAll(".ayah-card")
-      .forEach((card) => observer.observe(card));
+    const markInput = () => {
+      userScrolled = true;
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (
+        [
+          "PageDown",
+          "PageUp",
+          "ArrowDown",
+          "ArrowUp",
+          " ",
+          "Home",
+          "End",
+        ].includes(event.key) &&
+        !(event.target instanceof HTMLInputElement) &&
+        !(event.target instanceof HTMLTextAreaElement) &&
+        !(event.target instanceof HTMLSelectElement)
+      )
+        markInput();
+    };
+    const onScroll = () => {
+      if (!userScrolled) return;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const card = [
+          ...document.querySelectorAll<HTMLElement>(".ayah-card"),
+        ].find((item) => {
+          const rect = item.getBoundingClientRect();
+          return rect.bottom > 120 && rect.top < window.innerHeight;
+        });
+        if (card) rememberAyah(Number(card.id.replace("ayah-", "")));
+        userScrolled = false;
+      }, 600);
+    };
+    window.addEventListener("wheel", markInput, { passive: true });
+    window.addEventListener("touchmove", markInput, { passive: true });
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("scroll", onScroll, true);
     return () => {
       clearTimeout(timer);
-      observer.disconnect();
+      window.removeEventListener("wheel", markInput);
+      window.removeEventListener("touchmove", markInput);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("scroll", onScroll, true);
     };
   }, [detail, loading, pendingAyah, rememberAyah]);
 
@@ -520,7 +520,6 @@ export default function QuranReader({
     setLoading(true);
     setError("");
     setPendingAyah(1);
-    initialScrollDone.current = true;
     if (number === selected) setRequestVersion((value) => value + 1);
     else setSelected(number);
     window.scrollTo({ top: 0, behavior: "smooth" });
