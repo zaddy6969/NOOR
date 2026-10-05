@@ -15,8 +15,8 @@ export default function InstallGuide() {
     window.addEventListener("beforeinstallprompt", ready); window.addEventListener("appinstalled", done);
     return () => { cancelAnimationFrame(frame); window.removeEventListener("beforeinstallprompt", ready); window.removeEventListener("appinstalled", done); };
   }, []);
-  return <section className="noor-feature-card install-guide"><h2>{t("Install NOOR")}</h2>{installed ? <p>NOOR is running as an installed app.</p> : <>
+  return <section className="noor-feature-card install-guide"><h2>{t("Install NOOR")}</h2>{installed ? <p>{t("NOOR is running as an installed app.")}</p> : <>
     {prompt ? <button type="button" onClick={async () => { try { await prompt.prompt(); const result = await prompt.userChoice; setMessage(result.outcome === "accepted" ? "Installation accepted." : "You can install later from your browser menu."); setPrompt(null); } catch { setMessage("Use your browser menu to install NOOR."); } }}>{t("Install NOOR")}</button> : null}
-    <div className="install-platforms"><article><strong>iPhone / iPad</strong><p>Open NOOR in Safari → Share → Add to Home Screen → Add.</p></article><article><strong>Android / desktop</strong><p>Open your browser menu → Install app or Add to Home screen. If unavailable, keep a bookmark.</p></article></div>
-    <p>Installation gives you an app shortcut. Download each Quran selection separately before going offline.</p></>}<p role="status">{message}</p></section>;
+    <div className="install-platforms"><article><strong>iPhone / iPad</strong><p>{t("Open NOOR in Safari → Share → Add to Home Screen → Add.")}</p></article><article><strong>{t("Android / desktop")}</strong><p>{t("Open your browser menu → Install app or Add to Home screen. If unavailable, keep a bookmark.")}</p></article></div>
+    <p>{t("Installation gives you an app shortcut. Download each Quran selection separately before going offline.")}</p></>}<p role="status">{t(message)}</p></section>;
 }

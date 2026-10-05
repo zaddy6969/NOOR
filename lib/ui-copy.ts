@@ -1,5 +1,7 @@
+import { DAILY_UI_COPY } from "./ui-copy-daily.ts";
 export type NoorLocale = "en" | "hi" | "ur";
 export const UI_COPY: Record<string, [string, string]> = {
+  ...DAILY_UI_COPY,
   "Assignments cover all 6,236 Ayahs in order. Mark a day complete after reading; progress stays private on this device.": ["योजना में सभी 6,236 आयतें क्रम से हैं। पढ़ने के बाद दिन पूरा चिह्नित करें। प्रगति इस डिवाइस पर निजी रहती है।", "منصوبے میں تمام 6,236 آیات ترتیب سے شامل ہیں۔ پڑھنے کے بعد دن کو مکمل نشان لگائیں۔ پیش رفت اس آلے پر نجی رہتی ہے۔"],
   "Choose the prayers you want reminders for. Browser alerts run while this prayer page is open; closed-page push alerts are not enabled. Calendar reminders work through your calendar app.": ["याद दिलाने के लिए नमाज़ें चुनें। ब्राउज़र सूचनाएँ यह पेज खुला रहने पर चलती हैं। पेज बंद होने पर पुश सूचनाएँ चालू नहीं हैं। कैलेंडर की याद दिलाने वाली सूचनाएँ आपके कैलेंडर ऐप से चलती हैं।", "یاد دہانی کے لیے نمازیں منتخب کریں۔ براؤزر کی اطلاعات اس صفحے کے کھلے رہنے پر چلتی ہیں۔ بند صفحے کی پش اطلاعات فعال نہیں ہیں۔ کیلنڈر کی یاد دہانیاں آپ کی کیلنڈر ایپ سے چلتی ہیں۔"],
   "Remind me for": ["इन नमाज़ों की याद दिलाएँ", "ان نمازوں کی یاد دہانی"], "On schedule": ["योजना के अनुसार", "منصوبے کے مطابق"],
@@ -19,4 +21,7 @@ export const UI_COPY: Record<string, [string, string]> = {
   "Prayer reminders": ["नमाज़ की याद दिलाएँ", "نماز کی یاد دہانی"], "Reminder timing": ["याद दिलाने का समय", "یاد دہانی کا وقت"], "At prayer time": ["नमाज़ के समय", "نماز کے وقت"], "Enable browser alerts": ["ब्राउज़र सूचनाएँ चालू करें", "براؤزر کی اطلاعات فعال کریں"], "Disable alerts": ["सूचनाएँ बंद करें", "اطلاعات بند کریں"], "Send test notification": ["परीक्षण सूचना भेजें", "آزمائشی اطلاع بھیجیں"], "Add today's prayers to calendar": ["आज की नमाज़ें कैलेंडर में जोड़ें", "آج کی نمازیں کیلنڈر میں شامل کریں"],
   "Calculation": ["गणना विधि", "حساب کا طریقہ"], "Asr method": ["अस्र का तरीका", "عصر کا طریقہ"], "Hijri adjustment": ["हिजरी तारीख समायोजन", "ہجری تاریخ کی تبدیلی"], "Surah": ["सूरह", "سورۃ"], "Download a Surah": ["सूरह डाउनलोड करें", "سورۃ ڈاؤن لوڈ کریں"], "Download selected Surah": ["चुनी सूरह डाउनलोड करें", "منتخب سورۃ ڈاؤن لوڈ کریں"], "Downloading…": ["डाउनलोड हो रहा है…", "ڈاؤن لوڈ جاری ہے…"], "Your downloads": ["आपके डाउनलोड", "آپ کے ڈاؤن لوڈ"], "Remove download": ["डाउनलोड हटाएँ", "ڈاؤن لوڈ ہٹائیں"], "Verify downloads": ["डाउनलोड जाँचें", "ڈاؤن لوڈ جانچیں"], "Keep downloads on this device": ["डाउनलोड इस डिवाइस पर रखें", "ڈاؤن لوڈ اس آلے پر محفوظ رکھیں"], "Install NOOR": ["नूर इंस्टॉल करें", "نور انسٹال کریں"], "From Ayah": ["पहली आयत", "پہلی آیت"], "To Ayah": ["अंतिम आयत", "آخری آیت"], "Repetitions": ["दोहराव", "تکرار"], "Recitation practice": ["तिलावत अभ्यास", "تلاوت کی مشق"], "Play selected range": ["चुनी आयतें सुनें", "منتخب آیات سنیں"],
 };
-export function translateUI(text: string, locale: NoorLocale) { return locale === "en" ? text : UI_COPY[text]?.[locale === "hi" ? 0 : 1] ?? text; }
+export function translateUI(text: string, locale: NoorLocale, values: Record<string, string | number> = {}) {
+  const translated = locale === "en" ? text : UI_COPY[text]?.[locale === "hi" ? 0 : 1] ?? text;
+  return translated.replace(/\{(\w+)\}/g, (match, key: string) => values[key] === undefined ? match : String(values[key]));
+}

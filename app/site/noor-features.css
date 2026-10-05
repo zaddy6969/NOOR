@@ -56,6 +56,9 @@ label > .noor-select { width: 100%; }
 .quran-attribution a { font-size: 12px; color: #27624c; text-decoration: underline; text-underline-offset: 3px; }
 html[dir="rtl"] .noor-select, html[dir="rtl"] .noor-feature-card, html[dir="rtl"] .daily-primary-nav { font-family: var(--font-arabic), sans-serif; }
 html[dir="rtl"] .noor-feature-card { text-align: start; }
+html[dir="rtl"] .offline-manager, html[dir="rtl"] .saved-library, html[dir="rtl"] .location-picker, html[dir="rtl"] .prayer-center { text-align: start; }
+html[dir="rtl"] .prayer-center-today strong, html[dir="rtl"] .prayer-month td { direction: ltr; unicode-bidi: isolate; }
+.noor-feature-controls .calendar-download { overflow-wrap: anywhere; text-decoration: none; }
 html[dir="rtl"] .media-dock audio, html[dir="rtl"] input[type="date"], html[dir="rtl"] input[type="time"] { direction: ltr; }
 .noor-dark .noor-select > button, .noor-dark .noor-select-popup, .noor-dark .noor-feature-card { background: #132a23; color: #edf1e5; border-color: #3d5145; }
 .noor-dark .noor-select-popup [role="option"].is-active { background: #284237; }
@@ -65,7 +68,7 @@ html[dir="rtl"] .media-dock audio, html[dir="rtl"] input[type="date"], html[dir=
 .noor-dark .noor-feature-card button, .noor-dark .plan-next > a { background: #253e31; color: #e5edde; border-color: #4f6755; }
 @media (max-width: 760px) {
   .noor-feature-card { padding: 16px; border-radius: 14px; }
-  .noor-feature-controls > label, .noor-feature-controls > button { flex: 1 1 145px; max-width: 100%; }
+  .noor-feature-controls > label, .noor-feature-controls > button, .noor-feature-controls > .calendar-download { flex: 1 1 145px; max-width: 100%; }
   .install-platforms, .review-register { grid-template-columns: minmax(0, 1fr); }
   .quran-reader-tools .noor-select { max-width: 100%; width: 100%; }
   .quran-reader-tools { overflow: visible; }

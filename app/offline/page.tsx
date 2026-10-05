@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import ToolHeader from "../site/ToolHeader";
 import SiteFooter from "../site/SiteFooter";
 import OfflineManager from "./OfflineManager";
+import { LocaleText } from "../site/SiteUtilities";
 export const metadata: Metadata = {
   title: "Offline Downloads",
   description:
@@ -16,8 +17,8 @@ export default function OfflinePage() {
         subtitle="Choose · Download · Read"
       />
       <section className="trust-hero">
-        <h1>Read wherever you are</h1>
-        <p>Manage Quran downloads and their storage on this device.</p>
+        <h1><LocaleText text="Read wherever you are" /></h1>
+        <p><LocaleText text="Manage Quran downloads and their storage on this device." /></p>
       </section>
       <OfflineManager />
       <SiteFooter />

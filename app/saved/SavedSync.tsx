@@ -1,10 +1,12 @@
 "use client";
 
+import { useNoorCopy } from "../site/SiteUtilities";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   readSavedCollections,
   SAVED_KEYS,
+  SAVED_ITEMS_EVENT,
   writeSavedList,
 } from "../site/saved-items";
 
@@ -69,11 +71,18 @@ function applyRemote(data: SyncPayload, includeNotes: boolean) {
   window.dispatchEvent(new Event("noor:plan-change"));
 }
 
-export default function SavedSync({ configured }: { configured: boolean }) {
+export default function SavedSync({ configured, setupStatus }: { configured: boolean; setupStatus: string }) {
+  const { t, locale } = useNoorCopy();
   const [includeNotes, setIncludeNotes] = useState(false);
   const [consent, setConsent] = useState(false);
   const [lastSync, setLastSync] = useState("");
-  useEffect(() => { try { setLastSync(localStorage.getItem("noor-last-sync-v1") ?? ""); } catch { /* optional status */ } }, []);
+  useEffect(() => {
+    const refresh = () => { try { const stored = localStorage.getItem("noor-last-sync-v1") ?? ""; setLastSync(Number.isFinite(Date.parse(stored)) ? stored : ""); } catch { /* optional status */ } };
+    const frame = requestAnimationFrame(refresh);
+    window.addEventListener("storage", refresh);
+    window.addEventListener(SAVED_ITEMS_EVENT, refresh);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("storage", refresh); window.removeEventListener(SAVED_ITEMS_EVENT, refresh); };
+  }, []);
   const [state, setState] = useState<
     "idle" | "syncing" | "done" | "error" | "signin"
   >("idle");
@@ -126,7 +135,7 @@ export default function SavedSync({ configured }: { configured: boolean }) {
       setLastSync(time);
       setState("done");
       setMessage(
-        `Synced securely at ${new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date())}.${conflicts ? ` ${conflicts} note conflicts kept this device’s text. Reload the reader to see synced notes.` : ""}`,
+        t("Synced securely at {time}.", { time: new Intl.DateTimeFormat(locale, { hour: "numeric", minute: "2-digit" }).format(new Date()) }) + (conflicts ? " " + t("{count} note conflicts kept this device’s text. Reload the reader to see synced notes.", { count: conflicts }) : ""),
       );
     } catch (error) {
       setState("error");
@@ -141,29 +150,26 @@ export default function SavedSync({ configured }: { configured: boolean }) {
   return (
     <aside
       className={`saved-sync saved-sync-${state}`}
-      aria-label="Account sync"
+      aria-label={t("Account sync")}
     >
       <div>
-        <strong>Optional account sync</strong>
-        <span>{message}</span>
-        {lastSync ? <small>Last successful sync: {new Date(lastSync).toLocaleString()}</small> : null}
-        <p>Merge saved items, Quran progress, preferences and completion plans. Nothing is uploaded automatically. Downloads and precise location stay on your device.</p>
-        {configured ? <><label><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /> I agree to sync my saved items and progress to my account.</label><label><input type="checkbox" checked={includeNotes} onChange={(event) => setIncludeNotes(event.target.checked)} /> Include my private Quran notes (optional).</label></> : <p>Use Export backup below to transfer your private data until account services are connected.</p>}
-        <a href="/content-review">Content review and sources →</a>
+        <strong>{t("Optional account sync")}</strong>
+        <span>{t(message)}</span>
+        {!configured ? <small>{t(setupStatus)}</small> : null}
+        {lastSync ? <small>{t("Last successful sync")}: {new Date(lastSync).toLocaleString(locale)}</small> : null}
+        <p>{t("Merge saved items, Quran progress, preferences and completion plans. Nothing is uploaded automatically. Downloads and precise location stay on your device.")}</p>
+        {configured ? <><label><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /> {t("I agree to sync my saved items and progress to my account.")}</label><label><input type="checkbox" checked={includeNotes} onChange={(event) => setIncludeNotes(event.target.checked)} /> {t("Include my private Quran notes (optional).")}</label></> : <p>{t("Use Export backup below to transfer your private data until account services are connected.")}</p>}
+        <a href="/content-review">{t("Content review and sources")} →</a>
       </div>
       {!configured ? (
         <span className="saved-sync-unavailable" aria-disabled="true">
-          Not configured
+          {t("Not configured")}
         </span>
       ) : state === "signin" ? (
-        <Link href="/sign-in">Sign in</Link>
+        <Link href="/sign-in">{t("Sign in")}</Link>
       ) : (
         <button type="button" onClick={sync} disabled={state === "syncing" || !consent}>
-          {state === "syncing"
-            ? "Syncing…"
-            : state === "done"
-              ? "Sync again"
-              : "Sync across devices"}
+          {t(state === "syncing" ? "Syncing…" : state === "done" ? "Sync again" : "Sync across devices")}
         </button>
       )}
     </aside>

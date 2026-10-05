@@ -42,12 +42,12 @@ export default function CompletionPlan() {
       <label>{t("Start date")}<input type="date" required value={startDate} onChange={(event) => setStartDate(event.target.value)} /></label>
       <button type="submit">{t("Start plan")}</button>{plan ? <button type="button" onClick={() => setRestart(false)}>{t("Cancel")}</button> : null}
     </form> : <>
-      <progress max={plan.days} value={new Set(plan.completed).size} aria-label="Quran plan completion" />
-      <p>{plan.startDate > currentDate ? `Starts ${plan.startDate}` : `${t("Day")} ${scheduled} · ${overdue ? `${t("Catch up")}: ${overdue} ${t("days")}` : t("On schedule")}`}</p>
+      <progress max={plan.days} value={new Set(plan.completed).size} aria-label={t("Quran plan completion")} />
+      <p>{plan.startDate > currentDate ? t("Starts {date}", { date: plan.startDate }) : `${t("Day")} ${scheduled} · ${overdue ? `${t("Catch up")}: ${overdue} ${t("days")}` : t("On schedule")}`}</p>
       {nextDay ? (() => { const task = planAssignment(plan.days, nextDay); return <article className="plan-next"><strong>{t("Day")} {nextDay} · {task.count} {t("Ayahs")}</strong><span dir="ltr">{task.first.surah}:{task.first.ayah} → {task.last.surah}:{task.last.ayah}</span><Link href={`/quran?surah=${task.first.surah}&ayah=${task.first.ayah}`}>{t("Open reading")} →</Link><button type="button" onClick={() => save({ ...plan, completed: [...new Set([...plan.completed, nextDay])], updatedAt: new Date().toISOString() })}>{t("Mark complete")}</button></article>; })() : <p role="status">{t("All assignments completed. May Allah accept your reading.")}</p>}
       <details><summary>{t("Your assignments")}</summary><ol className="plan-assignments">{Array.from({ length: plan.days }, (_, index) => { const day = index + 1; const task = planAssignment(plan.days, day); return <li key={day}><Link href={`/quran?surah=${task.first.surah}&ayah=${task.first.ayah}`}>{t("Day")} {day} · <bdi>{task.first.surah}:{task.first.ayah}–{task.last.surah}:{task.last.ayah}</bdi></Link><label><input type="checkbox" checked={plan.completed.includes(day)} onChange={(event) => save({ ...plan, completed: event.target.checked ? [...new Set([...plan.completed, day])] : plan.completed.filter((item) => item !== day), updatedAt: new Date().toISOString() })} />{t("Completed")}</label></li>; })}</ol></details>
       <button type="button" className="text-action" onClick={() => { setRestart(true); setStartDate(today()); setDays(plan.days); }}>{t("Restart plan")}</button>
     </>}
-    <p role="status">{message}</p>
+    <p role="status">{t(message)}</p>
   </details>;
 }

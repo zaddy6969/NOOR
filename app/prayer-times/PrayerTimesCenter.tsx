@@ -24,7 +24,7 @@ type MonthDay = {
   timings: PrayerTimings;
 };
 export default function PrayerTimesCenter() {
-  const { t } = useNoorCopy();
+  const { t, locale } = useNoorCopy();
   const {
     location,
     confirmed,
@@ -107,23 +107,23 @@ export default function PrayerTimesCenter() {
     <section className="prayer-center" aria-busy={loading}>
       <div className="prayer-center-status">
         <div>
-          <span>NEXT PRAYER · {location.label.toUpperCase()}</span>
-          <h2>{loading ? "Loading…" : (upcoming?.prayer ?? "Unavailable")}</h2>
+          <span>{t("NEXT PRAYER")} · {location.label}</span>
+          <h2>{t(loading ? "Loading…" : (upcoming?.prayer ?? "Unavailable"))}</h2>
           <strong aria-hidden="true">
             {upcoming && now ? formatCountdown(upcoming.target, now) : "—"}
           </strong>
           <p>
             {upcoming
-              ? upcoming.time + (upcoming.tomorrow ? " tomorrow" : " today")
-              : "No verified next-prayer time available."}
+              ? upcoming.time + " · " + t(upcoming.tomorrow ? "tomorrow" : "today")
+              : t("No verified next-prayer time available.")}
           </p>
           <p>
             {schedule
               ? schedule.dateISO +
                 " · " +
                 schedule.timezone +
-                (cached ? " · saved schedule for today" : " · live schedule")
-              : "Select your location below."}
+                (" · " + t(cached ? "saved schedule for today" : "live schedule"))
+              : t("Select your location below.")}
           </p>
         </div>
         <div className="prayer-center-today">
@@ -136,7 +136,7 @@ export default function PrayerTimesCenter() {
               }
               key={prayer}
             >
-              <span>{prayer}</span>
+              <span>{t(prayer)}</span>
               <strong>
                 {loading ? "…" : (schedule?.timings[prayer] ?? "—")}
               </strong>
@@ -146,16 +146,16 @@ export default function PrayerTimesCenter() {
       </div>
       {error ? (
         <div className="prayer-center-error" role="alert">
-          <p>{error}</p>
+          <p>{t(error)}</p>
           <button type="button" onClick={() => void retry()}>
-            Retry prayer times
+            {t("Retry prayer times")}
           </button>
         </div>
       ) : null}
       <LocationPicker location={location} confirmed={confirmed} />
       <section
         className="prayer-center-controls"
-        aria-label="Prayer calculation settings"
+        aria-label={t("Prayer calculation settings")}
       >
         <label>
           <span>{t("Calculation")}</span>
@@ -176,8 +176,8 @@ export default function PrayerTimesCenter() {
             value={settings.school}
             onChange={(event) => update("school", Number(event.target.value))}
           >
-            <option value={1}>Hanafi</option>
-            <option value={0}>Standard</option>
+            <option value={1}>{t("Hanafi")}</option>
+            <option value={0}>{t("Standard")}</option>
           </NoorSelect>
         </label>
         <label>
@@ -191,8 +191,8 @@ export default function PrayerTimesCenter() {
             {[-2, -1, 0, 1, 2].map((value) => (
               <option key={value} value={value}>
                 {value
-                  ? (value > 0 ? "+" : "") + value + " days"
-                  : "No adjustment"}
+                  ? (value > 0 ? "+" : "") + value + " " + t("days")
+                  : t("No adjustment")}
               </option>
             ))}
           </NoorSelect>
@@ -201,29 +201,29 @@ export default function PrayerTimesCenter() {
           {schedule?.method ??
             PRAYER_METHODS.find((item) => item.id === settings.method)
               ?.label}{" "}
-          · {settings.school === 1 ? "Hanafi" : "Standard"} Asr ·{" "}
-          {schedule?.hijri ?? "Hijri date unavailable"}
+          · {t(settings.school === 1 ? "Hanafi" : "Standard")} {t("Asr")} ·{" "}
+          {schedule?.hijri ?? t("Hijri date unavailable")}
         </p>
       </section>
       <PrayerReminders schedule={schedule} location={location.label} confirmed={confirmed} />
       <section className="prayer-month">
         <header>
           <div>
-            <span>MONTHLY SCHEDULE</span>
+            <span>{t("MONTHLY SCHEDULE")}</span>
             <h2>
               {view
-                ? new Intl.DateTimeFormat("en-IN", {
+                ? new Intl.DateTimeFormat(locale, {
                     month: "long",
                     year: "numeric",
                   }).format(new Date(view.year, view.month - 1, 1))
-                : "Choose a location to load"}
+                : t("Choose a location to load")}
             </h2>
           </div>
           <div>
             <button
               type="button"
               onClick={() => changeMonth(-1)}
-              aria-label="Previous month"
+              aria-label={t("Previous month")}
             >
               ←
             </button>
@@ -236,12 +236,12 @@ export default function PrayerTimesCenter() {
                 }
               }}
             >
-              Today
+              {t("Today")}
             </button>
             <button
               type="button"
               onClick={() => changeMonth(1)}
-              aria-label="Next month"
+              aria-label={t("Next month")}
             >
               →
             </button>
@@ -251,10 +251,10 @@ export default function PrayerTimesCenter() {
           <table>
             <thead>
               <tr>
-                <th scope="col">Date</th>
+                <th scope="col">{t("Date")}</th>
                 {PRAYERS.map((prayer) => (
                   <th scope="col" key={prayer}>
-                    {prayer}
+                    {t(prayer)}
                   </th>
                 ))}
               </tr>
@@ -272,7 +272,7 @@ export default function PrayerTimesCenter() {
                 >
                   <th scope="row">
                     <strong>
-                      {day.weekday}, {day.gregorianDay}
+                      {new Intl.DateTimeFormat(locale, { weekday: "short", day: "numeric" }).format(new Date(view!.year, view!.month - 1, day.gregorianDay))}
                     </strong>
                     <span>{day.hijriLabel}</span>
                   </th>
@@ -283,27 +283,25 @@ export default function PrayerTimesCenter() {
               ))}
             </tbody>
           </table>
-          {monthLoading ? <p role="status">Loading monthly schedule…</p> : null}
+          {monthLoading ? <p role="status">{t("Loading monthly schedule…")}</p> : null}
           {monthError ? (
             <p role="alert">
-              {monthError}{" "}
+              {t(monthError)}{" "}
               <button
                 type="button"
                 onClick={() => setMonthRetry((value) => value + 1)}
               >
-                Retry monthly schedule
+                {t("Retry monthly schedule")}
               </button>
             </p>
           ) : null}
         </div>
       </section>
       <p className="prayer-center-source">
-        Calculated by AlAdhan / Islamic Network. Times use the selected
-        location’s timezone. Calculated times are not mosque iqamah times;
-        confirm congregation times locally.
+        {t("Calculated by AlAdhan / Islamic Network. Times use the selected location’s timezone. Calculated times are not mosque iqamah times; confirm congregation times locally.")}
         {schedule
-          ? " Retrieved " +
-            new Date(schedule.calculatedAt).toLocaleString("en-GB", {
+          ? " " + t("Retrieved") + " " +
+            new Date(schedule.calculatedAt).toLocaleString(locale, {
               timeZone: schedule.timezone,
             }) +
             "."

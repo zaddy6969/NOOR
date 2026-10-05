@@ -117,7 +117,12 @@ const UtilitiesContext = createContext<UtilitiesContextValue | null>(null);
 export function useNoorCopy() {
   const utilities = useContext(UtilitiesContext);
   const locale = utilities?.locale ?? "en";
-  return { locale, t: (text: string) => translateUI(text, locale) };
+  return { locale, t: (text: string, values?: Record<string, string | number>) => translateUI(text, locale, values) };
+}
+
+export function LocaleText({ text }: { text: string }) {
+  const { t } = useNoorCopy();
+  return <>{t(text)}</>;
 }
 
 export function LanguageControl() {

@@ -84,6 +84,8 @@ test(
       const wrongOrigin = await fetch(base + "/api/account/sync", { method: "PUT", headers: { origin: "https://untrusted.example", "content-type": "application/json" }, body: "{}" });
       assert.equal(wrongOrigin.status, 403);
       const sync = await fetch(base + "/api/account/sync");
+      assert.equal(sync.headers.get("cache-control"), "private, no-store");
+      assert.equal(wrongOrigin.headers.get("cache-control"), "private, no-store");
       assert.equal(sync.status, 503);
       assert.match((await sync.json()).error, /not configured/);
       const review = await (await fetch(base + "/content-review")).text();

@@ -1,9 +1,11 @@
 "use client";
+import { useNoorCopy } from "../site/SiteUtilities";
 import { useState } from "react";
 import { PERSONAL_KEYS, backupEntries } from "../../lib/personal-backup";
 import { SAVED_ITEMS_EVENT } from "../site/saved-items";
 const KEYS = PERSONAL_KEYS;
 export default function PersonalDataControls() {
+  const { t } = useNoorCopy();
   const [notice, setNotice] = useState("");
   const [confirm, setConfirm] = useState(false);
   const download = () => {
@@ -47,6 +49,8 @@ export default function PersonalDataControls() {
         localStorage.setItem(key, value as string);
       window.dispatchEvent(new Event(SAVED_ITEMS_EVENT));
       window.dispatchEvent(new Event("noor:quran-progress"));
+      window.dispatchEvent(new Event("noor:plan-change"));
+      window.dispatchEvent(new Event("noor:reminders-change"));
       setNotice(
         "Backup restored. Reload an open reader to refresh its notes. Matching local entries were replaced.",
       );
@@ -61,18 +65,17 @@ export default function PersonalDataControls() {
   return (
     <section className="personal-data-controls">
       <div>
-        <strong>Your private data</strong>
+        <strong>{t("Your private data")}</strong>
         <p>
-          Export or restore bookmarks, notes and reading/Qaza progress. Accounts
-          and location are excluded.
+          {t("Export or restore bookmarks, notes and reading/Qaza progress. Accounts and location are excluded.")}
         </p>
       </div>
       <div>
         <button type="button" onClick={download}>
-          Export backup
+          {t("Export backup")}
         </button>
         <label className="file-action">
-          Restore backup
+          {t("Restore backup")}
           <input
             type="file"
             accept=".json,application/json"
@@ -80,33 +83,35 @@ export default function PersonalDataControls() {
           />
         </label>
         <button type="button" onClick={() => setConfirm(true)}>
-          Delete local personal data
+          {t("Delete local personal data")}
         </button>
       </div>
       {confirm ? (
         <div>
           <p>
-            Delete local bookmarks, notes, counters and plans? Export first if
-            you want to keep them. This does not delete cloud data or offline
-            downloads.
+            {t("Delete local bookmarks, notes, counters and plans? Export first if you want to keep them. This does not delete cloud data or offline downloads.")}
           </p>
           <button
             type="button"
             onClick={() => {
               KEYS.forEach((key) => localStorage.removeItem(key));
+              localStorage.removeItem("noor-last-sync-v1");
+              window.dispatchEvent(new Event("noor:quran-progress"));
+              window.dispatchEvent(new Event("noor:plan-change"));
+              window.dispatchEvent(new Event("noor:reminders-change"));
               window.dispatchEvent(new Event(SAVED_ITEMS_EVENT));
               setConfirm(false);
               setNotice("Local personal data deleted.");
             }}
           >
-            Confirm deletion
+            {t("Confirm deletion")}
           </button>
           <button type="button" onClick={() => setConfirm(false)}>
-            Cancel
+            {t("Cancel")}
           </button>
         </div>
       ) : null}
-      <p role="status">{notice}</p>
+      <p role="status">{t(notice)}</p>
     </section>
   );
 }

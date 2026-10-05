@@ -1,4 +1,5 @@
 "use client";
+import { useNoorCopy } from "../site/SiteUtilities";
 import NoorSelect from "../site/NoorSelect";
 import { useEffect, useState } from "react";
 import {
@@ -14,6 +15,7 @@ export default function LocationPicker({
   location: NoorLocation;
   confirmed: boolean;
 }) {
+  const { t } = useNoorCopy();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<NoorLocation[]>([]);
   const [message, setMessage] = useState("");
@@ -59,7 +61,7 @@ export default function LocationPicker({
     writeNoorLocation(city);
     setQuery("");
     setResults([]);
-    setMessage("Selected " + city.label);
+    setMessage(city.label);
   };
   const locate = () => {
     if (!navigator.geolocation) {
@@ -89,19 +91,19 @@ export default function LocationPicker({
     );
   };
   return (
-    <section className="location-picker" aria-label="Choose location">
+    <section className="location-picker" aria-label={t("Choose location")}>
       <p>
         <strong>{location.label}</strong>
         {!confirmed
-          ? " · default city — choose your location"
-          : " · selected location"}
+          ? " · " + t("default city — choose your location")
+          : " · " + t("selected location")}
         {location.accuracy
-          ? " · accuracy about " + Math.round(location.accuracy) + " m"
+          ? " · " + t("accuracy about {meters} m", { meters: Math.round(location.accuracy) })
           : ""}
       </p>
       <div>
         <label>
-          Search city or postal code
+          {t("Search city or postal code")}
           <input
             type="search"
             value={query}
@@ -115,7 +117,7 @@ export default function LocationPicker({
           />
         </label>
         <button type="button" onClick={locate} disabled={locating}>
-          {locating ? "Locating…" : "Use my location"}
+          {t(locating ? "Locating…" : "Use my location")}
         </button>
       </div>
       {query.trim().length >= 2 ? (
@@ -131,8 +133,8 @@ export default function LocationPicker({
         </ul>
       ) : null}
       <label>
-        Quick city selection
-        <NoorSelect aria-label="Quick city selection"
+        {t("Quick city selection")}
+        <NoorSelect aria-label={t("Quick city selection")}
           value={location.source === "preset" ? location.id : ""}
           onChange={(event) => {
             const city = NOOR_CITIES.find(
@@ -142,7 +144,7 @@ export default function LocationPicker({
           }}
         >
           <option value="" disabled>
-            Choose a preset city
+            {t("Choose a preset city")}
           </option>
           {NOOR_CITIES.map((city) => (
             <option key={city.id} value={city.id}>
@@ -151,10 +153,9 @@ export default function LocationPicker({
           ))}
         </NoorSelect>
       </label>
-      <small role="status">{message}</small>
+      <small role="status">{t(message)}</small>
       <small>
-        City search: Open-Meteo / GeoNames. Search terms are sent to the
-        provider.
+        {t("City search: Open-Meteo / GeoNames. Search terms are sent to the provider.")}
       </small>
     </section>
   );

@@ -22,10 +22,10 @@ export default function ToolHeader({
         </span>
       </Link>
       <div>
-        <strong>{title}</strong>
-        <span>{subtitle}</span>
+        <strong>{t(title)}</strong>
+        <span>{t(subtitle)}</span>
       </div>
-      <nav className="daily-primary-nav" aria-label="Primary navigation">
+      <nav className="daily-primary-nav" aria-label={t("Primary navigation")}>
         <Link href="/">{t("Today")}</Link>
         <Link href="/quran">{t("Quran")}</Link>
         <Link href="/prayer-times">{t("Prayer")}</Link>

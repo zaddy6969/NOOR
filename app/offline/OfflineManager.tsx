@@ -67,13 +67,11 @@ export default function OfflineManager() {
       <InstallGuide />
       <h2>{t("Download a Surah")}</h2>
       <p>
-        Download while connected. Arabic and the selected translation are
-        included. Audio is optional and may use substantial storage. Study tools
-        such as tafsir and word meanings still require a connection.
+        {t("Download while connected. Arabic and the selected translation are included. Audio is optional and may use substantial storage. Study tools such as tafsir and word meanings still require a connection.")}
       </p>
       <div className="offline-controls">
         <label>
-          Surah
+          {t("Surah")}
           <NoorSelect aria-label={t("Surah")}
             value={surah}
             onChange={(event) => setSurah(Number(event.target.value))}
@@ -89,7 +87,7 @@ export default function OfflineManager() {
           </NoorSelect>
         </label>
         <label>
-          Translation
+          {t("Translation")}
           <NoorSelect aria-label={t("Translation")}
             value={translation}
             onChange={(event) => setTranslation(event.target.value)}
@@ -101,7 +99,7 @@ export default function OfflineManager() {
           </NoorSelect>
         </label>
         <label>
-          Reciter
+          {t("Reciter")}
           <NoorSelect aria-label={t("Reciter")}
             value={reciter}
             onChange={(event) => setReciter(event.target.value)}
@@ -149,16 +147,12 @@ export default function OfflineManager() {
           {t(busy ? "Downloading…" : "Download selected Surah")}
         </button>
       </div>
-      {busy ? <div className="download-progress"><progress aria-label="Download progress" {...(progress?.total ? { value: progress.received ?? 0, max: progress.total } : {})} /><span>{progress?.stage}{progress?.received !== undefined ? ` · ${(progress.received / 1048576).toFixed(1)} MB${progress.total ? ` / ${(progress.total / 1048576).toFixed(1)} MB` : ""}` : ""}</span><button type="button" onClick={() => cancel.current?.abort()}>{t("Cancel download")}</button></div> : null}
-      <p role="status">{message}</p>
-      <section className="noor-feature-card"><h2>{t("Device storage")}</h2><p>{storage.quota ? `${((storage.usage ?? 0) / 1048576).toFixed(1)} MB used of ${(storage.quota / 1048576).toFixed(0)} MB available to this website.` : "Your browser does not expose a storage estimate."} {storage.persisted ? "Persistent storage granted." : "Downloads may be cleared by your browser."}</p><button type="button" onClick={async () => { try { const granted = await navigator.storage?.persist?.(); setMessage(granted ? "Persistent storage granted. Your device settings can still clear downloads." : "Persistent storage was not granted. Keep a backup of private notes."); await estimate(); } catch { setMessage("Persistent storage is unavailable in this browser."); } }}>{t("Keep downloads on this device")}</button><button type="button" onClick={async () => { try { const cache = await caches.open(DOWNLOAD_CACHE); const missing: string[] = []; for (const entry of readDownloadIndex()) { if (!(await cache.match(entry.url)) || (entry.audioUrl && !(await cache.match(entry.audioUrl)))) missing.push(entry.title); } setMessage(missing.length ? `Missing downloads: ${missing.join(", ")}. Remove and download them again while connected.` : `${readDownloadIndex().length} selections checked. All indexed reading and audio files are present.`); } catch { setMessage("Download verification is unavailable."); } }}>{t("Verify downloads")}</button></section>
+      {busy ? <div className="download-progress"><progress aria-label={t("Download progress")} {...(progress?.total ? { value: progress.received ?? 0, max: progress.total } : {})} /><span>{t(progress?.stage ?? "")}{progress?.received !== undefined ? ` · ${(progress.received / 1048576).toFixed(1)} MB${progress.total ? ` / ${(progress.total / 1048576).toFixed(1)} MB` : ""}` : ""}</span><button type="button" onClick={() => cancel.current?.abort()}>{t("Cancel download")}</button></div> : null}
+      <p role="status">{t(message)}</p>
+      <section className="noor-feature-card"><h2>{t("Device storage")}</h2><p>{storage.quota ? t("{used} MB used of {quota} MB available to this website.", { used: ((storage.usage ?? 0) / 1048576).toFixed(1), quota: (storage.quota / 1048576).toFixed(0) }) : t("Your browser does not expose a storage estimate.")} {t(storage.persisted ? "Persistent storage granted." : "Downloads may be cleared by your browser.")}</p><button type="button" onClick={async () => { try { const granted = await navigator.storage?.persist?.(); setMessage(granted ? "Persistent storage granted. Your device settings can still clear downloads." : "Persistent storage was not granted. Keep a backup of private notes."); await estimate(); } catch { setMessage("Persistent storage is unavailable in this browser."); } }}>{t("Keep downloads on this device")}</button><button type="button" onClick={async () => { try { const cache = await caches.open(DOWNLOAD_CACHE); const missing: string[] = []; for (const entry of readDownloadIndex()) { if (!(await cache.match(entry.url)) || (entry.audioUrl && !(await cache.match(entry.audioUrl)))) missing.push(entry.title); } setMessage(missing.length ? t("Missing downloads: {titles}. Remove and download them again while connected.", { titles: missing.join(", ") }) : t("{count} selections checked. All indexed reading and audio files are present.", { count: readDownloadIndex().length })); } catch { setMessage("Download verification is unavailable."); } }}>{t("Verify downloads")}</button></section>
       <h2>{t("Your downloads")}</h2>
       <p>
-        {entries.length} selections ·{" "}
-        {(
-          entries.reduce((sum, entry) => sum + entry.bytes, 0) / 1048576
-        ).toFixed(1)}{" "}
-        MB. Browser storage may be cleared by your device.
+        {t("{count} selections · {size} MB. Browser storage may be cleared by your device.", { count: entries.length, size: (entries.reduce((sum, entry) => sum + entry.bytes, 0) / 1048576).toFixed(1) })}
       </p>
       {entries.length ? (
         <ul>
@@ -166,7 +160,7 @@ export default function OfflineManager() {
             <li key={entry.id}>
               <strong>{entry.title}</strong>
               <small>
-                {entry.audioUrl ? "Reading + audio" : "Reading"} ·{" "}
+                {t(entry.audioUrl ? "Reading + audio" : "Reading")} ·{" "}
                 {(entry.bytes / 1048576).toFixed(1)} MB ·{" "}
                 {entry.savedAt.slice(0, 10)}
               </small>
@@ -180,20 +174,20 @@ export default function OfflineManager() {
                   })
                 }
               >
-                Open downloaded Surah →
+                {t("Open downloaded Surah")} →
               </Link>
               <button type="button" onClick={() => void remove(entry)}>
-                Remove download
+                {t("Remove download")}
               </button>
             </li>
           ))}
         </ul>
       ) : (
-        <p>No Quran selections downloaded yet.</p>
+        <p>{t("No Quran selections downloaded yet.")}</p>
       )}
       <p>
-        Daily duas are included in the prepared offline pages.{" "}
-        <Link href="/duas">Open daily duas →</Link>
+        {t("Daily duas are included in the prepared offline pages.")}{" "}
+        <Link href="/duas">{t("Open daily duas")} →</Link>
       </p>
     </section>
   );

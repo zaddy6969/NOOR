@@ -1,5 +1,6 @@
 "use client";
 
+import { useNoorCopy } from "../site/SiteUtilities";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { daroodEntries } from "../darood/DaroodLibrary";
@@ -42,9 +43,12 @@ function BookmarkMark() {
 
 export default function SavedLibrary({
   syncConfigured,
+  setupStatus,
 }: {
   syncConfigured: boolean;
+  setupStatus: string;
 }) {
+  const { t } = useNoorCopy();
   const [collections, setCollections] =
     useState<SavedCollections>(EMPTY_COLLECTIONS);
   const [filter, setFilter] = useState<Filter>("all");
@@ -82,7 +86,7 @@ export default function SavedLibrary({
       readSavedList(key).filter((item) => item !== id),
     );
     setCollections(readSavedCollections());
-    setNotice(`${label} removed from Saved`);
+    setNotice(t("{label} removed from Saved", { label }));
     window.setTimeout(() => setNotice(""), 1700);
   };
 
@@ -97,23 +101,22 @@ export default function SavedLibrary({
     <section className="saved-library">
       <header className="saved-summary">
         <div>
-          <span>PRIVATE ON THIS DEVICE</span>
-          <h1>Your saved collection</h1>
+          <span>{t("PRIVATE ON THIS DEVICE")}</span>
+          <h1>{t("Your saved collection")}</h1>
           <p>
-            Keep verses, Surahs, duas, Darood and glossary words together. They
-            remain available after refresh on this browser.
+            {t("Keep verses, Surahs, duas, Darood and glossary words together. They remain available after refresh on this browser.")}
           </p>
         </div>
         <strong>
           <BookmarkMark />
           <b>{total}</b>
-          <small>saved {total === 1 ? "item" : "items"}</small>
+          <small>{t("saved")} {t(total === 1 ? "item" : "items")}</small>
         </strong>
       </header>
-      <SavedSync configured={syncConfigured} />
+      <SavedSync configured={syncConfigured} setupStatus={setupStatus} />
       <PersonalDataControls />
 
-      <nav className="saved-filters" aria-label="Filter saved items">
+      <nav className="saved-filters" aria-label={t("Filter saved items")}>
         {(
           [
             ["all", "All", total],
@@ -130,7 +133,7 @@ export default function SavedLibrary({
             aria-pressed={filter === id}
             key={id}
           >
-            {label}
+            {t(label)}
             <span>{count}</span>
           </button>
         ))}
@@ -139,12 +142,12 @@ export default function SavedLibrary({
       {total === 0 ? (
         <div className="saved-empty">
           <BookmarkMark />
-          <h2>Nothing saved yet</h2>
-          <p>Tap Save or Bookmark anywhere in NOOR and it will appear here.</p>
+          <h2>{t("Nothing saved yet")}</h2>
+          <p>{t("Tap Save or Bookmark anywhere in NOOR and it will appear here.")}</p>
           <div>
-            <Link href="/quran">Read Quran</Link>
-            <Link href="/darood">Browse Darood</Link>
-            <Link href="/glossary">Open Glossary</Link>
+            <Link href="/quran">{t("Read Quran")}</Link>
+            <Link href="/darood">{t("Browse Darood")}</Link>
+            <Link href="/glossary">{t("Open Glossary")}</Link>
           </div>
         </div>
       ) : (
@@ -154,9 +157,9 @@ export default function SavedLibrary({
               <header>
                 <div>
                   <span>01</span>
-                  <h2 id="saved-quran-title">Quran</h2>
+                  <h2 id="saved-quran-title">{t("Quran")}</h2>
                 </div>
-                <small>{quranCount} saved</small>
+                <small>{quranCount} {t("saved")}</small>
               </header>
               <div className="saved-card-grid">
                 {collections.quranSurahs.map((id) => {
@@ -167,25 +170,25 @@ export default function SavedLibrary({
                       className="saved-card saved-quran-card"
                       key={`surah-${id}`}
                     >
-                      <span>SAVED SURAH</span>
+                      <span>{t("SAVED SURAH")}</span>
                       <h3>
-                        {surah ? `Surah ${surah.englishName}` : `Surah ${id}`}
+                        {surah ? `${t("Surah")} ${surah.englishName}` : `${t("Surah")} ${id}`}
                       </h3>
                       <p>
                         {surah?.englishNameTranslation ??
-                          "Continue reading from the full Quran reader."}
+                          t("Continue reading from the full Quran reader.")}
                       </p>
                       <footer>
                         <Link href={`/quran?surah=${id}`}>
-                          Open Surah <b aria-hidden="true">↗</b>
+                          {t("Open Surah")} <b aria-hidden="true">↗</b>
                         </Link>
                         <button
                           type="button"
                           onClick={() =>
-                            remove(SAVED_KEYS.quranSurahs, id, `Surah ${id}`)
+                            remove(SAVED_KEYS.quranSurahs, id, `${t("Surah")} ${id}`)
                           }
                         >
-                          Remove
+                          {t("Remove")}
                         </button>
                       </footer>
                     </article>
@@ -199,18 +202,18 @@ export default function SavedLibrary({
                       className="saved-card saved-quran-card"
                       key={`verse-${reference}`}
                     >
-                      <span>SAVED AYAH</span>
-                      <h3>Quran {reference}</h3>
+                      <span>{t("SAVED AYAH")}</span>
+                      <h3>{t("Quran")} <bdi>{reference}</bdi></h3>
                       <p>
                         {surah
                           ? `${surah.englishName} · ${surah.englishNameTranslation}`
-                          : "Open the exact saved verse in the reader."}
+                          : t("Open the exact saved verse in the reader.")}
                       </p>
                       <footer>
                         <Link
                           href={`/quran?surah=${surahNumber}&ayah=${ayahNumber}`}
                         >
-                          Open Ayah <b aria-hidden="true">↗</b>
+                          {t("Open Ayah")} <b aria-hidden="true">↗</b>
                         </Link>
                         <button
                           type="button"
@@ -222,7 +225,7 @@ export default function SavedLibrary({
                             )
                           }
                         >
-                          Remove
+                          {t("Remove")}
                         </button>
                       </footer>
                     </article>
@@ -235,7 +238,7 @@ export default function SavedLibrary({
           {sections.duas && collections.duas.length > 0 ? (
             <section aria-labelledby="saved-duas-title">
               <header>
-                <h2 id="saved-duas-title">Daily Duas</h2>
+                <h2 id="saved-duas-title">{t("Daily Duas")}</h2>
               </header>
               <div className="saved-card-grid">
                 {collections.duas.map((id) => {
@@ -244,19 +247,19 @@ export default function SavedLibrary({
                     <article className="saved-card" key={id}>
                       <span>
                         {dua.source}
-                        {dua.excerpt ? " · excerpt" : ""}
+                        {dua.excerpt ? " · " + t("excerpt") : ""}
                       </span>
                       <h3>{dua.title}</h3>
                       <p className="saved-arabic" lang="ar" dir="rtl">
                         {dua.arabic}
                       </p>
                       <footer>
-                        <Link href={"/duas?dua=" + id}>Open dua →</Link>
+                        <Link href={"/duas?dua=" + id}>{t("Open dua")} →</Link>
                         <button
                           type="button"
                           onClick={() => remove(SAVED_KEYS.duas, id, dua.title)}
                         >
-                          Remove
+                          {t("Remove")}
                         </button>
                       </footer>
                     </article>
@@ -271,9 +274,9 @@ export default function SavedLibrary({
               <header>
                 <div>
                   <span>02</span>
-                  <h2 id="saved-darood-title">Darood Sharif</h2>
+                  <h2 id="saved-darood-title">{t("Darood Sharif")}</h2>
                 </div>
-                <small>{collections.darood.length} saved</small>
+                <small>{collections.darood.length} {t("saved")}</small>
               </header>
               <div className="saved-card-grid">
                 {collections.darood.map((id) => {
@@ -289,7 +292,7 @@ export default function SavedLibrary({
                       </p>
                       <footer>
                         <Link href={`/darood#${id}`}>
-                          Open Darood <b aria-hidden="true">↗</b>
+                          {t("Open Darood")} <b aria-hidden="true">↗</b>
                         </Link>
                         <button
                           type="button"
@@ -297,7 +300,7 @@ export default function SavedLibrary({
                             remove(SAVED_KEYS.darood, id, entry.title)
                           }
                         >
-                          Remove
+                          {t("Remove")}
                         </button>
                       </footer>
                     </article>
@@ -312,9 +315,9 @@ export default function SavedLibrary({
               <header>
                 <div>
                   <span>03</span>
-                  <h2 id="saved-lughat-title">Islamic Glossary</h2>
+                  <h2 id="saved-lughat-title">{t("Islamic Glossary")}</h2>
                 </div>
-                <small>{collections.lughat.length} saved</small>
+                <small>{collections.lughat.length} {t("saved")}</small>
               </header>
               <div className="saved-card-grid">
                 {collections.lughat.map((id) => {
@@ -332,7 +335,7 @@ export default function SavedLibrary({
                       <p>{entry.meaning}</p>
                       <footer>
                         <Link href={`/glossary#${id}`}>
-                          Open word <b aria-hidden="true">↗</b>
+                          {t("Open word")} <b aria-hidden="true">↗</b>
                         </Link>
                         <button
                           type="button"
@@ -340,7 +343,7 @@ export default function SavedLibrary({
                             remove(SAVED_KEYS.lughat, id, entry.term)
                           }
                         >
-                          Remove
+                          {t("Remove")}
                         </button>
                       </footer>
                     </article>
@@ -352,8 +355,7 @@ export default function SavedLibrary({
         </div>
       )}
       <p className="saved-device-note">
-        Saved items stay in this browser by default. Account sync happens only
-        when you choose it.
+        {t("Saved items stay in this browser by default. Account sync happens only when you choose it.")}
       </p>
       {notice ? (
         <div className="quran-notice" role="status">

@@ -2,6 +2,7 @@
 
 import { Children, isValidElement, useEffect, useId, useRef, useState, type ChangeEvent, type ReactNode, type SelectHTMLAttributes } from "react";
 import { createPortal } from "react-dom";
+import { dropdownLayout } from "@/lib/dropdown-layout";
 
 // Keep the native select for forms, and expose a keyboard-friendly branded popup.
 export default function NoorSelect({ children, value, defaultValue, onChange, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
@@ -30,10 +31,7 @@ export default function NoorSelect({ children, value, defaultValue, onChange, ..
   const show = () => {
     if (props.disabled || !enabled.length) return;
     const rect = button.current!.getBoundingClientRect();
-    const below = window.innerHeight - rect.bottom - 12;
-    const height = Math.min(320, Math.max(below, rect.top - 12), window.innerHeight - 24);
-    const width = Math.min(Math.max(rect.width, 240), window.innerWidth - 24);
-    setPosition({ top: below >= Math.min(220, height) ? rect.bottom + 6 : Math.max(12, rect.top - height - 6), left: Math.min(Math.max(12, rect.left), window.innerWidth - width - 12), width, height });
+    setPosition(dropdownLayout(rect, window.innerWidth, window.innerHeight));
     setActive(Math.max(enabled[0], items.findIndex((item) => item.value === selected && !item.disabled)));
     setOpen(true);
   };
