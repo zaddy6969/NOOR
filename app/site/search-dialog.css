@@ -1,0 +1,158 @@
+/* Scoped search styles keep site-wide focus rules outside the search field. */
+.global-search-panel {
+  --search-line: color-mix(in srgb, var(--ink) 12%, var(--surface));
+  --search-soft: color-mix(in srgb, var(--ink) 4%, var(--surface));
+  width: min(700px, 100%);
+  max-height: min(730px, 86dvh);
+  border-color: var(--search-line);
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .24), 0 4px 16px rgba(0, 0, 0, .08);
+}
+
+.global-search-backdrop {
+  background: rgba(12, 16, 18, .52);
+  backdrop-filter: blur(7px);
+}
+
+.global-search-intro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 0;
+  flex-shrink: 0;
+}
+
+.global-search-intro h2 {
+  margin: 0;
+  font-family: var(--font-geist), sans-serif;
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -.03em;
+  line-height: 1.4;
+}
+
+.global-search-intro p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.global-search-panel .global-search-close {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--search-line);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.global-search-panel .global-search-head {
+  display: block;
+  padding: 20px 24px 16px;
+  flex-shrink: 0;
+}
+
+.global-search-panel .global-search-field {
+  height: 54px;
+  border: 1px solid var(--search-line);
+  border-radius: 12px;
+  background: var(--search-soft);
+  box-shadow: none;
+}
+
+.global-search-panel .global-search-field:focus-within {
+  border-color: color-mix(in srgb, var(--ink) 30%, var(--surface));
+  background: var(--surface);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 5%, transparent);
+}
+
+.global-search-panel .global-search-field > svg { color: var(--muted); }
+
+.global-search-panel .global-search-field input,
+.global-search-panel .global-search-field input:focus-visible {
+  min-width: 0;
+  height: 50px;
+  outline: none;
+  box-shadow: none;
+  border: 0;
+  border-radius: 0;
+  font-size: 15px;
+}
+
+.global-search-panel button:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--ink) 55%, var(--surface));
+  outline-offset: -2px;
+}
+
+.global-search-panel .global-search-clear:hover,
+.global-search-panel .global-search-close:hover,
+.global-search-panel .global-search-recent-remove:hover {
+  background: var(--search-soft);
+  color: var(--ink);
+}
+
+.global-search-panel .global-search-start { padding: 0 24px 24px; min-height: 0; }
+.global-search-panel .global-search-popular { border-color: var(--search-line); }
+.global-search-start > .global-search-popular:first-child { margin-top: 0; border-top: 0; padding-top: 4px; }
+.global-search-panel .global-search-popular button { border-color: var(--search-line); background: var(--surface); border-radius: 9px; }
+.global-search-panel .global-search-popular button:hover { border-color: color-mix(in srgb, var(--ink) 28%, var(--surface)); background: var(--search-soft); }
+.global-search-panel .global-search-popular button svg { color: var(--muted); }
+.global-search-panel .global-search-status { padding: 4px 26px 12px; min-height: 34px; flex-shrink: 0; }
+.global-search-panel .global-search-status strong { font-size: 12px; letter-spacing: .01em; }
+.global-search-panel .global-search-results { padding: 0 16px 16px; min-height: 0; overscroll-behavior: contain; }
+
+.global-search-panel .global-search-results > button {
+  min-height: 76px;
+  padding: 13px 12px;
+  border-radius: 12px;
+  gap: 12px;
+}
+
+.global-search-panel .global-search-results > button:hover,
+.global-search-panel .global-search-results > button.active,
+.global-search-panel .global-search-results > button:focus-visible { background: var(--search-soft); }
+.global-search-panel .global-result-icon { border-radius: 10px; width: 38px; height: 38px; background: var(--surface); border: 1px solid var(--search-line); color: var(--muted); }
+.global-search-panel .global-search-results strong { font-size: 14px; line-height: 1.5; }
+.global-search-panel .global-search-results small { margin-top: 5px; font-size: 12px; line-height: 1.7; }
+.global-search-panel .global-search-results small span { display: inline-block; padding: 1px 6px; border-radius: 4px; background: color-mix(in srgb, var(--gold) 10%, var(--surface)); font-size: 9px; line-height: 1.7; vertical-align: 1px; }
+.global-search-panel .global-result-arrow { grid-column: 4; }
+
+.global-search-footer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--search-line);
+  background: var(--search-soft);
+  color: var(--muted);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.global-search-footer span { display: inline-flex; align-items: center; gap: 5px; }
+.global-search-footer span:last-child { margin-inline-start: auto; }
+.global-search-footer kbd { min-width: 21px; padding: 2px 4px; border: 1px solid var(--search-line); border-radius: 4px; background: var(--surface); text-align: center; font-family: inherit; font-size: 10px; line-height: 1.4; }
+
+@media (max-width: 620px) {
+  .global-search-overlay { align-items: flex-start; padding: 12px 10px; }
+  .global-search-panel { max-height: calc(100dvh - 24px); border-radius: 16px; }
+  .global-search-intro { padding: 20px 16px 0; }
+  .global-search-intro h2 { font-size: 18px; }
+  .global-search-intro p { font-size: 12px; }
+  .global-search-panel .global-search-head { padding: 16px; }
+  .global-search-panel .global-search-field { padding: 0 12px; gap: 8px; }
+  .global-search-panel .global-search-field input { font-size: 16px; }
+  .global-search-panel .global-search-start { padding: 0 12px 20px; }
+  .global-search-panel .global-search-status { padding: 0 18px 10px; }
+  .global-search-panel .global-search-results { padding: 0 8px 12px; }
+  .global-search-panel .global-search-results > button { min-height: 72px; padding: 10px; grid-template-columns: 34px minmax(0, 1fr) 15px; gap: 10px; }
+  .global-search-panel .global-result-icon { width: 34px; height: 34px; }
+  .global-search-panel .global-result-arrow { grid-column: 3; }
+  .global-search-panel .global-search-results small { font-size: 11px; }
+  .global-search-footer { padding: 10px 16px; gap: 12px; font-size: 10px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .global-search-footer { display: none; }
+}

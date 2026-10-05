@@ -48,6 +48,11 @@ const UTILITY_COPY: Record<NoorLocale, {
   matches: string;
   clearInput: string;
   closeSearch: string;
+  title: string;
+  subtitle: string;
+  navigate: string;
+  openResult: string;
+  close: string;
 }> = {
   en: {
     search: "Search everything…",
@@ -69,6 +74,11 @@ const UTILITY_COPY: Record<NoorLocale, {
     matches: "Best matches",
     clearInput: "Clear search",
     closeSearch: "Close search",
+    title: "Search NOOR",
+    subtitle: "Find Quran, duas, guides and more",
+    navigate: "Navigate",
+    openResult: "Open",
+    close: "Close",
   },
   hi: {
     search: "सब कुछ खोजें…",
@@ -90,6 +100,11 @@ const UTILITY_COPY: Record<NoorLocale, {
     matches: "सबसे अच्छे परिणाम",
     clearInput: "खोज साफ़ करें",
     closeSearch: "खोज बंद करें",
+    title: "नूर में खोजें",
+    subtitle: "क़ुरआन, दुआएँ, गाइड और बहुत कुछ खोजें",
+    navigate: "चुनें",
+    openResult: "खोलें",
+    close: "बंद करें",
   },
   ur: {
     search: "سب کچھ تلاش کریں…",
@@ -111,6 +126,11 @@ const UTILITY_COPY: Record<NoorLocale, {
     matches: "بہترین نتائج",
     clearInput: "تلاش صاف کریں",
     closeSearch: "تلاش بند کریں",
+    title: "نور میں تلاش کریں",
+    subtitle: "قرآن، دعائیں، رہنمائی اور بہت کچھ تلاش کریں",
+    navigate: "منتخب کریں",
+    openResult: "کھولیں",
+    close: "بند کریں",
   },
 };
 
@@ -417,9 +437,13 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     <UtilitiesContext.Provider value={{ openSearch, dark, locale, setTheme, toggleTheme }}>
       {children}
       {searchOpen ? (
-        <div ref={dialogRef} className="global-search-overlay" role="dialog" aria-modal="true" aria-label="Search NOOR" onKeyDown={trapDialogFocus}>
+        <div ref={dialogRef} className="global-search-overlay" role="dialog" aria-modal="true" aria-labelledby="noor-search-title" onKeyDown={trapDialogFocus}>
           <button className="global-search-backdrop" type="button" onClick={() => closeSearch()} aria-label="Close search"/>
           <section className="global-search-panel">
+            <div className="global-search-intro">
+              <div><h2 id="noor-search-title">{copy.title}</h2><p>{copy.subtitle}</p></div>
+              <button className="global-search-close" type="button" onClick={() => closeSearch()} aria-label={copy.closeSearch}><CloseIcon/></button>
+            </div>
             <header className="global-search-head">
               <div className="global-search-field">
                 <SearchIcon/>
@@ -440,14 +464,16 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
                     }
                   }}
                   placeholder={copy.placeholder}
-                  aria-label="Search topics, features, dictionary, destinations, Naats and Quran verses"
-                  aria-controls="noor-search-results"
+                  aria-label={copy.searchLabel}
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-expanded={Boolean(query.trim())}
+                  aria-controls={query.trim() ? "noor-search-results" : undefined}
                   aria-activedescendant={results[activeResult] ? `noor-search-result-${activeResult}` : undefined}
                   autoComplete="off"
                 />
                 {query ? <button className="global-search-clear" type="button" onClick={() => updateSearchQuery("")} aria-label={copy.clearInput}><CloseIcon/></button> : null}
               </div>
-              <button className="global-search-close" type="button" onClick={() => closeSearch()} aria-label={copy.closeSearch}><CloseIcon/></button>
             </header>
 
             {!query.trim() ? (
@@ -495,13 +521,18 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
                         <small><span>{result.type}</span>{result.description}</small>
                       </div>
                       {result.arabic ? <b lang="ar" dir="rtl">{result.arabic}</b> : null}
-                      <i aria-hidden="true">↗</i>
+                      <i className="global-result-arrow" aria-hidden="true">↗</i>
                     </button>
                   ))}
                   {!loading && results.length === 0 ? <div className="global-search-empty"><SearchIcon/><p role="status">{searchError ? translateUI(searchError, locale) : copy.noResult}</p><p>{translateUI("Try a topic, Surah name, dua, or verse reference such as 2:255.", locale)}</p><div className="global-search-popular">{POPULAR_SEARCHES[locale].slice(0, 4).map(item => <button type="button" key={item} onClick={() => updateSearchQuery(item)}>{item}</button>)}</div>{searchError ? <button type="button" onClick={() => { const value = query; updateSearchQuery(""); requestAnimationFrame(() => updateSearchQuery(value)); }}>{translateUI("Try again", locale)}</button> : null}</div> : null}
                 </div>
               </>
             )}
+            <footer className="global-search-footer">
+              <span><kbd>↑</kbd><kbd>↓</kbd>{copy.navigate}</span>
+              <span><kbd>↵</kbd>{copy.openResult}</span>
+              <span><kbd>Esc</kbd>{copy.close}</span>
+            </footer>
           </section>
         </div>
       ) : null}
