@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 
 import { useEffect, useState } from "react";
 
@@ -34,8 +36,8 @@ export default function PrayerTracker() {
   useEffect(() => {
     const hydrateTimer = window.setTimeout(() => {
       try {
-        const stored = JSON.parse(window.localStorage.getItem(`noor-salah-${todayKey()}`) ?? "[]") as unknown;
-        const days = JSON.parse(window.localStorage.getItem("noor-salah-days-v1") ?? "[]") as unknown;
+        const stored = JSON.parse(personalStorage.getItem(`noor-salah-${todayKey()}`) ?? "[]") as unknown;
+        const days = JSON.parse(personalStorage.getItem("noor-salah-days-v1") ?? "[]") as unknown;
         if (Array.isArray(stored)) setChecked(stored.filter((item): item is string => prayerNames.includes(String(item))));
         if (Array.isArray(days)) setCompletionDays(days.filter((item): item is string => typeof item === "string"));
       } catch {
@@ -52,13 +54,13 @@ export default function PrayerTracker() {
       ? checked.filter((item) => item !== name)
       : [...checked, name];
     setChecked(next);
-    window.localStorage.setItem(`noor-salah-${todayKey()}`, JSON.stringify(next));
+    personalStorage.setItem(`noor-salah-${todayKey()}`, JSON.stringify(next));
     const days = new Set(completionDays);
     if (next.length === prayerNames.length) days.add(todayKey());
     else days.delete(todayKey());
     const nextDays = [...days].sort().slice(-370);
     setCompletionDays(nextDays);
-    window.localStorage.setItem("noor-salah-days-v1", JSON.stringify(nextDays));
+    personalStorage.setItem("noor-salah-days-v1", JSON.stringify(nextDays));
     window.dispatchEvent(new CustomEvent("noor:salah-progress", { detail: { completed: next.length, streak: prayerStreak(nextDays) } }));
   };
 

@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -27,7 +29,7 @@ function localDateKey() {
 
 function readStringArray(key: string) {
   try {
-    const value = JSON.parse(window.localStorage.getItem(key) ?? "[]") as unknown;
+    const value = JSON.parse(personalStorage.getItem(key) ?? "[]") as unknown;
     return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
   } catch {
     return [];

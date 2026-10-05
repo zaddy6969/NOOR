@@ -24,10 +24,11 @@ function unavailable() {
   );
 }
 
-async function userIdOrResponse() {
+async function userIdOrResponse(request: Request) {
   if (!isClerkProductionConfigured() || !process.env.DATABASE_URL)
     return { ok: false as const, response: unavailable() };
-  const { userId } = await auth();
+  let userId: string | null;
+  try { ({ userId } = await auth()); } catch { return { ok: false as const, response: unavailable() }; }
   if (!userId)
     return {
       ok: false as const,
@@ -36,12 +37,13 @@ async function userIdOrResponse() {
         { status: 401 },
       ),
     };
+  if (request.headers.get("x-noor-account") !== userId) return { ok: false as const, response: syncResponse({ error: "Your account changed. Reload NOOR and sync again." }, { status: 409 }) };
   return { ok: true as const, userId };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const startedAt = Date.now();
-  const session = await userIdOrResponse();
+  const session = await userIdOrResponse(request);
   if (!session.ok) return session.response;
   try {
     return syncResponse({ data: await readUserSync(session.userId) }, { headers: { "Cache-Control": "private, no-store" } });
@@ -68,11 +70,11 @@ export async function PUT(request: Request) {
     return syncResponse({ error: "Sync must be requested from NOOR." }, { status: 403 });
   if (!request.headers.get("content-type")?.includes("application/json"))
     return syncResponse({ error: "JSON is required." }, { status: 415 });
-  const session = await userIdOrResponse();
+  const session = await userIdOrResponse(request);
   if (!session.ok) return session.response;
   try {
     const text = await request.text();
-    if (text.length > 150000) return syncResponse({ error: "Sync data is too large." }, { status: 413 });
+    if (text.length > 1000000) return syncResponse({ error: "Sync data is too large." }, { status: 413 });
     const input = JSON.parse(text);
     if (!input || typeof input !== "object" || Array.isArray(input) || input.version !== 1) return syncResponse({ error: "Invalid sync payload version." }, { status: 400 });
     const expectedUpdatedAt = typeof input.expectedUpdatedAt === "string" && Number.isFinite(Date.parse(input.expectedUpdatedAt)) ? input.expectedUpdatedAt : null;

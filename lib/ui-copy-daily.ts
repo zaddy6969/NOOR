@@ -1,5 +1,10 @@
 // Interface copy only. Quran translations and reviewed educational text have their own sources.
 export const DAILY_UI_COPY: Record<string, [string, string]> = {
+  "Your browser could not save this change. Free some storage or allow site storage, then try again.": ["ब्राउज़र यह बदलाव सहेज नहीं पाया। स्टोरेज खाली करें या साइट स्टोरेज की अनुमति दें और फिर कोशिश करें।", "آپ کا براؤزر یہ تبدیلی محفوظ نہیں کر سکا۔ کچھ جگہ خالی کریں یا سائٹ اسٹوریج کی اجازت دیں، پھر کوشش کریں۔"],
+  "Try a topic, Surah name, dua, or verse reference such as 2:255.": ["विषय, सूरह का नाम, दुआ या 2:255 जैसी आयत खोजें।", "موضوع، سورہ کا نام، دعا یا 2:255 جیسا آیت کا حوالہ تلاش کریں۔"],
+  "Search is temporarily unavailable. Please try again.": ["खोज अभी उपलब्ध नहीं है। फिर कोशिश करें।", "تلاش عارضی طور پر دستیاب نہیں۔ دوبارہ کوشش کریں۔"],
+  "Try again": ["फिर कोशिश करें", "دوبارہ کوشش کریں"],
+  "Dismiss": ["बंद करें", "بند کریں"],
   "Primary navigation": ["मुख्य नेविगेशन", "بنیادی نیویگیشن"],
   "OFFLINE DOWNLOADS": ["ऑफ़लाइन डाउनलोड", "آف لائن ڈاؤن لوڈ"],
   "Choose · Download · Read": ["चुनें · डाउनलोड करें · पढ़ें", "منتخب کریں · ڈاؤن لوڈ کریں · پڑھیں"],

@@ -1,3 +1,4 @@
+import { personalStorage } from "@/lib/personal-storage";
 export const DOWNLOAD_CACHE = "noor-downloads-v1";
 export const SHELL_CACHE = "noor-shell-v3";
 export type DownloadEntry = {
@@ -12,7 +13,7 @@ export const DOWNLOAD_INDEX = "noor-download-index-v1";
 export type DownloadProgress = { stage: string; received?: number; total?: number };
 export function readDownloadIndex(): DownloadEntry[] {
   try {
-    const data = JSON.parse(localStorage.getItem(DOWNLOAD_INDEX) ?? "[]");
+    const data = JSON.parse(personalStorage.getItem(DOWNLOAD_INDEX) ?? "[]");
     return Array.isArray(data) ? data : [];
   } catch {
     return [];
@@ -129,7 +130,7 @@ export async function downloadSurah(
     )
   )
     await cache.delete(previous.audioUrl);
-  localStorage.setItem(
+  personalStorage.setItem(
     DOWNLOAD_INDEX,
     JSON.stringify([...index.filter((item) => item.id !== entry.id), entry]),
   );

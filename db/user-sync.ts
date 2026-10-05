@@ -57,7 +57,8 @@ export async function writeUserSync(
   const rows = (await sql`
     INSERT INTO noor_user_sync (clerk_user_id, payload)
     VALUES (${clerkUserId}, ${JSON.stringify(payload)}::jsonb)
-    ON CONFLICT (clerk_user_id) DO UPDATE SET payload = EXCLUDED.payload, updated_at = NOW()
+    ON CONFLICT (clerk_user_id) DO UPDATE SET payload = EXCLUDED.payload,
+      updated_at = GREATEST(clock_timestamp(), noor_user_sync.updated_at + INTERVAL '1 millisecond')
     WHERE ${expectedUpdatedAt}::timestamptz IS NOT NULL
       AND date_trunc('milliseconds', noor_user_sync.updated_at) = ${expectedUpdatedAt}::timestamptz
     RETURNING updated_at

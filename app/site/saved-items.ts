@@ -1,3 +1,4 @@
+import { personalStorage, writePersonalBatch } from "../../lib/personal-storage.ts";
 export const SAVED_KEYS = {
   quranVerses: "noor-quran-bookmarks-v1",
   duas: "noor-duas-saved-v1",
@@ -20,7 +21,7 @@ export function readSavedList(key: string): string[] {
   if (typeof window === "undefined") return [];
   try {
     const value = JSON.parse(
-      window.localStorage.getItem(key) ?? "[]",
+      personalStorage.getItem(key) ?? "[]",
     ) as unknown;
     if (!Array.isArray(value)) return [];
     return [
@@ -38,7 +39,18 @@ export function readSavedList(key: string): string[] {
 
 export function writeSavedList(key: string, items: string[]) {
   const next = [...new Set(items)];
-  window.localStorage.setItem(key, JSON.stringify(next));
+  try {
+    const field = Object.entries(SAVED_KEYS).find(([, value]) => value === key)?.[0];
+    let changes: Record<string, Record<string, { saved: boolean; at: string }>> = {};
+    try { const value = JSON.parse(personalStorage.getItem("noor-saved-changes-v1") ?? "{}"); if (value && typeof value === "object" && !Array.isArray(value)) changes = value; } catch { /* repair corrupt metadata */ }
+    if (field) {
+      const before = readSavedList(key), after = new Set(next), at = new Date().toISOString();
+      const updates = { ...changes[field] };
+      for (const id of new Set([...before, ...next])) if (before.includes(id) !== after.has(id)) updates[id] = { saved: after.has(id), at };
+      changes = { ...changes, [field]: updates };
+    }
+    writePersonalBatch([[key, JSON.stringify(next)], ["noor-saved-changes-v1", JSON.stringify(changes)]]);
+  } catch { return null; }
   window.dispatchEvent(
     new CustomEvent(SAVED_ITEMS_EVENT, { detail: { key, count: next.length } }),
   );

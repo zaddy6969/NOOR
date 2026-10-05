@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 
 import { useEffect, useRef, useState } from "react";
 import { duePrayer, REMINDER_KEY, validReminders, type ReminderSettings } from "@/lib/prayer-reminders";
@@ -18,12 +20,12 @@ export default function PrayerReminders({ schedule, location, confirmed }: { sch
   useEffect(() => {
     const refresh = () => {
       setPermission("Notification" in window ? Notification.permission : "unsupported");
-      try { const value = JSON.parse(localStorage.getItem(REMINDER_KEY) ?? "null"); setSettings(validReminders(value) ? value : DEFAULT_REMINDERS); } catch { setSettings(DEFAULT_REMINDERS); }
+      try { const value = JSON.parse(personalStorage.getItem(REMINDER_KEY) ?? "null"); setSettings(validReminders(value) ? value : DEFAULT_REMINDERS); } catch { setSettings(DEFAULT_REMINDERS); }
     };
     refresh(); window.addEventListener("storage", refresh); window.addEventListener("focus", refresh); window.addEventListener("noor:reminders-change", refresh);
     return () => { window.removeEventListener("storage", refresh); window.removeEventListener("focus", refresh); window.removeEventListener("noor:reminders-change", refresh); };
   }, []);
-  const save = (next: ReminderSettings) => { try { localStorage.setItem(REMINDER_KEY, JSON.stringify(next)); setSettings(next); } catch { setMessage("Reminder preferences could not be saved."); } };
+  const save = (next: ReminderSettings) => { try { personalStorage.setItem(REMINDER_KEY, JSON.stringify(next)); setSettings(next); } catch { setMessage("Reminder preferences could not be saved."); } };
   const notify = async (title: string, body: string, tag: string) => {
     if (!("serviceWorker" in navigator)) throw new Error("Browser alerts are unavailable. Use calendar reminders.");
     const registration = await navigator.serviceWorker.getRegistration();
@@ -36,10 +38,10 @@ export default function PrayerReminders({ schedule, location, confirmed }: { sch
       try {
       for (const prayer of duePrayer(schedule, settings, Date.now())) {
         const tag = `noor-alert-${schedule.dateISO}-${location}-${prayer}-${settings.minutes}`;
-        if (localStorage.getItem(tag)) continue;
-        localStorage.setItem(tag, "sent");
+        if (personalStorage.getItem(tag)) continue;
+        personalStorage.setItem(tag, "sent");
         try { await notify(`${copyRef.current(prayer)} · NOOR`, `${settings.minutes ? copyRef.current("{minutes} minutes before", { minutes: settings.minutes }) : copyRef.current("Prayer time")} · ${location} · ${schedule.timings[prayer]}`, tag); }
-        catch (error) { localStorage.removeItem(tag); setMessage(error instanceof Error ? error.message : "Alert could not be delivered."); }
+        catch (error) { personalStorage.removeItem(tag); setMessage(error instanceof Error ? error.message : "Alert could not be delivered."); }
       }
       } catch { setSettings((current) => ({ ...current, enabled: false })); setMessage("Your browser could not store reminder delivery status. Alerts are paused."); }
     };

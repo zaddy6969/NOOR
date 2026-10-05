@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 
 import { useEffect, useState } from "react";
 
@@ -8,7 +10,7 @@ export default function StepLearningMode({ steps, storageKey, label }: { steps: 
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      const saved = Number(window.localStorage.getItem(storageKey));
+      const saved = Number(personalStorage.getItem(storageKey));
       if (Number.isInteger(saved) && saved >= 0 && saved < steps.length) setCurrent(saved);
     });
     return () => window.cancelAnimationFrame(frame);
@@ -17,7 +19,7 @@ export default function StepLearningMode({ steps, storageKey, label }: { steps: 
   const select = (index: number) => {
     const next = Math.max(0, Math.min(steps.length - 1, index));
     setCurrent(next);
-    window.localStorage.setItem(storageKey, String(next));
+    personalStorage.setItem(storageKey, String(next));
   };
 
   if (showAll) {

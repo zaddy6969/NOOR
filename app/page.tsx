@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import NoorSelect from "./site/NoorSelect";
 
 import Link from "next/link";
@@ -581,7 +583,7 @@ export default function Home() {
       setActiveFeature(id);
       try {
         const stored = JSON.parse(
-          window.localStorage.getItem("noor-recent-features-v1") ?? "[]",
+          personalStorage.getItem("noor-recent-features-v1") ?? "[]",
         ) as unknown;
         const previous = Array.isArray(stored)
           ? stored.filter(
@@ -593,7 +595,7 @@ export default function Home() {
           0,
           6,
         );
-        window.localStorage.setItem(
+        personalStorage.setItem(
           "noor-recent-features-v1",
           JSON.stringify(recent),
         );
@@ -667,7 +669,7 @@ export default function Home() {
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      const saved = window.localStorage.getItem("noor-language");
+      const saved = personalStorage.getItem("noor-language");
       if (saved === "en" || saved === "hi" || saved === "ur") setLocale(saved);
       setLocaleReady(true);
     });
@@ -676,7 +678,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!localeReady) return;
-    window.localStorage.setItem("noor-language", locale);
+    personalStorage.setItem("noor-language", locale);
     document.documentElement.lang =
       locale === "hi" ? "hi" : locale === "ur" ? "ur" : "en";
     document.documentElement.dir = locale === "ur" ? "rtl" : "ltr";

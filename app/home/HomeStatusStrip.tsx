@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
@@ -85,7 +87,7 @@ export default function HomeStatusStrip() {
     const frame = window.requestAnimationFrame(() => {
       setTarget(document.querySelector(".noor-feature-shell"));
       try {
-        const saved = JSON.parse(window.localStorage.getItem("noor-prayer-settings-v1") ?? "null") as { cityId?: string; method?: number; school?: number } | null;
+        const saved = JSON.parse(personalStorage.getItem("noor-prayer-settings-v1") ?? "null") as { cityId?: string; method?: number; school?: number } | null;
         const selected = CITIES.find((item) => item.id === saved?.cityId) ?? CITIES[0];
         setCity(selected);
         const method = saved?.method ?? 1;

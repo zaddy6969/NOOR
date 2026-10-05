@@ -4,19 +4,24 @@ import { validPlan, type QuranPlan } from "./quran-plan.ts";
 export type SyncPayload = {
   version: 1;
   saved: { duas: string[]; quranVerses: string[]; quranSurahs: string[]; darood: string[]; lughat: string[] };
+  savedChanges?: Record<string, Record<string, { saved: boolean; at: string }>>;
   quran: { progress: Record<string, unknown> | null; preferences: Record<string, unknown>; readingDays: string[]; notes?: Record<string, string>; plan: QuranPlan | null; readingGoal: number; readAyahs: Record<string, string[]> };
   updatedAt: string;
 };
 const object = (value: unknown): Record<string, unknown> => value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 const strings = (value: unknown, limit: number) => Array.isArray(value) ? [...new Set(value.filter((item): item is string => typeof item === "string" && item.length > 0 && item.length <= 120))].slice(0, limit) : [];
 export function sanitizeSync(input: unknown): SyncPayload {
-  if (JSON.stringify(input).length > 150000) throw new Error("Sync data is too large.");
+  if ((JSON.stringify(input) ?? "").length > 1000000) throw new Error("Sync data is too large.");
   const root = object(input), saved = object(root.saved), quran = object(root.quran), progress = object(quran.progress), preferences = object(quran.preferences);
   const notes = Object.fromEntries(Object.entries(object(quran.notes)).filter(([key, text]) => { const [surah, ayah] = key.split(":").map(Number); return isValidQuranReference(surah, ayah) && typeof text === "string" && text.length <= 3000; }).slice(0, 500));
   const reference = (value: string) => { const [surah, ayah] = value.split(":").map(Number); return isValidQuranReference(surah, ayah); };
   return {
     version: 1,
-    saved: { duas: strings(saved.duas, 100), quranVerses: strings(saved.quranVerses, 1000).filter(reference), quranSurahs: strings(saved.quranSurahs, 114).filter((value) => /^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 114), darood: strings(saved.darood, 500), lughat: strings(saved.lughat, 500) },
+    saved: { duas: strings(saved.duas, 100), quranVerses: strings(saved.quranVerses, 6236).filter(reference), quranSurahs: strings(saved.quranSurahs, 114).filter((value) => /^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 114), darood: strings(saved.darood, 500), lughat: strings(saved.lughat, 500) },
+    savedChanges: Object.fromEntries(["duas", "quranVerses", "quranSurahs", "darood", "lughat"].map(field => [field, Object.fromEntries(Object.entries(object(object(root.savedChanges)[field])).filter(([id, change]) => {
+      const item = object(change);
+      return id.length > 0 && id.length <= 120 && typeof item.saved === "boolean" && typeof item.at === "string" && Number.isFinite(Date.parse(item.at)) && Date.parse(item.at) <= Date.now() + 300000;
+    }).slice(0, 7000).map(([id, change]) => { const item = object(change); return [id, { saved: item.saved as boolean, at: item.at as string }]; }))])),
     quran: {
       progress: isValidQuranReference(Number(progress.surah), Number(progress.ayah)) ? { surah: Number(progress.surah), ayah: Number(progress.ayah), englishName: String(progress.englishName ?? "").slice(0, 100), updatedAt: Number.isFinite(Date.parse(String(progress.updatedAt))) ? String(progress.updatedAt) : "" } : null,
       preferences: { ...(["en.sahih", "en.pickthall", "ur.jalandhry", "hi.hindi"].includes(String(preferences.translation)) ? { translation: preferences.translation } : {}), ...(["alafasy", "sudais", "husary", "minshawi"].includes(String(preferences.reciter)) ? { reciter: preferences.reciter } : {}) },
@@ -34,6 +39,17 @@ export function mergeSync(localInput: unknown, remoteInput: unknown, includeNote
   const union = (left: string[], right: string[]) => [...new Set([...left, ...right])];
   const merged: SyncPayload = { version: 1, saved: { duas: union(local.saved.duas, remote.saved.duas), quranVerses: union(local.saved.quranVerses, remote.saved.quranVerses), quranSurahs: union(local.saved.quranSurahs, remote.saved.quranSurahs), darood: union(local.saved.darood, remote.saved.darood), lughat: union(local.saved.lughat, remote.saved.lughat) }, quran: { progress: newer(local.quran.progress, remote.quran.progress), preferences: { ...remote.quran.preferences, ...local.quran.preferences }, readingDays: union(local.quran.readingDays, remote.quran.readingDays).sort(), plan: (Date.parse(local.quran.plan?.updatedAt ?? "") || 0) >= (Date.parse(remote.quran.plan?.updatedAt ?? "") || 0) ? local.quran.plan : remote.quran.plan, readingGoal: local.quran.readingGoal || remote.quran.readingGoal, readAyahs: { ...remote.quran.readAyahs, ...local.quran.readAyahs } }, updatedAt: new Date().toISOString() };
   for (const [day, refs] of Object.entries(remote.quran.readAyahs)) merged.quran.readAyahs[day] = union(local.quran.readAyahs[day] ?? [], refs);
+  merged.savedChanges = {};
+  for (const field of ["duas", "quranVerses", "quranSurahs", "darood", "lughat"] as const) {
+    const changes = { ...remote.savedChanges?.[field] };
+    for (const [id, change] of Object.entries(local.savedChanges?.[field] ?? {})) {
+      if (!changes[id] || Date.parse(change.at) >= Date.parse(changes[id].at)) changes[id] = change;
+    }
+    merged.savedChanges[field] = changes;
+    const items = new Set(merged.saved[field]);
+    for (const [id, change] of Object.entries(changes)) { if (change.saved) items.add(id); else items.delete(id); }
+    merged.saved[field] = [...items];
+  }
   // On conflicts keep this device's note and expose conflict counts in the UI.
   if (includeNotes) merged.quran.notes = { ...remote.quran.notes, ...local.quran.notes };
   return sanitizeSync(merged);

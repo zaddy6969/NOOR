@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import { useNoorCopy } from "../site/SiteUtilities";
 import NoorSelect from "../site/NoorSelect";
 import { useEffect, useState } from "react";
@@ -11,11 +13,11 @@ export default function ReadingGoal() {
   useEffect(() => {
     const sync = () => {
       try {
-        const value = Number(localStorage.getItem("noor-reading-goal-v1") ?? 0);
+        const value = Number(personalStorage.getItem("noor-reading-goal-v1") ?? 0);
         setGoal([0, 3, 5, 10, 20].includes(value) ? value : 0);
         const today = new Date().toLocaleDateString("en-CA");
         const records = JSON.parse(
-          localStorage.getItem("noor-read-ayahs-v1") ?? "{}",
+          personalStorage.getItem("noor-read-ayahs-v1") ?? "{}",
         );
         setTodayCount(
           Array.isArray(records[today]) ? records[today].length : 0,
@@ -92,7 +94,7 @@ export default function ReadingGoal() {
           onChange={(event) => {
             const value = Number(event.target.value);
             try {
-              localStorage.setItem("noor-reading-goal-v1", String(value));
+              personalStorage.setItem("noor-reading-goal-v1", String(value));
               setGoal(value);
             } catch {
               setMessage("Goal could not be saved.");

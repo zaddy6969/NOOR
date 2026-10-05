@@ -81,10 +81,10 @@ export default function SavedLibrary({
   const total = savedItemsTotal(collections);
 
   const remove = (key: string, id: string, label: string) => {
-    writeSavedList(
+    if (!writeSavedList(
       key,
       readSavedList(key).filter((item) => item !== id),
-    );
+    )) return;
     setCollections(readSavedCollections());
     setNotice(t("{label} removed from Saved", { label }));
     window.setTimeout(() => setNotice(""), 1700);

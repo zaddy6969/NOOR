@@ -29,11 +29,10 @@ export default function LughatLibrary() {
   }, [filter, query, saved]);
 
   const toggleSaved = (id: string) => {
-    setSaved((current) => {
-      const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
-      writeSavedList(SAVED_KEYS.lughat, next);
-      return next;
-    });
+    const current = readSavedList(SAVED_KEYS.lughat);
+    const next = current.includes(id) ? current.filter(item => item !== id) : [...current, id];
+    const result = writeSavedList(SAVED_KEYS.lughat, next);
+    if (result) setSaved(result);
   };
 
   const copy = async (id: string) => {

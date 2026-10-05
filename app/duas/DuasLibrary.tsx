@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { DUAS } from "./dua-data";
@@ -22,7 +24,7 @@ export default function DuasLibrary() {
       if (position >= 0) setIndex(position);
       try {
         const values = JSON.parse(
-          localStorage.getItem("noor-dua-counts-v1") ?? "{}",
+          personalStorage.getItem("noor-dua-counts-v1") ?? "{}",
         );
         setCounts(
           Object.fromEntries(
@@ -51,7 +53,7 @@ export default function DuasLibrary() {
   const updateCount = (value: number) => {
     const next = { ...counts, [dua.id]: value };
     try {
-      localStorage.setItem("noor-dua-counts-v1", JSON.stringify(next));
+      personalStorage.setItem("noor-dua-counts-v1", JSON.stringify(next));
       setCounts(next);
     } catch {
       setNotice("Storage unavailable. Counter could not be saved.");
@@ -63,7 +65,7 @@ export default function DuasLibrary() {
       const next = values.includes(dua.id)
         ? values.filter((id) => id !== dua.id)
         : [...values, dua.id];
-      writeSavedList(SAVED_KEYS.duas, next);
+      if (!writeSavedList(SAVED_KEYS.duas, next)) return;
       setSaved(next);
       setNotice(
         next.includes(dua.id)

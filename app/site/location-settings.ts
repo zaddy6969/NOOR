@@ -1,3 +1,4 @@
+import { personalStorage } from "@/lib/personal-storage";
 export type NoorLocation = {
   id: string;
   label: string;
@@ -101,7 +102,7 @@ export function readNoorLocation(): NoorLocation {
   if (typeof window === "undefined") return DEFAULT_NOOR_LOCATION;
   try {
     const parsed = JSON.parse(
-      window.localStorage.getItem(NOOR_LOCATION_KEY) ?? "null",
+      personalStorage.getItem(NOOR_LOCATION_KEY) ?? "null",
     ) as unknown;
     return isLocation(parsed) ? parsed : DEFAULT_NOOR_LOCATION;
   } catch {
@@ -110,7 +111,7 @@ export function readNoorLocation(): NoorLocation {
 }
 
 export function writeNoorLocation(location: NoorLocation) {
-  window.localStorage.setItem(NOOR_LOCATION_KEY, JSON.stringify(location));
+  personalStorage.setItem(NOOR_LOCATION_KEY, JSON.stringify(location));
   window.dispatchEvent(
     new CustomEvent<NoorLocation>(NOOR_LOCATION_EVENT, { detail: location }),
   );

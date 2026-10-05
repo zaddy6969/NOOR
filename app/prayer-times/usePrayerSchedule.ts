@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DEFAULT_NOOR_LOCATION,
@@ -37,7 +39,7 @@ export const DEFAULT_PRAYER_SETTINGS: PrayerSettings = {
 export function readPrayerSettings(): PrayerSettings {
   try {
     const data = JSON.parse(
-      localStorage.getItem("noor-prayer-settings-v1") ?? "{}",
+      personalStorage.getItem("noor-prayer-settings-v1") ?? "{}",
     );
     return {
       cityId: typeof data.cityId === "string" ? data.cityId : "bengaluru",
@@ -87,7 +89,7 @@ export function usePrayerSchedule() {
     setLocation(nextLocation);
     setSettings(nextSettings);
     try {
-      setConfirmed(Boolean(localStorage.getItem(NOOR_LOCATION_KEY)));
+      setConfirmed(Boolean(personalStorage.getItem(NOOR_LOCATION_KEY)));
     } catch {
       setConfirmed(false);
     }
@@ -113,7 +115,7 @@ export function usePrayerSchedule() {
       setSchedule(payload);
       currentSchedule.current = payload;
       try {
-        localStorage.setItem(cacheKey, JSON.stringify(payload));
+        personalStorage.setItem(cacheKey, JSON.stringify(payload));
       } catch {
         /* caching is optional */
       }
@@ -121,7 +123,7 @@ export function usePrayerSchedule() {
       if (active.signal.aborted) return;
       let saved: unknown = null;
       try {
-        saved = JSON.parse(localStorage.getItem(cacheKey) ?? "null");
+        saved = JSON.parse(personalStorage.getItem(cacheKey) ?? "null");
       } catch {
         /* no cache */
       }

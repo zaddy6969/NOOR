@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -19,7 +21,7 @@ export default function CompletionPlan() {
     const refresh = () => {
       setCurrentDate(today());
       setStartDate((date) => date || today());
-      try { const value = JSON.parse(localStorage.getItem(PLAN_KEY) ?? "null"); setPlan(validPlan(value) ? value : null); } catch { setPlan(null); }
+      try { const value = JSON.parse(personalStorage.getItem(PLAN_KEY) ?? "null"); setPlan(validPlan(value) ? value : null); } catch { setPlan(null); }
     };
     refresh();
     const timer = window.setInterval(refresh, 60000);
@@ -29,7 +31,7 @@ export default function CompletionPlan() {
   }, []);
   const save = (next: QuranPlan) => {
     if (!validPlan(next)) { setMessage("Choose a valid date and plan."); return; }
-    try { localStorage.setItem(PLAN_KEY, JSON.stringify(next)); setPlan(next); setRestart(false); setMessage(""); window.dispatchEvent(new Event("noor:plan-change")); } catch { setMessage("Your browser could not save this plan."); }
+    try { personalStorage.setItem(PLAN_KEY, JSON.stringify(next)); setPlan(next); setRestart(false); setMessage(""); window.dispatchEvent(new Event("noor:plan-change")); } catch { setMessage("Your browser could not save this plan."); }
   };
   const scheduled = plan && currentDate ? planDay(plan.startDate, currentDate, plan.days) : 1;
   const nextDay = plan ? Array.from({ length: plan.days }, (_, index) => index + 1).find((day) => !plan.completed.includes(day)) : undefined;

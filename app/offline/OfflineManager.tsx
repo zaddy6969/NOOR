@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import NoorSelect from "../site/NoorSelect";
 import InstallGuide from "./InstallGuide";
 import { useNoorCopy } from "../site/SiteUtilities";
@@ -55,7 +57,7 @@ export default function OfflineManager() {
         !remaining.some((item) => item.audioUrl === entry.audioUrl)
       )
         await cache.delete(entry.audioUrl);
-      localStorage.setItem(DOWNLOAD_INDEX, JSON.stringify(remaining));
+      personalStorage.setItem(DOWNLOAD_INDEX, JSON.stringify(remaining));
       setEntries(remaining);
       setMessage("Download removed.");
     } catch {

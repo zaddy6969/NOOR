@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 
 import { useEffect, useMemo, useState } from "react";
 import { shopItems, type ShopCategory } from "./shop-data";
@@ -12,7 +14,7 @@ export default function ShopCatalog() {
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      try { setList(JSON.parse(window.localStorage.getItem("noor-shop-list-v1") ?? "[]") as string[]); } catch { setList([]); }
+      try { setList(JSON.parse(personalStorage.getItem("noor-shop-list-v1") ?? "[]") as string[]); } catch { setList([]); }
     });
     return () => window.cancelAnimationFrame(frame);
   }, []);
@@ -26,7 +28,7 @@ export default function ShopCatalog() {
   const toggle = (id: string) => {
     setList((current) => {
       const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id];
-      window.localStorage.setItem("noor-shop-list-v1", JSON.stringify(next));
+      personalStorage.setItem("noor-shop-list-v1", JSON.stringify(next));
       return next;
     });
   };

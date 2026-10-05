@@ -1,4 +1,6 @@
 "use client";
+import { personalOwner, writePersonalBatch, personalStorage } from "@/lib/personal-storage";
+
 import { useNoorCopy } from "../site/SiteUtilities";
 import { useState } from "react";
 import { PERSONAL_KEYS, backupEntries } from "../../lib/personal-backup";
@@ -11,7 +13,7 @@ export default function PersonalDataControls() {
   const download = () => {
     try {
       const entries = Object.fromEntries(
-        KEYS.map((key) => [key, localStorage.getItem(key)]).filter(
+        KEYS.map((key) => [key, personalStorage.getItem(key)]).filter(
           ([, value]) => value !== null,
         ),
       );
@@ -41,12 +43,12 @@ export default function PersonalDataControls() {
   };
   const restore = async (file?: File) => {
     if (!file) return;
+    const owner = personalOwner();
     try {
       if (file.size > 1000000)
         throw new Error("Backup exceeds the 1 MB limit.");
       const entries = backupEntries(JSON.parse(await file.text()));
-      for (const [key, value] of entries)
-        localStorage.setItem(key, value as string);
+      writePersonalBatch(entries, owner);
       window.dispatchEvent(new Event(SAVED_ITEMS_EVENT));
       window.dispatchEvent(new Event("noor:quran-progress"));
       window.dispatchEvent(new Event("noor:plan-change"));
@@ -94,14 +96,16 @@ export default function PersonalDataControls() {
           <button
             type="button"
             onClick={() => {
-              KEYS.forEach((key) => localStorage.removeItem(key));
-              localStorage.removeItem("noor-last-sync-v1");
+              try {
+              KEYS.forEach((key) => personalStorage.removeItem(key));
+              personalStorage.removeItem("noor-last-sync-v1");
               window.dispatchEvent(new Event("noor:quran-progress"));
               window.dispatchEvent(new Event("noor:plan-change"));
               window.dispatchEvent(new Event("noor:reminders-change"));
               window.dispatchEvent(new Event(SAVED_ITEMS_EVENT));
               setConfirm(false);
               setNotice("Local personal data deleted.");
+              } catch (error) { setNotice(error instanceof Error ? error.message : "Unable to delete local data."); }
             }}
           >
             {t("Confirm deletion")}

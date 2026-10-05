@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import NoorSelect from "../site/NoorSelect";
 
 import { useEffect, useMemo, useState } from "react";
@@ -33,7 +35,7 @@ export default function MosqueFinder() {
   useEffect(() => {
     const refresh = () => {
       setLocation(readNoorLocation());
-      try { setConfirmed(Boolean(window.localStorage.getItem(NOOR_LOCATION_KEY))); } catch { setConfirmed(false); }
+      try { setConfirmed(Boolean(personalStorage.getItem(NOOR_LOCATION_KEY))); } catch { setConfirmed(false); }
       setLocationReady(true);
     };
     const frame = requestAnimationFrame(() => {

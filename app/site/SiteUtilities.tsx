@@ -1,4 +1,6 @@
 "use client";
+import { ACCOUNT_CHANGE_EVENT, personalStorage } from "@/lib/personal-storage";
+
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -128,7 +130,7 @@ export function LocaleText({ text }: { text: string }) {
 export function LanguageControl() {
   const { locale, t } = useNoorCopy();
   return <NoorSelect aria-label={t("Language")} value={locale} onChange={(event) => {
-    localStorage.setItem("noor-language", event.target.value);
+    personalStorage.setItem("noor-language", event.target.value);
     window.dispatchEvent(new Event("noor:language-change"));
   }}><option value="en">EN</option><option value="ur">اردو</option><option value="hi">हिंदी</option></NoorSelect>;
 }
@@ -155,7 +157,7 @@ const POPULAR_SEARCHES: Record<NoorLocale, string[]> = {
 
 function readRecentSearches() {
   try {
-    const stored = JSON.parse(window.localStorage.getItem(RECENT_SEARCH_KEY) ?? "[]");
+    const stored = JSON.parse(personalStorage.getItem(RECENT_SEARCH_KEY) ?? "[]");
     return Array.isArray(stored) ? stored.filter((item): item is string => typeof item === "string" && item.trim().length > 0).slice(0, MAX_RECENT_SEARCHES) : [];
   } catch {
     return [];
@@ -220,6 +222,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [searchError, setSearchError] = useState("");
   const [loading, setLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [activeResult, setActiveResult] = useState(0);
@@ -229,6 +232,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
 
   const updateSearchQuery = useCallback((value: string) => {
     setQuery(value);
+    setSearchError("");
     setResults([]);
     setActiveResult(0);
     setLoading(Boolean(value.trim()));
@@ -251,7 +255,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      const stored = window.localStorage.getItem("noor-theme-v2");
+      const stored = personalStorage.getItem("noor-theme-v2");
       const initialDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
       setDark(initialDark);
       document.documentElement.classList.toggle("noor-dark", initialDark);
@@ -263,12 +267,12 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
   useEffect(() => {
     if (!themeReady) return;
     document.documentElement.classList.toggle("noor-dark", dark);
-    window.localStorage.setItem("noor-theme-v2", dark ? "dark" : "light");
+    personalStorage.setItem("noor-theme-v2", dark ? "dark" : "light");
   }, [dark, themeReady]);
 
   useEffect(() => {
     const syncLocale = () => {
-      const saved = window.localStorage.getItem("noor-language");
+      const saved = personalStorage.getItem("noor-language");
       const next = saved === "hi" || saved === "ur" ? saved : "en";
       setLocale(next);
       document.documentElement.lang = next;
@@ -317,10 +321,14 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     if (!cleanQuery) return;
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      fetch(`/api/search?q=${encodeURIComponent(cleanQuery)}`, { signal: controller.signal })
-        .then((response) => response.ok ? response.json() : Promise.reject())
-        .then((payload: { results?: SearchResult[] }) => setResults(Array.isArray(payload.results) ? payload.results : []))
-        .catch((error: Error) => { if (error.name !== "AbortError") setResults([]); })
+      fetch(`/api/search?q=${encodeURIComponent(cleanQuery)}`, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]) })
+        .then(async response => {
+          const payload = await response.json() as { results?: SearchResult[]; error?: string };
+          if (!response.ok) throw new Error(payload.error ?? "Search is temporarily unavailable. Please try again.");
+          return payload;
+        })
+        .then(payload => { if (!controller.signal.aborted) { setResults(Array.isArray(payload.results) ? payload.results : []); setSearchError(""); } })
+        .catch((error: Error) => { if (!controller.signal.aborted) { setResults([]); setSearchError(error.message || "Search is temporarily unavailable. Please try again."); } })
         .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     }, 180);
     return () => {
@@ -328,6 +336,12 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
       controller.abort();
     };
   }, [query, searchOpen]);
+
+  useEffect(() => {
+    const reset = () => { setSearchOpen(false); setQuery(""); setResults([]); setRecentSearches([]); setSearchError(""); };
+    window.addEventListener(ACCOUNT_CHANGE_EVENT, reset);
+    return () => window.removeEventListener(ACCOUNT_CHANGE_EVENT, reset);
+  }, []);
 
   const toggleTheme = useCallback(() => setDark((value) => !value), []);
   const setTheme = useCallback((theme: "light" | "dark") => setDark(theme === "dark"), []);
@@ -353,7 +367,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     if (clean.length < 2) return;
     setRecentSearches((current) => {
       const next = [clean, ...current.filter((item) => item.toLocaleLowerCase() !== clean.toLocaleLowerCase())].slice(0, MAX_RECENT_SEARCHES);
-      window.localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(next));
+      personalStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(next));
       return next;
     });
   }, []);
@@ -361,14 +375,14 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
   const removeRecentSearch = (value: string) => {
     setRecentSearches((current) => {
       const next = current.filter((item) => item !== value);
-      window.localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(next));
+      personalStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(next));
       return next;
     });
   };
 
   const clearRecentSearches = () => {
     setRecentSearches([]);
-    window.localStorage.removeItem(RECENT_SEARCH_KEY);
+    personalStorage.removeItem(RECENT_SEARCH_KEY);
   };
 
   const chooseResult = (result: SearchResult) => {
@@ -484,7 +498,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
                       <i aria-hidden="true">↗</i>
                     </button>
                   ))}
-                  {!loading && results.length === 0 ? <div className="global-search-empty"><SearchIcon/><p>{copy.noResult}</p></div> : null}
+                  {!loading && results.length === 0 ? <div className="global-search-empty"><SearchIcon/><p role="status">{searchError ? translateUI(searchError, locale) : copy.noResult}</p><p>{translateUI("Try a topic, Surah name, dua, or verse reference such as 2:255.", locale)}</p><div className="global-search-popular">{POPULAR_SEARCHES[locale].slice(0, 4).map(item => <button type="button" key={item} onClick={() => updateSearchQuery(item)}>{item}</button>)}</div>{searchError ? <button type="button" onClick={() => { const value = query; updateSearchQuery(""); requestAnimationFrame(() => updateSearchQuery(value)); }}>{translateUI("Try again", locale)}</button> : null}</div> : null}
                 </div>
               </>
             )}

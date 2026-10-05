@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import NoorSelect from "../site/NoorSelect";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -256,7 +258,7 @@ export default function QuranReader({
       )
         return;
       try {
-        window.localStorage.setItem(
+        personalStorage.setItem(
           "noor-quran-progress-v1",
           JSON.stringify({
             surah: detail.number,
@@ -274,18 +276,18 @@ export default function QuranReader({
       window.history.replaceState(null, "", url);
       try {
         const previous = JSON.parse(
-          window.localStorage.getItem("noor-quran-reading-days-v1") ?? "[]",
+          personalStorage.getItem("noor-quran-reading-days-v1") ?? "[]",
         ) as string[];
         const today = new Date().toISOString().slice(0, 10);
         const next = Array.from(new Set([...previous, today])).slice(-366);
-        window.localStorage.setItem(
+        personalStorage.setItem(
           "noor-quran-reading-days-v1",
           JSON.stringify(next),
         );
         setReadingStreak(calculateStreak(next));
         const localDay = new Date().toLocaleDateString("en-CA");
         const history = JSON.parse(
-          localStorage.getItem("noor-read-ayahs-v1") ?? "{}",
+          personalStorage.getItem("noor-read-ayahs-v1") ?? "{}",
         );
         const references = Array.isArray(history[localDay])
           ? history[localDay]
@@ -293,7 +295,7 @@ export default function QuranReader({
         const record = {
           [localDay]: [...new Set([...references, detail.number + ":" + ayah])],
         };
-        localStorage.setItem("noor-read-ayahs-v1", JSON.stringify(record));
+        personalStorage.setItem("noor-read-ayahs-v1", JSON.stringify(record));
         window.dispatchEvent(new Event("noor:quran-progress"));
       } catch {
         /* reading still works if storage is unavailable */
@@ -308,18 +310,18 @@ export default function QuranReader({
       setBookmarks(saved);
       try {
         const preferences = JSON.parse(
-          window.localStorage.getItem("noor-quran-preferences-v1") ?? "{}",
+          personalStorage.getItem("noor-quran-preferences-v1") ?? "{}",
         ) as { translation?: string; reciter?: string };
         if (TRANSLATIONS.some((item) => item.id === preferences.translation))
           setTranslation(preferences.translation as string);
         if (RECITERS.some((item) => item.id === preferences.reciter))
           setReciter(preferences.reciter as string);
         const savedNotes = JSON.parse(
-          window.localStorage.getItem("noor-quran-notes-v1") ?? "{}",
+          personalStorage.getItem("noor-quran-notes-v1") ?? "{}",
         ) as Record<string, string>;
         if (savedNotes && typeof savedNotes === "object") setNotes(savedNotes);
         const readingDays = JSON.parse(
-          window.localStorage.getItem("noor-quran-reading-days-v1") ?? "[]",
+          personalStorage.getItem("noor-quran-reading-days-v1") ?? "[]",
         ) as string[];
         if (Array.isArray(readingDays))
           setReadingStreak(calculateStreak(readingDays));
@@ -335,7 +337,7 @@ export default function QuranReader({
       } else if (resume) {
         try {
           const progress = JSON.parse(
-            localStorage.getItem("noor-quran-progress-v1") ?? "null",
+            personalStorage.getItem("noor-quran-progress-v1") ?? "null",
           );
           if (progress && progress.surah >= 1 && progress.surah <= 114) {
             setSelected(progress.surah);
@@ -365,7 +367,7 @@ export default function QuranReader({
   useEffect(() => {
     if (!preferencesReady) return;
     try {
-      window.localStorage.setItem(
+      personalStorage.setItem(
         "noor-quran-preferences-v1",
         JSON.stringify({ translation, reciter }),
       );
@@ -437,7 +439,7 @@ export default function QuranReader({
 
   useEffect(() => {
     if (!activeAyahNumber || !detail) return;
-    try { window.localStorage.setItem(
+    try { personalStorage.setItem(
       "noor-quran-progress-v1",
       JSON.stringify({
         surah: detail.number,
@@ -592,11 +594,12 @@ export default function QuranReader({
 
   const toggleBookmark = (ayah: number) => {
     const key = `${selected}:${ayah}`;
-    const next = bookmarks.includes(key)
-      ? bookmarks.filter((item) => item !== key)
-      : [...bookmarks, key];
+    const current = readSavedList(SAVED_KEYS.quranVerses);
+    const next = current.includes(key)
+      ? current.filter((item) => item !== key)
+      : [...current, key];
+    if (!writeSavedList(SAVED_KEYS.quranVerses, next)) return;
     setBookmarks(next);
-    writeSavedList(SAVED_KEYS.quranVerses, next);
     setNotice(next.includes(key) ? `Saved ${key}` : `Removed ${key}`);
     window.setTimeout(() => setNotice(""), 1800);
   };
@@ -691,7 +694,7 @@ export default function QuranReader({
     if (clean) next[studyPanel.reference] = clean;
     else delete next[studyPanel.reference];
     try {
-      window.localStorage.setItem("noor-quran-notes-v1", JSON.stringify(next));
+      personalStorage.setItem("noor-quran-notes-v1", JSON.stringify(next));
     } catch {
       setStudyPanel({ ...studyPanel, error: "This browser could not save your note. Keep a copy before closing." });
       return;

@@ -343,7 +343,7 @@ function QuranWorkspace({ target }: { target: QuranTarget }) {
     const next = current.includes(key)
       ? current.filter((item) => item !== key)
       : [...current, key];
-    writeSavedList(SAVED_KEYS.quranSurahs, next);
+    if (!writeSavedList(SAVED_KEYS.quranSurahs, next)) return;
     setBookmarked(next.includes(key));
   };
 

@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 
 import { useEffect, useMemo, useState } from "react";
 
@@ -53,7 +55,7 @@ export default function QazaCalculator() {
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      const stored = window.localStorage.getItem("noor-qaza-plan-v1");
+      const stored = personalStorage.getItem("noor-qaza-plan-v1");
       if (!stored) return;
       try {
         const plan = JSON.parse(stored) as {
@@ -119,7 +121,7 @@ export default function QazaCalculator() {
   ]);
 
   const savePlan = () => {
-    window.localStorage.setItem(
+    personalStorage.setItem(
       "noor-qaza-plan-v1",
       JSON.stringify({
         targetMonths,
@@ -337,7 +339,7 @@ export default function QazaCalculator() {
             className="calculator-reset"
             type="button"
             onClick={() => {
-              window.localStorage.removeItem("noor-qaza-plan-v1");
+              personalStorage.removeItem("noor-qaza-plan-v1");
               setSaved(false);
             }}
           >

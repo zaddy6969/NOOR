@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import NoorSelect from "../site/NoorSelect";
 import { useEffect, useState } from "react";
 import { NOOR_LOCATION_EVENT } from "../site/location-settings";
@@ -88,7 +90,7 @@ export default function PrayerTimesCenter() {
     };
   }, [query, view, monthRetry]);
   const update = (key: "method" | "school" | "adjustment", value: number) => {
-    localStorage.setItem(
+    personalStorage.setItem(
       "noor-prayer-settings-v1",
       JSON.stringify({ ...settings, [key]: value }),
     );

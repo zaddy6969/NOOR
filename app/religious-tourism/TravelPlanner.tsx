@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import NoorSelect from "../site/NoorSelect";
 
 import { useEffect, useMemo, useState } from "react";
@@ -23,13 +25,13 @@ export default function TravelPlanner() {
   const [checked, setChecked] = useState<string[]>([]);
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      try { setChecked(JSON.parse(window.localStorage.getItem("noor-travel-checklist-v1") ?? "[]") as string[]); } catch { setChecked([]); }
+      try { setChecked(JSON.parse(personalStorage.getItem("noor-travel-checklist-v1") ?? "[]") as string[]); } catch { setChecked([]); }
     });
     return () => window.cancelAnimationFrame(frame);
   }, []);
   const place = destinations.find((item) => item.slug === destination) ?? destinations[0];
   const progress = Math.round((checked.length / checklist.length) * 100);
-  const toggle = (id: string) => setChecked((current) => { const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id]; window.localStorage.setItem("noor-travel-checklist-v1", JSON.stringify(next)); return next; });
+  const toggle = (id: string) => setChecked((current) => { const next = current.includes(id) ? current.filter((item) => item !== id) : [...current, id]; personalStorage.setItem("noor-travel-checklist-v1", JSON.stringify(next)); return next; });
   const outline = useMemo(() => {
     if (days <= 2) return "Keep the visit focused: one principal worship or heritage area each day, with generous prayer and rest time.";
     if (days <= 5) return "Balance key places with worship, rest and one flexible half-day for delays or accessibility needs.";

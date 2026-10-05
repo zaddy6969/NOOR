@@ -1,3 +1,7 @@
+import { normalizeSearchText, prepareSearch, searchWords } from "@/lib/search-match";
+import { SURAH_DIRECTORY } from "@/lib/surah-directory";
+import { DUAS } from "../../duas/dua-data";
+import { daroodEntries } from "../../darood/darood-data";
 import { isValidQuranReference } from "@/lib/quran-structure";
 
 import { naatEntries } from "../../naat/naat-data";
@@ -113,6 +117,10 @@ const features = [
     "Ziyarat pilgrimage travel planner private checklist etiquette documents",
     "/religious-tourism",
   ],
+  ["Quran completion plans", "Finish Quran in 30 60 90 days daily reading plan khatam catch up", "/quran"],
+  ["Offline Quran downloads", "Download Quran Arabic translation audio storage install PWA", "/offline"],
+  ["Prayer reminders", "Prayer alerts notifications calendar reminders", "/prayer-times"],
+  ["Content review and corrections", "Sources translator attribution reviewer corrections report mistake", "/content-review"],
   ["About NOOR", "Purpose, accuracy, limits and product status", "/about"],
   [
     "Privacy",
@@ -548,69 +556,9 @@ const detailedGuides = [
   ],
 ] as const;
 
-function normalizeSearchText(value: string) {
-  return value
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[‘’'`]/g, "")
-    .replace(/[^a-z0-9\u0600-\u06ff]+/g, " ")
-    .trim()
-    .replace(/\s+/g, " ");
-}
-
-function editDistance(left: string, right: string) {
-  if (left === right) return 0;
-  if (!left.length) return right.length;
-  if (!right.length) return left.length;
-  let previous = Array.from({ length: right.length + 1 }, (_, index) => index);
-  for (let i = 1; i <= left.length; i += 1) {
-    const current = [i];
-    for (let j = 1; j <= right.length; j += 1) {
-      current[j] = Math.min(
-        current[j - 1] + 1,
-        previous[j] + 1,
-        previous[j - 1] + (left[i - 1] === right[j - 1] ? 0 : 1),
-      );
-    }
-    previous = current;
-  }
-  return previous[right.length];
-}
-
-function isCloseWord(queryWord: string, candidate: string) {
-  if (queryWord.length < 4 || candidate.length < 4) return false;
-  const allowance = Math.max(queryWord.length, candidate.length) >= 7 ? 2 : 1;
-  return (
-    Math.abs(queryWord.length - candidate.length) <= allowance &&
-    editDistance(queryWord, candidate) <= allowance
-  );
-}
-
-function rank(text: string, rawQuery: string) {
-  const value = normalizeSearchText(text);
-  const query = normalizeSearchText(rawQuery);
-  if (!query) return 0;
-  if (value === query) return 150;
-  if (value.startsWith(`${query} `) || value.startsWith(query)) return 125;
-  if (value.includes(` ${query} `) || value.endsWith(` ${query}`)) return 90;
-  if (value.includes(query)) return 78;
-
-  const valueWords = value.split(" ").filter(Boolean);
-  const queryWords = query.split(" ").filter(Boolean);
-  let exact = 0;
-  let fuzzy = 0;
-  for (const word of queryWords) {
-    if (valueWords.includes(word)) exact += 1;
-    else if (valueWords.some((candidate) => isCloseWord(word, candidate)))
-      fuzzy += 1;
-  }
-  if (exact + fuzzy !== queryWords.length) return exact * 7;
-  return 48 + exact * 12 + fuzzy * 7;
-}
-
 function staticResults(query: string) {
   const results: SearchResult[] = [];
+  const match = prepareSearch(query);
 
   for (const alias of intentAliases) {
     const exactAlias = alias.terms.some(
@@ -621,7 +569,7 @@ function staticResults(query: string) {
       alias.terms.some((term) => {
         const normalizedTerm = normalizeSearchText(term);
         return (
-          query.includes(normalizedTerm) || rank(normalizedTerm, query) >= 55
+          query.includes(normalizedTerm) || match(normalizedTerm) >= 55
         );
       });
     if (matchesAlias)
@@ -632,7 +580,7 @@ function staticResults(query: string) {
   }
 
   for (const [title, description, href] of features) {
-    const score = rank(`${title} ${description}`, query);
+    const score = match(`${title} ${description}`);
     if (score)
       results.push({
         id: `feature-${href}`,
@@ -645,7 +593,7 @@ function staticResults(query: string) {
   }
 
   for (const [title, description, href] of detailedGuides) {
-    const score = rank(`${title} ${description}`, query);
+    const score = match(`${title} ${description}`);
     if (score)
       results.push({
         id: `guide-${href}`,
@@ -657,10 +605,21 @@ function staticResults(query: string) {
       });
   }
 
+  for (const surah of SURAH_DIRECTORY) {
+    const score = match(`Surah ${surah.number} ${surah.englishName} ${surah.name} ${surah.englishNameTranslation}`);
+    if (score) results.push({ id: `surah-${surah.number}`, type: "Quran", title: `Surah ${surah.englishName}`, description: `${surah.englishNameTranslation} · ${surah.numberOfAyahs} Ayahs`, href: `/quran?surah=${surah.number}`, arabic: surah.name, score: score + 25 });
+  }
+  for (const dua of DUAS) {
+    const score = match(`Dua supplication ${dua.title} ${dua.category} ${dua.roman} ${dua.arabic} ${dua.meaning} ${dua.source}`);
+    if (score) results.push({ id: `dua-${dua.id}`, type: "Guide", title: dua.title, description: `${dua.category} dua · ${dua.meaning}`, href: `/duas?dua=${dua.id}`, score: score + 18 });
+  }
+  for (const darood of daroodEntries) {
+    const score = match(`${darood.title} ${darood.alternate} ${darood.roman} ${darood.arabic} ${darood.meaning}`);
+    if (score) results.push({ id: `darood-${darood.id}`, type: "Guide", title: darood.title, description: `${darood.category} · ${darood.source}`, href: `/darood#${darood.id}`, score: score + 12 });
+  }
   for (const topic of topics) {
-    const topicScore = rank(
+    const topicScore = match(
       `${topic.title} ${topic.summary} ${topic.kicker}`,
-      query,
     );
     if (topicScore)
       results.push({
@@ -672,7 +631,7 @@ function staticResults(query: string) {
         score: topicScore + 5,
       });
     for (const chapter of topic.chapters) {
-      const chapterScore = rank(`${chapter.title} ${chapter.intro}`, query);
+      const chapterScore = match(`${chapter.title} ${chapter.intro}`);
       if (chapterScore)
         results.push({
           id: `chapter-${topic.slug}-${chapter.id}`,
@@ -683,7 +642,7 @@ function staticResults(query: string) {
           score: chapterScore,
         });
       for (const item of chapter.items) {
-        const itemScore = rank(`${item.title} ${item.body}`, query);
+        const itemScore = match(`${item.title} ${item.body}`);
         if (itemScore >= 8)
           results.push({
             id: `item-${topic.slug}-${chapter.id}-${item.title}`,
@@ -696,7 +655,7 @@ function staticResults(query: string) {
       }
     }
     for (const faq of topic.faqs) {
-      const faqScore = rank(`${faq.q} ${faq.a}`, query);
+      const faqScore = match(`${faq.q} ${faq.a}`);
       if (faqScore >= 8)
         results.push({
           id: `faq-${topic.slug}-${faq.q}`,
@@ -710,9 +669,8 @@ function staticResults(query: string) {
   }
 
   for (const entry of naatEntries) {
-    const score = rank(
+    const score = match(
       `${entry.title} ${entry.writer} ${entry.reciter} ${entry.genre} ${entry.summary}`,
-      query,
     );
     if (score)
       results.push({
@@ -726,9 +684,8 @@ function staticResults(query: string) {
   }
 
   for (const entry of lughatEntries) {
-    const score = rank(
+    const score = match(
       `${entry.term} ${entry.urdu} ${entry.roman} ${entry.meaning} ${entry.use} ${entry.category}`,
-      query,
     );
     if (score)
       results.push({
@@ -742,9 +699,8 @@ function staticResults(query: string) {
   }
 
   for (const place of destinations) {
-    const score = rank(
+    const score = match(
       `${place.name} ${place.country} ${place.region} ${place.category} ${place.summary} ${place.significance} ${place.places.join(" ")}`,
-      query,
     );
     if (score)
       results.push({
@@ -759,9 +715,8 @@ function staticResults(query: string) {
   }
 
   for (const item of shopItems) {
-    const score = rank(
+    const score = match(
       `${item.name} ${item.category} ${item.description} ${item.options}`,
-      query,
     );
     if (score)
       results.push({
@@ -810,12 +765,12 @@ async function quranResults(
   if (alias) return [alias.result];
   if (!allowTextSearch || query.length < 3) return [];
   try {
-    const editions = ["en.sahih", "en.pickthall"];
+    const editions = /[\u0900-\u097f]/.test(query) ? ["hi.hindi"] : /[\u0600-\u06ff]/.test(query) ? ["quran-simple", "ur.jalandhry"] : ["en.sahih", "en.pickthall"];
     const responses = await Promise.all(
       editions.map((edition) =>
         fetch(
           `https://api.alquran.cloud/v1/search/${encodeURIComponent(query)}/all/${edition}`,
-          { headers: { Accept: "application/json" } },
+          { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(2500) },
         ).catch(() => null),
       ),
     );
@@ -841,6 +796,7 @@ async function quranResults(
     const seen = new Set<string>();
     const matches = payloads
       .flatMap((payload) => payload?.data?.matches ?? [])
+      .filter(match => isValidQuranReference(Number(match.surah?.number), Number(match.numberInSurah)))
       .filter((match) => {
         const key = `${match.surah?.number}:${match.numberInSurah}`;
         if (seen.has(key)) return false;
@@ -866,9 +822,9 @@ async function quranResults(
 }
 
 export async function GET(request: Request) {
-  const query = normalizeSearchText(
-    new URL(request.url).searchParams.get("q")?.slice(0, 100) ?? "",
-  );
+  const rawQuery = (new URL(request.url).searchParams.get("q") ?? "").slice(0, 100).trim();
+  const query = normalizeSearchText(rawQuery);
+  const referenceQuery = searchWords(rawQuery).join(" ");
   if (!query) {
     return Response.json({
       results: features
@@ -883,8 +839,8 @@ export async function GET(request: Request) {
     });
   }
 
-  if (/^(?:quran\s*)?\d{1,3}(?:\s*[:.]\s*|\s+)\d{1,3}$/i.test(query)) {
-    const exact = await quranResults(query, false);
+  if (/^(?:quran\s*)?\d{1,3}(?:\s*[:.]\s*|\s+)\d{1,3}$/i.test(referenceQuery)) {
+    const exact = await quranResults(referenceQuery, false);
     if (!exact.length) return Response.json({ results: [], error: "This Surah does not contain that Ayah." }, { status: 400 });
     return Response.json(
       {

@@ -6,6 +6,7 @@ import { Cormorant_Garamond, Geist, Noto_Naskh_Arabic } from "next/font/google";
 import { isClerkConfigured } from "@/lib/auth-config";
 import MediaProvider from "./media/MediaProvider";
 import SiteUtilitiesProvider from "./site/SiteUtilities";
+import PersonalStorageProvider from "./site/PersonalStorageProvider";
 import PwaRegister from "./site/PwaRegister";
 import "./globals.css";
 import "./home/noor-redesign.css";
@@ -92,7 +93,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const application = (
     <SiteUtilitiesProvider>
-      <MediaProvider>{children}</MediaProvider>
+      <PersonalStorageProvider configured={isClerkConfigured()}><MediaProvider>{children}</MediaProvider></PersonalStorageProvider>
     </SiteUtilitiesProvider>
   );
   const content = isClerkConfigured() ? (

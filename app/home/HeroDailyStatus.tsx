@@ -1,4 +1,6 @@
 "use client";
+import { personalStorage } from "@/lib/personal-storage";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePrayerSchedule } from "../prayer-times/usePrayerSchedule";
@@ -63,7 +65,7 @@ export default function HeroDailyStatus({
     const sync = () => {
       try {
         const value = JSON.parse(
-          localStorage.getItem("noor-quran-progress-v1") ?? "null",
+          personalStorage.getItem("noor-quran-progress-v1") ?? "null",
         );
         if (
           value &&

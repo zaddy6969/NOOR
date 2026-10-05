@@ -17,12 +17,13 @@ export const PERSONAL_KEYS = [
   "noor-read-ayahs-v1",
   "noor-quran-plan-v1",
   "noor-prayer-reminders-v1",
+  "noor-saved-changes-v1",
 ];
 const object = (value: unknown): value is Record<string, unknown> =>
   Boolean(value && typeof value === "object" && !Array.isArray(value));
 const list = (value: unknown) =>
   Array.isArray(value) &&
-  value.length <= 1000 &&
+  value.length <= 6236 &&
   value.every((item) => typeof item === "string" && item.length <= 120);
 export function backupEntries(input: unknown): Array<[string, string]> {
   if (!object(input) || input.version !== 1 || !object(input.entries))
@@ -30,11 +31,12 @@ export function backupEntries(input: unknown): Array<[string, string]> {
   const entries: Array<[string, string]> = [];
   for (const [key, raw] of Object.entries(input.entries)) {
     if (!PERSONAL_KEYS.includes(key)) continue;
-    if (typeof raw !== "string" || raw.length > 150000)
+    if (typeof raw !== "string" || raw.length > 1000000)
       throw new Error("Invalid backup entry.");
     const value: unknown = JSON.parse(raw);
     let valid = false;
-    if (key === "noor-quran-plan-v1") valid = validPlan(value);
+    if (key === "noor-saved-changes-v1") valid = object(value) && Object.entries(value).every(([field, changes]) => ["duas", "quranVerses", "quranSurahs", "darood", "lughat"].includes(field) && object(changes) && Object.entries(changes).length <= 7000 && Object.entries(changes).every(([id, change]) => id.length <= 120 && object(change) && typeof change.saved === "boolean" && typeof change.at === "string" && Number.isFinite(Date.parse(change.at))));
+    else if (key === "noor-quran-plan-v1") valid = validPlan(value);
     else if (key === "noor-prayer-reminders-v1") valid = validReminders(value);
     else if (key === "noor-reading-goal-v1")
       valid = [0, 3, 5, 10, 20].includes(value as number);
