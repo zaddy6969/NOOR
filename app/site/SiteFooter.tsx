@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useNoorCopy } from "./SiteUtilities";
 
 type Locale = "en" | "hi" | "ur";
 
@@ -137,7 +140,9 @@ const GROUPS = [
   ],
 ] as const;
 
-export default function SiteFooter({ locale = "en" }: { locale?: Locale }) {
+export default function SiteFooter({ locale: providedLocale }: { locale?: Locale }) {
+  const { locale: sharedLocale } = useNoorCopy();
+  const locale = providedLocale ?? sharedLocale;
   const text = (value: string) => COPY[locale][value] ?? value;
   const tagline =
     locale === "en"
