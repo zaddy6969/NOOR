@@ -75,7 +75,7 @@ export function prepareSearch(query: string) {
     for (const word of words) {
       if (candidates.includes(word)) exact++;
       else if (word.length >= 3 && candidates.some(candidate => candidate.startsWith(word))) prefix++;
-      else if (candidates.some(candidate => closeWord(word, candidate))) fuzzy++;
+      else if (!synonyms.has(word) && candidates.some(candidate => closeWord(word, candidate))) fuzzy++;
     }
     const matched = exact + prefix + fuzzy;
     if (matched === words.length) return 48 + exact * 12 + prefix * 9 + fuzzy * 7;

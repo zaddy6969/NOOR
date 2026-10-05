@@ -22,6 +22,7 @@ test("natural language, transliteration and multilingual requests find relevant 
   ]) assert.ok(prepareSearch(query)(text) > 0, query);
   assert.equal(prepareSearch("how do I")("How do I perform prayer?"), 0);
   assert.equal(prepareSearch("zzxxyy unknown")("Quran reader"), 0);
+  assert.equal(prepareSearch("सोने की दुआ")("Dua Seeking forgiveness"), 0);
   assert.ok(prepareSearch("prayer times")("Prayer times") > prepareSearch("prayer times")("Prayer practice"));
 });
 test("every Surah is searchable by name without an external service", () => {

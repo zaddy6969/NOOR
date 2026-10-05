@@ -39,7 +39,12 @@ export const personalStorage = {
 // Validate first, then restore all previous values if any local write fails.
 export function writePersonalBatch(entries: Array<[string, string]>, expectedOwner = personalOwner()) {
   if (expectedOwner !== personalOwner() || expectedOwner === null) throw new Error("Your account changed. Please try again.");
-  const previous = entries.map(([key]) => [storageKey(key), window.localStorage.getItem(storageKey(key))] as const);
+  let previous: Array<readonly [string, string | null]>;
+  try { previous = entries.map(([key]) => [storageKey(key), window.localStorage.getItem(storageKey(key))] as const); }
+  catch {
+    window.dispatchEvent(new Event(STORAGE_ERROR_EVENT));
+    throw new Error("Your browser could not save this change. Free some storage or allow site storage, then try again.");
+  }
   try { for (const [key, value] of entries) personalStorage.setItem(key, value); }
   catch (error) {
     for (const [key, value] of previous) {
