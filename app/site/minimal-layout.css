@@ -1,4 +1,7 @@
 /* Compact shared layouts; secondary controls stay available on demand. */
+.compact-tool-topbar { grid-template-columns: auto auto minmax(0, 1fr) auto; column-gap: 24px; min-height: 72px; padding-block: 12px; }
+.compact-tool-topbar .daily-primary-nav { justify-content: center; }
+.compact-tool-topbar .header-utility-cluster { margin-inline-start: 0; justify-self: end; }
 .compact-tool-topbar > div > .sr-only { position: absolute; }
 .noor-select > button { min-height: 44px; padding: 8px 11px; border-radius: 8px; background: var(--surface); color: var(--ink); border-color: var(--line); }
 
@@ -97,6 +100,12 @@
 .minimal-footer .professional-footer-bottom { padding: 12px 0; display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
 .compact-footer { margin-top: 0; }
 
+@media (max-width: 1000px) {
+  .compact-tool-topbar { grid-template-columns: auto minmax(0, 1fr) auto; padding: 10px 16px; }
+  .compact-tool-topbar .daily-primary-nav { grid-column: 1 / -1; grid-row: 2; width: 100%; min-height: 36px; }
+  .compact-tool-topbar .header-utility-cluster { grid-column: 3; grid-row: 1; }
+}
+
 @media (max-width: 700px) {
   .quran-reader-toolbar { gap: 8px; }
   .quran-reader-toolbar .quran-mode-switch button { padding-inline: 11px; font-size: 12px; }
@@ -126,6 +135,8 @@
 }
 
 @media (max-width: 360px) {
+  .compact-tool-topbar { padding-inline: 12px; }
+  .compact-tool-topbar .brand-mark, .compact-tool-topbar .brand small { display: none; }
   .quran-reader-toolbar .quran-mode-switch button { padding-inline: 8px; }
   .quran-settings-toggle { padding-inline: 8px; }
   .quran-settings-toggle svg { display: none; }
