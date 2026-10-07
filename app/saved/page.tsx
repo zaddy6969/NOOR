@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SavedLibrary from "./SavedLibrary";
 import SiteFooter from "../site/SiteFooter";
 import ToolHeader from "../site/ToolHeader";
-import { accountSyncSetupStatus, isAccountSyncConfigured } from "@/lib/auth-config";
+import { isAccountSyncConfigured } from "@/lib/auth-config";
 
 export const metadata: Metadata = {
   title: "Saved Items",
@@ -15,8 +15,8 @@ export default function SavedPage() {
   return (
     <main className="saved-page">
       <ToolHeader title="SAVED" subtitle="Your private NOOR collection" />
-      <SavedLibrary syncConfigured={isAccountSyncConfigured()} setupStatus={accountSyncSetupStatus()} />
-      <SiteFooter />
+      <SavedLibrary syncConfigured={isAccountSyncConfigured()} />
+      <SiteFooter compact />
     </main>
   );
 }

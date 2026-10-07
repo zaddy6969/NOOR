@@ -175,7 +175,7 @@ export default function NamazPage() {
         <div className="namaz-hero-copy">
           <p className="eyebrow"><span/> COMPLETE WORSHIP GUIDE · HANAFI</p>
           <h1>Wudu & <em>Namaz</em></h1>
-          <p>A complete, calm learning path—from purification to Salam—with the five daily prayers, Arabic recitations, common mistakes and visible sources.</p>
+          <p>Learn purification and Salah step by step. Hanafi guidance with sources.</p>
           <div className="namaz-hero-actions"><Link href="/namaz/wudu">Start with Wudu</Link><Link href="/namaz/salah">Open prayer steps</Link></div>
           <div className="guide-status"><i>✓</i><span><strong>Reference-led guide</strong>Qur’an, hadith and recognized Sunni Hanafi material</span><Link href="/editorial-policy#corrections">Report a correction</Link></div>
         </div>

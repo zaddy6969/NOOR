@@ -18,6 +18,7 @@ import "./quran/reader-controls.css";
 import "./home/feature-launcher.css";
 import "./site/noor-features.css";
 import "./site/search-dialog.css";
+import "./site/minimal-layout.css";
 
 const geist = Geist({
   variable: "--font-geist",

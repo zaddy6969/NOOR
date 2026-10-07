@@ -17,8 +17,8 @@ export default function ZakatCalculatorPage() {
     <main className="calculator-page">
       <ToolHeader title="ZAKAT CALCULATOR" subtitle="Assets · Nisab · 2.5% estimate" />
       <section className="tool-page-intro">
-        <div><p>ZAKAT PLANNING</p><h1>Calculate carefully,<br/>{" "}<em>without confusion.</em></h1></div>
-        <p>Add only wealth that is actually Zakatable, choose a Nisab method, and review the estimate before paying. Your amounts remain in this browser and are not saved.</p>
+        <div><h1>Zakat Calculator</h1></div>
+        <p>Enter Zakatable assets and choose a Nisab method. Review the estimate before paying.</p>
       </section>
       <ZakatCalculator />
       <section className="tool-reference-strip">

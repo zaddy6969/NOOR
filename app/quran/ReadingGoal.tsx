@@ -81,11 +81,11 @@ export default function ReadingGoal() {
   return (
     <details className="reading-goal">
       <summary>
-        {t("Optional daily reading goal")}
+        {t("Daily reading goal")}
         {goal ? " · " + todayCount + "/" + goal + " ayahs" : ""}
       </summary>
       <p>
-        {t("Choose a gentle personal goal. Visible ayahs are counted on this device; this measures reading activity, not recitation quality.")}
+        {t("Track the Ayahs viewed on this device.")}
       </p>
       <label>
         Daily goal

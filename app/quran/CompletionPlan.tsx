@@ -37,8 +37,8 @@ export default function CompletionPlan() {
   const nextDay = plan ? Array.from({ length: plan.days }, (_, index) => index + 1).find((day) => !plan.completed.includes(day)) : undefined;
   const overdue = plan ? Math.max(0, scheduled - 1 - plan.completed.filter((day) => day < scheduled).length) : 0;
   return <details className="noor-feature-card completion-plan">
-    <summary>{t("Quran completion plan")}{plan ? ` · ${new Set(plan.completed).size}/${plan.days}` : " · 30 / 60 / 90"}</summary>
-    <p>{t("Choose your pace")}. {t("Assignments cover all 6,236 Ayahs in order. Mark a day complete after reading; progress stays private on this device.")}</p>
+    <summary>{t("Quran completion plan")}{plan ? ` · ${new Set(plan.completed).size}/${plan.days}` : ""}</summary>
+    <p>{t("Read the whole Quran in 30, 60 or 90 days. Mark each day complete after reading.")}</p>
     {!plan || restart ? <form className="noor-feature-controls" onSubmit={(event) => { event.preventDefault(); save({ days, startDate, completed: [], updatedAt: new Date().toISOString() }); }}>
       <label>{t("Choose your pace")}<NoorSelect aria-label={t("Choose your pace")} value={days} onChange={(event) => setDays(Number(event.target.value) as 30 | 60 | 90)}>{[30, 60, 90].map((count) => <option key={count} value={count}>{count} {t("days")}</option>)}</NoorSelect></label>
       <label>{t("Start date")}<input type="date" required value={startDate} onChange={(event) => setStartDate(event.target.value)} /></label>

@@ -23,7 +23,7 @@ export default function ToolHeader({
       </Link>
       <div>
         <strong>{t(title)}</strong>
-        <span>{t(subtitle)}</span>
+        <span className="sr-only">{t(subtitle)}</span>
       </div>
       <nav className="daily-primary-nav" aria-label={t("Primary navigation")}>
         <Link href="/">{t("Today")}</Link>
@@ -35,9 +35,6 @@ export default function ToolHeader({
       <aside className="header-utility-cluster">
         <HeaderUtilities compact />
         <LanguageControl />
-        <Link className="topic-home-link" href="/">
-          ← {t("Home")}
-        </Link>
       </aside>
     </header>
   );

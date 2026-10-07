@@ -14,8 +14,8 @@ export default function MosqueFinderPage() {
     <main className="directory-tool-page mosque-finder-page">
       <ToolHeader title="MOSQUE FINDER" subtitle="Live nearby masjids" />
       <section className="compact-directory-intro mosque-intro">
-        <div><p>NEARBY PRAYER</p><h1>Find a masjid<br/>{" "}<em>close to you.</em></h1></div>
-        <p>Choose a city or allow location after tapping the button. View nearby mosques on the embedded map, with dargahs clearly separated by filter.</p>
+        <div><h1>Mosque Finder</h1></div>
+        <p>Choose a city to find nearby mosques.</p>
       </section>
       <MosqueFinder />
       <section className="internal-source-note"><strong>Live community map</strong><p>Place data comes from OpenStreetMap through its read-only Overpass API and may be incomplete. Confirm prayer and Jumu‘ah times directly with the mosque.</p></section>

@@ -43,10 +43,8 @@ function BookmarkMark() {
 
 export default function SavedLibrary({
   syncConfigured,
-  setupStatus,
 }: {
   syncConfigured: boolean;
-  setupStatus: string;
 }) {
   const { t } = useNoorCopy();
   const [collections, setCollections] =
@@ -101,21 +99,15 @@ export default function SavedLibrary({
     <section className="saved-library">
       <header className="saved-summary">
         <div>
-          <span>{t("PRIVATE ON THIS DEVICE")}</span>
-          <h1>{t("Your saved collection")}</h1>
-          <p>
-            {t("Keep verses, Surahs, duas, Darood and glossary words together. They remain available after refresh on this browser.")}
-          </p>
+          <h1>{t("Saved")}</h1>
+          <p>{t("Saved on this device")}</p>
         </div>
         <strong>
-          <BookmarkMark />
           <b>{total}</b>
-          <small>{t("saved")} {t(total === 1 ? "item" : "items")}</small>
+          <small>{t(total === 1 ? "item" : "items")}</small>
         </strong>
       </header>
-      <SavedSync configured={syncConfigured} setupStatus={setupStatus} />
-      <PersonalDataControls />
-
+      {total > 0 ? (
       <nav className="saved-filters" aria-label={t("Filter saved items")}>
         {(
           [
@@ -138,16 +130,16 @@ export default function SavedLibrary({
           </button>
         ))}
       </nav>
+      ) : null}
 
       {total === 0 ? (
         <div className="saved-empty">
           <BookmarkMark />
           <h2>{t("Nothing saved yet")}</h2>
-          <p>{t("Tap Save or Bookmark anywhere in NOOR and it will appear here.")}</p>
+          <p>{t("Save an Ayah or dua to find it here.")}</p>
           <div>
             <Link href="/quran">{t("Read Quran")}</Link>
-            <Link href="/darood">{t("Browse Darood")}</Link>
-            <Link href="/glossary">{t("Open Glossary")}</Link>
+            <Link href="/duas">{t("Duas")}</Link>
           </div>
         </div>
       ) : (
@@ -176,7 +168,7 @@ export default function SavedLibrary({
                       </h3>
                       <p>
                         {surah?.englishNameTranslation ??
-                          t("Continue reading from the full Quran reader.")}
+                          ""}
                       </p>
                       <footer>
                         <Link href={`/quran?surah=${id}`}>
@@ -207,7 +199,7 @@ export default function SavedLibrary({
                       <p>
                         {surah
                           ? `${surah.englishName} · ${surah.englishNameTranslation}`
-                          : t("Open the exact saved verse in the reader.")}
+                          : ""}
                       </p>
                       <footer>
                         <Link
@@ -354,9 +346,12 @@ export default function SavedLibrary({
           ) : null}
         </div>
       )}
-      <p className="saved-device-note">
-        {t("Saved items stay in this browser by default. Account sync happens only when you choose it.")}
-      </p>
+      {total > 0 && filter !== "all" && !({ quran: quranCount, duas: collections.duas.length, darood: collections.darood.length, lughat: collections.lughat.length }[filter]) ? <p className="saved-filter-empty" role="status">{t("No saved items in this category.")}</p> : null}
+      <details className="saved-management">
+        <summary>{t("Collection settings")}</summary>
+        {syncConfigured ? <SavedSync configured={syncConfigured} setupStatus="" /> : <p>{t("Cross-device sync is currently unavailable.")}</p>}
+        <PersonalDataControls />
+      </details>
       {notice ? (
         <div className="quran-notice" role="status">
           {notice}

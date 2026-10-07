@@ -3,7 +3,7 @@ import { personalStorage } from "@/lib/personal-storage";
 
 import NoorSelect from "../site/NoorSelect";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import CompletionPlan from "./CompletionPlan";
@@ -194,6 +194,8 @@ export default function QuranReader({
   const [error, setError] = useState("");
   const [showMeaning, setShowMeaning] = useState(true);
   const [readerMode, setReaderMode] = useState<"Reading" | "Listening" | "Study">("Reading");
+  const settingsId = useId();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [arabicSize, setArabicSize] = useState(36);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [notice, setNotice] = useState("");
@@ -773,46 +775,32 @@ export default function QuranReader({
       </aside>
 
       <section className="quran-reading-panel">
-        <div className="quran-mode-switch" role="group" aria-label="Reader mode">
-          {(["Reading", "Listening", "Study"] as const).map((mode) => <button type="button" key={mode} aria-pressed={readerMode === mode} onClick={() => setReaderMode(mode)}>{t(mode)}</button>)}
+        <div className="quran-reader-toolbar">
+          <div className="quran-mode-switch" role="group" aria-label={t("Reader mode")}>
+            {(["Reading", "Listening", "Study"] as const).map((mode) => <button type="button" key={mode} aria-pressed={readerMode === mode} onClick={() => setReaderMode(mode)}>{t(mode)}</button>)}
+          </div>
+          <button className="quran-settings-toggle" type="button" aria-expanded={settingsOpen} aria-controls={settingsId} onClick={() => setSettingsOpen(value => !value)}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg>
+            {t("Settings")}
+          </button>
         </div>
-        <p className="quran-mode-hint">{t(readerMode === "Reading" ? "Read Arabic with optional translation. Choose Study for word meanings, Tafsir and private notes." : readerMode === "Listening" ? "Listen to a full Surah or practise a timed selection. The player stays open as you browse." : "Explore word meanings and Tafsir, or keep private notes beside each Ayah.")}</p>
-        <ReadingGoal />
-        <CompletionPlan />
-        <div className="quran-reader-tools">
-          <label><span>{t("Jump to Juz")}</span><NoorSelect aria-label="Jump to Juz" value="" onChange={(event) => {
+        <div className="quran-quick-controls">
+          <label><span>{t("Juz")}</span><NoorSelect aria-label="Jump to Juz" value="" onChange={(event) => {
             const start = JUZ_STARTS[Number(event.target.value) - 1];
             if (start) chooseVerseResult({ surah: start.surah, ayah: start.ayah, title: `Juz ${start.juz}`, excerpt: "" });
           }}><option value="" disabled>{t("Choose Juz")}</option>{JUZ_STARTS.map((start) => <option key={start.juz} value={start.juz}>Juz {start.juz} · {start.surah}:{start.ayah}</option>)}</NoorSelect></label>
           <label>
-            <span>{t("Jump to Ayah")}</span>
+            <span>{t("Ayah")}</span>
             <NoorSelect aria-label={t("Jump to Ayah")}
               onChange={(event) => jumpToAyah(event.target.value)}
               defaultValue=""
             >
               <option value="" disabled>
-                Choose
+                {t("Choose Ayah")}
               </option>
               {detail?.ayahs.map((ayah) => (
                 <option value={ayah.number} key={ayah.number}>
                   {detail.number}:{ayah.number}
-                </option>
-              ))}
-            </NoorSelect>
-          </label>
-          <label>
-            <span>{t("Translation")}</span>
-            <NoorSelect aria-label={t("Translation")}
-              value={translation}
-              onChange={(event) => {
-                setLoading(true);
-                setError("");
-                setTranslation(event.target.value);
-              }}
-            >
-              {TRANSLATIONS.map((item) => (
-                <option value={item.id} key={item.id}>
-                  {item.label}
                 </option>
               ))}
             </NoorSelect>
@@ -836,6 +824,26 @@ export default function QuranReader({
               }}
             >
               {RECITERS.map((item) => (
+                <option value={item.id} key={item.id}>
+                  {item.label}
+                </option>
+              ))}
+            </NoorSelect>
+          </label>
+        </div>
+        <section id={settingsId} className="quran-settings-panel" aria-label={t("Reader settings")} hidden={!settingsOpen}>
+          <div className="quran-reader-tools">
+          <label>
+            <span>{t("Translation")}</span>
+            <NoorSelect aria-label={t("Translation")}
+              value={translation}
+              onChange={(event) => {
+                setLoading(true);
+                setError("");
+                setTranslation(event.target.value);
+              }}
+            >
+              {TRANSLATIONS.map((item) => (
                 <option value={item.id} key={item.id}>
                   {item.label}
                 </option>
@@ -875,7 +883,10 @@ export default function QuranReader({
               {showMeaning ? "Translation on" : "Translation off"}
             </button>
           </div>
-        </div>
+          </div>
+          <div className="quran-reading-plans"><ReadingGoal /><CompletionPlan /></div>
+          {!loading && !error && detail ? <DownloadButton surah={detail.number} translation={translation} reciter={reciter} /> : null}
+        </section>
 
         {loading && (
           <div className="quran-loading">
@@ -897,11 +908,11 @@ export default function QuranReader({
           <>
             <header className="quran-surah-hero">
               <p>
-                SURAH {detail.number} · {detail.revelationType.toUpperCase()}
+                {t("Surah")} {detail.number} · {detail.ayahs.length} {t("Ayahs")}
               </p>
               <h1>{detail.englishName}</h1>
               <span>
-                {detail.meaning} · {detail.ayahs.length} Ayahs
+                {detail.meaning}
               </span>
               <b lang="ar" dir="rtl">
                 {detail.name}
@@ -912,15 +923,10 @@ export default function QuranReader({
               aria-label={`Full recitation of Surah ${detail.englishName}`}
             >
               <div>
-                <span>FULL SURAH RECITATION</span>
-                <strong>Play {detail.englishName} from beginning to end</strong>
+                <strong>{t("Recitation")}</strong>
                 <small>
                   {detail.audio.reciterName ??
-                    RECITERS.find((item) => item.id === reciter)?.label}{" "}
-                  · continuous recording
-                  {detail.audio.verseTimings.length
-                    ? " · timed Ayah follow"
-                    : ""}
+                    RECITERS.find((item) => item.id === reciter)?.label}
                 </small>
               </div>
               <button
@@ -932,18 +938,11 @@ export default function QuranReader({
                   ? detail.audio.verseTimings.length
                     ? `${quranPlayback.isPlaying ? "Playing" : "Paused"} · Ayah ${activeAyahNumber ?? 1}`
                     : "Player open"
-                  : detail.audio.verseTimings.length
-                    ? "Play full Surah with auto-follow"
-                    : "Play full Surah"}
+                  : t("Play Surah")}
               </button>
             </section>
             {readerMode === "Listening" ? <PracticeControls key={`${detail.number}-${reciter}`} detail={detail} reciter={reciter} /> : null}
-            <DownloadButton
-              surah={detail.number}
-              translation={translation}
-              reciter={reciter}
-            />
-            <div className="quran-attribution">
+            <details className="quran-source-details"><summary>{t("Sources & details")}</summary><div className="quran-attribution">
               <span>Arabic Uthmani text</span>
               <span>
                 Meaning:{" "}
@@ -954,15 +953,11 @@ export default function QuranReader({
                 {detail.audio.reciterName ??
                   RECITERS.find((item) => item.id === reciter)?.label}
               </span>
-              <span>Reading position is saved privately on this device</span>
+
               <Link href={`/corrections?page=${encodeURIComponent(`/quran?surah=${detail.number}`)}&kind=translation`}>Report a text or translation issue</Link>
               <Link href="/content-review">Sources & review status</Link>
-              <span>
-                {readingStreak
-                  ? `${readingStreak}-day reading streak`
-                  : "Read today to begin a streak"}
-              </span>
-            </div>
+              {readingStreak ? <span>{readingStreak}-day reading streak</span> : null}
+            </div></details>
             <div className="ayah-list">
               {detail.ayahs.map((ayah) => {
                 const key = `${detail.number}:${ayah.number}`;

@@ -156,13 +156,11 @@ export default function SavedSync({ configured, setupStatus }: { configured: boo
       aria-label={t("Account sync")}
     >
       <div>
-        <strong>{t("Optional account sync")}</strong>
+        <strong>{t("Account sync")}</strong>
         <span>{t(message)}</span>
         {!configured ? <small>{t(setupStatus)}</small> : null}
         {lastSync ? <small>{t("Last successful sync")}: {new Date(lastSync).toLocaleString(locale)}</small> : null}
-        <p>{t("Merge saved items, Quran progress, preferences and completion plans. Nothing is uploaded automatically. Downloads and precise location stay on your device.")}</p>
         {configured ? <><label><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /> {t("I agree to sync my saved items and progress to my account.")}</label><label><input type="checkbox" checked={includeNotes} onChange={(event) => setIncludeNotes(event.target.checked)} /> {t("Include my private Quran notes (optional).")}</label></> : <p>{t("Use Export backup below to transfer your private data until account services are connected.")}</p>}
-        <a href="/content-review">{t("Content review and sources")} →</a>
       </div>
       {!configured ? (
         <span className="saved-sync-unavailable" aria-disabled="true">

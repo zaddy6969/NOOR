@@ -16,8 +16,8 @@ export default function PrayerTimesPage() {
     <main className="prayer-center-page">
       <ToolHeader title="PRAYER TIMES" subtitle="Today · Monthly schedule · Calculation settings" />
       <section className="prayer-center-intro">
-        <div><p><LocaleText text="LOCAL PRAYER SCHEDULE" /></p><h1><LocaleText text="Prayer times you can verify." /></h1></div>
-        <p><LocaleText text="One location powers NOOR’s prayer, Qibla and mosque tools. Review the calculation method and always confirm congregation times with your local mosque." /></p>
+        <div><h1><LocaleText text="Prayer Times" /></h1></div>
+        <p><LocaleText text="Choose your city. Confirm congregation times with your mosque." /></p>
       </section>
       <PrayerTimesCenter />
       <ReviewBadge label="Calculation settings" detail="AlAdhan method and Asr settings are visible. Confirm congregation times locally." />

@@ -140,47 +140,46 @@ const GROUPS = [
   ],
 ] as const;
 
-export default function SiteFooter({ locale: providedLocale }: { locale?: Locale }) {
-  const { locale: sharedLocale } = useNoorCopy();
+export default function SiteFooter({ locale: providedLocale, compact = false }: { locale?: Locale; compact?: boolean }) {
+  const { locale: sharedLocale, t } = useNoorCopy();
   const locale = providedLocale ?? sharedLocale;
   const text = (value: string) => COPY[locale][value] ?? value;
-  const tagline =
-    locale === "en"
-      ? "Quran, prayer and trusted Islamic learning—kept simple for daily life."
-      : text("tagline");
   const note =
     locale === "en"
       ? "Educational guidance · Sources are labelled · Personal rulings require a qualified scholar"
       : text("note");
   return (
-    <footer className="professional-footer">
-      <div className="professional-footer-main">
-        <div className="footer-identity">
-          <Link className="brand footer-brand" href="/">
-            <span className="brand-mark">
-              <span className="brand-star">✦</span>
-            </span>
-            <span>
-              <strong>NOOR</strong>
-              <small>DAILY MUSLIM</small>
-            </span>
-          </Link>
-          <p>{tagline}</p>
-        </div>
-        {GROUPS.map(([heading, links]) => (
-          <div key={heading}>
+    <footer className={`professional-footer minimal-footer${compact ? " compact-footer" : ""}`}>
+      {!compact ? <div className="footer-quick-links">
+        <Link className="brand footer-brand" href="/">
+          <span className="brand-mark"><span className="brand-star">✦</span></span>
+          <span><strong>NOOR</strong><small>DAILY MUSLIM</small></span>
+        </Link>
+        <nav aria-label={t("Daily tools")}>
+          <Link href="/quran">{text("Quran")}</Link>
+          <Link href="/prayer-times">{text("Prayer Times")}</Link>
+          <Link href="/duas">{text("Duas")}</Link>
+          <Link href="/saved">{text("Saved")}</Link>
+        </nav>
+      </div> : null}
+      {!compact ? <details className="footer-directory">
+        <summary>{t("Explore NOOR")}</summary>
+        <div className="footer-directory-grid">
+          {GROUPS.map(([heading, links]) => <div key={heading}>
             <strong>{text(heading)}</strong>
-            {links.map(([label, href]) => (
-              <Link href={href} key={href}>
-                {text(label)}
-              </Link>
-            ))}
-          </div>
-        ))}
-      </div>
+            {links.map(([label, href]) => <Link href={href} key={href}>{text(label)}</Link>)}
+          </div>)}
+        </div>
+        <p className="footer-source-note">{note}</p>
+      </details> : null}
       <div className="professional-footer-bottom">
         <span>© 2026 NOOR</span>
-        <span>{note}</span>
+        <nav aria-label={t("About & support")}>
+          <Link href="/about">{text("About NOOR")}</Link>
+          <Link href="/corrections">{t("Report a correction")}</Link>
+          <Link href="/privacy">{text("Privacy")}</Link>
+          <Link href="/terms">{text("Terms")}</Link>
+        </nav>
       </div>
     </footer>
   );

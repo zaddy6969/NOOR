@@ -67,9 +67,9 @@ export default function PersonalDataControls() {
   return (
     <section className="personal-data-controls">
       <div>
-        <strong>{t("Your private data")}</strong>
+        <strong>{t("Backup & restore")}</strong>
         <p>
-          {t("Export or restore bookmarks, notes and reading/Qaza progress. Accounts and location are excluded.")}
+          {t("Back up your bookmarks, notes and progress.")}
         </p>
       </div>
       <div>
@@ -115,7 +115,7 @@ export default function PersonalDataControls() {
           </button>
         </div>
       ) : null}
-      <p role="status">{t(notice)}</p>
+      {notice ? <p role="status">{t(notice)}</p> : null}
     </section>
   );
 }

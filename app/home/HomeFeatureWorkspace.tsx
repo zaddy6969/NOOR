@@ -192,7 +192,6 @@ const DAROOD = {
 function WorkspaceHeader({
   feature,
   title,
-  description,
   href,
 }: {
   feature: FeatureId;
@@ -213,17 +212,9 @@ function WorkspaceHeader({
   return (
     <header className="workspace-heading">
       <div>
-        <span>
-          {locale === "hi"
-            ? "नूर दैनिक सुविधा"
-            : locale === "ur"
-              ? "نور روزانہ سہولت"
-              : "NOOR DAILY TOOL"}
-        </span>
         <h2 id={`workspace-${feature}-heading`} tabIndex={-1}>
           {resolvedTitle}
         </h2>
-        <p>{translated?.description ?? description}</p>
       </div>
       {href ? (
         <Link

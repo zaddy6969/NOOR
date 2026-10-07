@@ -874,7 +874,6 @@ export default function Home() {
         >
           <header>
             <div>
-              <span>{copy.explore}</span>
               <h2 id="more-features-title">{copy.more}</h2>
             </div>
             <button
@@ -916,7 +915,6 @@ export default function Home() {
                       >
                         <span className="noor-more-feature-copy">
                           <strong>{localized?.[0] ?? feature.label}</strong>
-                          <small>{localized?.[1] ?? feature.description}</small>
                           <b aria-hidden="true">→</b>
                         </span>
                         <span
