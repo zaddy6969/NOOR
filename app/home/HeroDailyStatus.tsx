@@ -1,6 +1,7 @@
 "use client";
 import { personalStorage } from "@/lib/personal-storage";
 
+import { useNoorCopy } from "../site/SiteUtilities";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePrayerSchedule } from "../prayer-times/usePrayerSchedule";
@@ -36,9 +37,7 @@ const LABELS = {
 export default function HeroDailyStatus({
   locale,
   onPrayer,
-  onCalendar,
   onQuran,
-  onQibla,
 }: {
   locale: Locale;
   onPrayer: () => void;
@@ -46,6 +45,7 @@ export default function HeroDailyStatus({
   onQuran: (target: { surah: number; ayah: number }) => void;
   onQibla: () => void;
 }) {
+  const { t } = useNoorCopy();
   const {
     location,
     confirmed,
@@ -99,12 +99,12 @@ export default function HeroDailyStatus({
         month: "long",
         year: "numeric",
       }).format(now)
-    : "Loading date…";
+    : t("Loading date…");
   return (
     <>
       <div className="daily-location-line">
         <span>
-          {location.label}
+          {location.label} · {gregorian}
           {!confirmed ? " · default city" : ""}
           {schedule ? " · " + schedule.timezone : ""}
         </span>
@@ -153,7 +153,7 @@ export default function HeroDailyStatus({
           onClick={() => onQuran(progress ?? { surah: 1, ayah: 1 })}
         >
           <span className="daily-card-label">
-            {progress ? copy.resume : "Read Quran"}
+            {progress ? copy.resume : t("Read Quran")}
           </span>
           <strong>
             {progress?.englishName ??
@@ -162,41 +162,10 @@ export default function HeroDailyStatus({
           <p>
             {progress
               ? "Continue at " + progress.surah + ":" + progress.ayah
-              : "Begin with the opening Surah"}
+              : t("Begin with the opening Surah")}
           </p>
-          <span className="daily-card-source">Open the reader →</span>
+          <span className="daily-card-source">{t("Open the reader")} →</span>
         </button>
-        <button
-          type="button"
-          className="daily-status-card date-summary-card"
-          onClick={onCalendar}
-        >
-          <span className="daily-card-label">{copy.calendar}</span>
-          <strong>{schedule?.hijri ?? "Check Hijri date"}</strong>
-          <p>{gregorian}</p>
-          <span className="daily-card-source">
-            Calculated date · local sighting may differ
-          </span>
-        </button>
-        <button
-          type="button"
-          className="daily-status-card qibla-summary-card"
-          onClick={onQibla}
-        >
-          <span className="daily-card-label">Qibla</span>
-          <strong>{copy.qibla}</strong>
-          <p>Find the bearing from your selected location</p>
-          <span className="daily-card-source">Open compass →</span>
-        </button>
-      </div>
-      <div className="daily-ayah-link">
-        <Link href="/quran?surah=11&ayah=88">
-          <span lang="ar" dir="rtl">
-            وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ
-          </span>{" "}
-          My success is only through Allah. · Quran 11:88 →
-        </Link>
-        <Link href="/#daily-duas">{copy.dua} →</Link>
       </div>
     </>
   );

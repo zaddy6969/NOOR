@@ -147,3 +147,5 @@ self.addEventListener("fetch", (event) => {
       })(),
     );
 });
+
+self.addEventListener("push",event=>{let payload;try{payload=event.data.json();}catch{return;}if(!payload||typeof payload.title!=="string")return;event.waitUntil(self.registration.showNotification(payload.title.slice(0,100),{body:String(payload.body??"").slice(0,250),icon:"/favicon.svg",tag:String(payload.tag??"noor-prayer").slice(0,120),data:{url:"/prayer-times"}}));});

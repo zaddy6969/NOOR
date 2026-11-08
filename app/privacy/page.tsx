@@ -16,9 +16,15 @@ export default function PrivacyPage() {
       intro="Most NOOR tools work without an account. Location is requested only after a user action and private preferences stay on the device unless stated otherwise."
       sections={[
         {
+          title: "Correction reports",
+          paragraphs: [
+            "Reports submitted inside NOOR are stored privately for review, with a receipt and a daily hashed network identifier for abuse prevention. Avoid sensitive information. GitHub reports use a separate public service. To request removal, submit a technical report with the original receipt.",
+          ],
+        },
+        {
           title: "Location",
           paragraphs: [
-            "Prayer, Qibla and mosque tools may use coordinates after you tap a location button. Coordinates are sent only to the relevant calculation or map endpoint for that request and are not saved by NOOR as a profile field.",
+            "Prayer, Qibla and mosque tools may use coordinates after you tap a location button. Coordinates are sent to the calculation or map provider. If you enable background reminders, NOOR stores the chosen city coordinates, calculation settings and browser push subscription for delivery. Disable reminders to delete that registration.",
           ],
         },
         {

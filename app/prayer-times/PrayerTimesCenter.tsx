@@ -14,6 +14,7 @@ import {
   scheduleQuery,
   PRAYER_METHODS,
 } from "./usePrayerSchedule";
+import PrayerReminderToggle from "./PrayerReminderToggle";
 import PrayerReminders from "./PrayerReminders";
 import { useNoorCopy } from "../site/SiteUtilities";
 import LocationPicker from "./LocationPicker";
@@ -109,14 +110,20 @@ export default function PrayerTimesCenter() {
     <section className="prayer-center" aria-busy={loading}>
       <div className="prayer-center-status">
         <div>
-          <span>{t("NEXT PRAYER")} · {location.label}</span>
-          <h2>{t(loading ? "Loading…" : (upcoming?.prayer ?? "Unavailable"))}</h2>
+          <span>
+            {t("NEXT PRAYER")} · {location.label}
+          </span>
+          <h2>
+            {t(loading ? "Loading…" : (upcoming?.prayer ?? "Unavailable"))}
+          </h2>
           <strong aria-hidden="true">
             {upcoming && now ? formatCountdown(upcoming.target, now) : "—"}
           </strong>
           <p>
             {upcoming
-              ? upcoming.time + " · " + t(upcoming.tomorrow ? "tomorrow" : "today")
+              ? upcoming.time +
+                " · " +
+                t(upcoming.tomorrow ? "tomorrow" : "today")
               : t("No verified next-prayer time available.")}
           </p>
           <p>
@@ -124,7 +131,8 @@ export default function PrayerTimesCenter() {
               ? schedule.dateISO +
                 " · " +
                 schedule.timezone +
-                (" · " + t(cached ? "saved schedule for today" : "live schedule"))
+                (" · " +
+                  t(cached ? "saved schedule for today" : "live schedule"))
               : t("Select your location below.")}
           </p>
         </div>
@@ -142,6 +150,7 @@ export default function PrayerTimesCenter() {
               <strong>
                 {loading ? "…" : (schedule?.timings[prayer] ?? "—")}
               </strong>
+              <PrayerReminderToggle prayer={prayer} />
             </article>
           ))}
         </div>
@@ -155,60 +164,71 @@ export default function PrayerTimesCenter() {
         </div>
       ) : null}
       <LocationPicker location={location} confirmed={confirmed} />
-      <section
-        className="prayer-center-controls"
-        aria-label={t("Prayer calculation settings")}
-      >
-        <label>
-          <span>{t("Calculation")}</span>
-          <NoorSelect aria-label={t("Calculation")}
-            value={settings.method}
-            onChange={(event) => update("method", Number(event.target.value))}
-          >
-            {PRAYER_METHODS.map((method) => (
-              <option value={method.id} key={method.id}>
-                {method.label}
-              </option>
-            ))}
-          </NoorSelect>
-        </label>
-        <label>
-          <span>{t("Asr method")}</span>
-          <NoorSelect aria-label={t("Asr method")}
-            value={settings.school}
-            onChange={(event) => update("school", Number(event.target.value))}
-          >
-            <option value={1}>{t("Hanafi")}</option>
-            <option value={0}>{t("Standard")}</option>
-          </NoorSelect>
-        </label>
-        <label>
-          <span>{t("Hijri adjustment")}</span>
-          <NoorSelect aria-label={t("Hijri adjustment")}
-            value={settings.adjustment}
-            onChange={(event) =>
-              update("adjustment", Number(event.target.value))
-            }
-          >
-            {[-2, -1, 0, 1, 2].map((value) => (
-              <option key={value} value={value}>
-                {value
-                  ? (value > 0 ? "+" : "") + value + " " + t("days")
-                  : t("No adjustment")}
-              </option>
-            ))}
-          </NoorSelect>
-        </label>
-        <p>
-          {schedule?.method ??
-            PRAYER_METHODS.find((item) => item.id === settings.method)
-              ?.label}{" "}
-          · {t(settings.school === 1 ? "Hanafi" : "Standard")} {t("Asr")} ·{" "}
-          {schedule?.hijri ?? t("Hijri date unavailable")}
-        </p>
-      </section>
-      <PrayerReminders schedule={schedule} location={location.label} confirmed={confirmed} />
-      <section className="prayer-month">
+      <details className="prayer-advanced">
+        <summary>{t("Calculation settings")}</summary>
+        <section
+          className="prayer-center-controls"
+          aria-label={t("Prayer calculation settings")}
+        >
+          <label>
+            <span>{t("Calculation")}</span>
+            <NoorSelect
+              aria-label={t("Calculation")}
+              value={settings.method}
+              onChange={(event) => update("method", Number(event.target.value))}
+            >
+              {PRAYER_METHODS.map((method) => (
+                <option value={method.id} key={method.id}>
+                  {method.label}
+                </option>
+              ))}
+            </NoorSelect>
+          </label>
+          <label>
+            <span>{t("Asr method")}</span>
+            <NoorSelect
+              aria-label={t("Asr method")}
+              value={settings.school}
+              onChange={(event) => update("school", Number(event.target.value))}
+            >
+              <option value={1}>{t("Hanafi")}</option>
+              <option value={0}>{t("Standard")}</option>
+            </NoorSelect>
+          </label>
+          <label>
+            <span>{t("Hijri adjustment")}</span>
+            <NoorSelect
+              aria-label={t("Hijri adjustment")}
+              value={settings.adjustment}
+              onChange={(event) =>
+                update("adjustment", Number(event.target.value))
+              }
+            >
+              {[-2, -1, 0, 1, 2].map((value) => (
+                <option key={value} value={value}>
+                  {value
+                    ? (value > 0 ? "+" : "") + value + " " + t("days")
+                    : t("No adjustment")}
+                </option>
+              ))}
+            </NoorSelect>
+          </label>
+          <p>
+            {schedule?.method ??
+              PRAYER_METHODS.find((item) => item.id === settings.method)
+                ?.label}{" "}
+            · {t(settings.school === 1 ? "Hanafi" : "Standard")} {t("Asr")} ·{" "}
+            {schedule?.hijri ?? t("Hijri date unavailable")}
+          </p>
+        </section>
+      </details>
+      <PrayerReminders
+        schedule={schedule}
+        location={location.label}
+        confirmed={confirmed}
+      />
+      <details className="prayer-month">
+        <summary>{t("MONTHLY SCHEDULE")}</summary>
         <header>
           <div>
             <span>{t("MONTHLY SCHEDULE")}</span>
@@ -274,7 +294,12 @@ export default function PrayerTimesCenter() {
                 >
                   <th scope="row">
                     <strong>
-                      {new Intl.DateTimeFormat(locale, { weekday: "short", day: "numeric" }).format(new Date(view!.year, view!.month - 1, day.gregorianDay))}
+                      {new Intl.DateTimeFormat(locale, {
+                        weekday: "short",
+                        day: "numeric",
+                      }).format(
+                        new Date(view!.year, view!.month - 1, day.gregorianDay),
+                      )}
                     </strong>
                     <span>{day.hijriLabel}</span>
                   </th>
@@ -285,7 +310,9 @@ export default function PrayerTimesCenter() {
               ))}
             </tbody>
           </table>
-          {monthLoading ? <p role="status">{t("Loading monthly schedule…")}</p> : null}
+          {monthLoading ? (
+            <p role="status">{t("Loading monthly schedule…")}</p>
+          ) : null}
           {monthError ? (
             <p role="alert">
               {t(monthError)}{" "}
@@ -298,11 +325,15 @@ export default function PrayerTimesCenter() {
             </p>
           ) : null}
         </div>
-      </section>
+      </details>
       <p className="prayer-center-source">
-        {t("Calculated by AlAdhan / Islamic Network. Times use the selected location’s timezone. Calculated times are not mosque iqamah times; confirm congregation times locally.")}
+        {t(
+          "Calculated by AlAdhan / Islamic Network. Times use the selected location’s timezone. Calculated times are not mosque iqamah times; confirm congregation times locally.",
+        )}
         {schedule
-          ? " " + t("Retrieved") + " " +
+          ? " " +
+            t("Retrieved") +
+            " " +
             new Date(schedule.calculatedAt).toLocaleString(locale, {
               timeZone: schedule.timezone,
             }) +

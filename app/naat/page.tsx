@@ -1,20 +1,22 @@
+import ToolHeader from "../site/ToolHeader";
 import type { Metadata } from "next";
-import Link from "next/link";
-import { HeaderUtilities } from "../site/SiteUtilities";
 import NaatLibrary from "./NaatLibrary";
 import { naatEntries } from "./naat-data";
 
 export const metadata: Metadata = {
   title: "Naat & Salam Library",
-  description: "Browse Naat and Salam by title, writer, reciter and language, with separate audio and video players.",
+  description:
+    "Browse Naat and Salam by title, writer, reciter and language, with separate audio and video players.",
   alternates: { canonical: "/naat" },
 };
 
 export default function NaatLibraryPage() {
   return (
     <main className="naat-library-page">
-      <header className="quran-topbar compact-tool-topbar"><Link className="brand" href="/"><span className="brand-mark"><span className="brand-star">✦</span></span><span><strong>NOOR</strong><small>DAILY MUSLIM</small></span></Link><div><strong>NAAT & SALAM</strong><span>Listen, watch or read</span></div><aside className="header-utility-cluster"><HeaderUtilities compact/><Link className="topic-home-link" href="/">← Home</Link></aside></header>
-      <div className="naat-library-heading"><h1>Naat &amp; Salam</h1></div>
+      <ToolHeader title="Naat & Salam" subtitle="" />
+      <div className="naat-library-heading">
+        <h1>Naat &amp; Salam</h1>
+      </div>
       <NaatLibrary entries={naatEntries} />
     </main>
   );

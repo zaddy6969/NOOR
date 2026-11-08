@@ -1,0 +1,14 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {validateCorrection} from "../lib/corrections.ts";
+import {validPushSubscription} from "../lib/push-validation.ts";
+import {localDateISO,prayerInstant} from "../lib/prayer-schedule.ts";
+import {validatePrayerLocation} from "../lib/prayer-range.ts";
+import {publishedReview} from "../lib/content-review.ts";
+import {duaIntent} from "../lib/dua-intents.ts";
+import {DUAS} from "../app/duas/dua-data.ts";
+test("everyday phrases resolve to specific sourced duas",()=>{for(const [q,id] of [["anxiety","anxiety"],["sone ki dua","sleeping"],["सोने की दुआ","sleeping"],["سونے کی دعا","sleeping"],["qarz ki dua","anxiety"],["maa baap ke liye dua","parents"],["exam dua","knowledge"]]){assert.equal(duaIntent(q),id,q);assert.ok(DUAS.some(d=>d.id===id&&d.href&&d.arabic));}assert.equal(duaIntent("zzxy nonsense"),null);});
+test("corrections require bounded complete content",()=>{assert.ok(validateCorrection({kind:"technical",page:"/quran",statement:"The reader is not scrolling",source:""}));for(const d of [{kind:"unknown"},{kind:"content",page:"/duas",statement:"Incorrect reference",source:""},{kind:"technical",page:"/",statement:"x".repeat(2001),source:""}])assert.equal(validateCorrection(d),null);});
+test("push cannot target internal or arbitrary endpoints",()=>{const keys={p256dh:"A".repeat(87),auth:"B".repeat(22)};assert.equal(validPushSubscription({endpoint:"https://fcm.googleapis.com/fcm/send/example",keys}),true);for(const endpoint of ["http://fcm.googleapis.com/x","https://127.0.0.1/x","https://fcm.googleapis.com.evil.test/x","https://fcm.googleapis.com:444/x","https://user@web.push.apple.com/x"])assert.equal(validPushSubscription({endpoint,keys}),false);});
+test("dates follow the selected city at midnight and through DST",()=>{const now=new Date("2026-11-08T00:10:00Z");assert.equal(localDateISO(now,"America/Los_Angeles"),"2026-11-07");assert.equal(localDateISO(now,"Asia/Kolkata"),"2026-11-08");assert.equal(new Date(prayerInstant("2026-03-08","06:00","America/New_York")).toISOString(),"2026-03-08T10:00:00.000Z");assert.equal(validatePrayerLocation({latitude:12,longitude:77,timezone:"bad/zone",city:"City",method:1,school:1,adjustment:0}),false);});
+test("approval needs qualifications, consent and the exact reviewed version",()=>{const r={status:"reviewed",reviewer:"Reviewer",reviewedAt:"2026-11-08",scope:"Arabic and meanings"};assert.equal(publishedReview(r),false);assert.equal(publishedReview({...r,version:"commit:abcdef",qualifications:"Verified scholarly qualification",publicationConsent:true}),true);});

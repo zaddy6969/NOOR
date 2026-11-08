@@ -44,3 +44,4 @@ next-env.d.ts
 /work/
 /.vinext/
 /generated_images/
+/.swc

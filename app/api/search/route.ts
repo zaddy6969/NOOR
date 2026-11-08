@@ -1,3 +1,5 @@
+import {duaIntent} from "@/lib/dua-intents";
+import {isAccountSyncConfigured} from "@/lib/auth-config";
 import { normalizeSearchText, prepareSearch, searchWords } from "@/lib/search-match";
 import { SURAH_DIRECTORY } from "@/lib/surah-directory";
 import { DUAS } from "../../duas/dua-data";
@@ -610,7 +612,7 @@ function staticResults(query: string) {
     if (score) results.push({ id: `surah-${surah.number}`, type: "Quran", title: `Surah ${surah.englishName}`, description: `${surah.englishNameTranslation} · ${surah.numberOfAyahs} Ayahs`, href: `/quran?surah=${surah.number}`, arabic: surah.name, score: score + 25 });
   }
   for (const dua of DUAS) {
-    const score = match(`Dua supplication ${dua.title} ${dua.category} ${dua.roman} ${dua.arabic} ${dua.meaning} ${dua.source}`);
+    const score = match(`Dua supplication ${dua.title} ${dua.category} ${dua.roman} ${dua.arabic} ${dua.meaning} ${dua.source} ${dua.keywords}`);
     if (score) results.push({ id: `dua-${dua.id}`, type: "Guide", title: dua.title, description: `${dua.category} dua · ${dua.meaning}`, href: `/duas?dua=${dua.id}`, score: score + 18 });
   }
   for (const darood of daroodEntries) {
@@ -774,6 +776,7 @@ async function quranResults(
         ).catch(() => null),
       ),
     );
+    if(responses.every(response=>!response?.ok))throw new Error("Quran search unavailable");
     const payloads = await Promise.all(
       responses.map(async (response) =>
         response?.ok
@@ -817,7 +820,7 @@ async function quranResults(
       };
     });
   } catch {
-    return [];
+    throw new Error("Quran search unavailable");
   }
 }
 
@@ -852,9 +855,12 @@ export async function GET(request: Request) {
       { headers: { "Cache-Control": "no-store" } },
     );
   }
-  const local = staticResults(query);
+  const local=staticResults(query).filter(item=>item.href!=="/sign-in"||isAccountSyncConfigured());
+  const dua=DUAS.find(item=>item.id===duaIntent(rawQuery));
+  if(dua)local.unshift({id:`intent-${dua.id}`,type:"Guide",title:dua.title,description:dua.meaning,href:`/duas?dua=${dua.id}`,score:200});
   const hasStrongLocalIntent = local.some((item) => item.score >= 110);
-  const quran = await quranResults(query, !hasStrongLocalIntent);
+  let warning="";
+  const quran=await quranResults(query,!hasStrongLocalIntent).catch(()=>{warning="Quran text search is temporarily unavailable. Local results are shown.";return [];});
   const merged = [...local, ...quran].sort((a, b) => b.score - a.score);
   const seen = new Set<string>();
   const results = merged
@@ -870,7 +876,7 @@ export async function GET(request: Request) {
     });
 
   return Response.json(
-    { results },
+    { results, warning },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

@@ -1,7 +1,9 @@
+import {REFRESH_UI_COPY} from "./ui-copy-refresh.ts";
 import { DAILY_UI_COPY } from "./ui-copy-daily.ts";
 export type NoorLocale = "en" | "hi" | "ur";
 export const UI_COPY: Record<string, [string, string]> = {
   ...DAILY_UI_COPY,
+  ...REFRESH_UI_COPY,
   "Assignments cover all 6,236 Ayahs in order. Mark a day complete after reading; progress stays private on this device.": ["योजना में सभी 6,236 आयतें क्रम से हैं। पढ़ने के बाद दिन पूरा चिह्नित करें। प्रगति इस डिवाइस पर निजी रहती है।", "منصوبے میں تمام 6,236 آیات ترتیب سے شامل ہیں۔ پڑھنے کے بعد دن کو مکمل نشان لگائیں۔ پیش رفت اس آلے پر نجی رہتی ہے۔"],
   "Choose the prayers you want reminders for. Browser alerts run while this prayer page is open; closed-page push alerts are not enabled. Calendar reminders work through your calendar app.": ["याद दिलाने के लिए नमाज़ें चुनें। ब्राउज़र सूचनाएँ यह पेज खुला रहने पर चलती हैं। पेज बंद होने पर पुश सूचनाएँ चालू नहीं हैं। कैलेंडर की याद दिलाने वाली सूचनाएँ आपके कैलेंडर ऐप से चलती हैं।", "یاد دہانی کے لیے نمازیں منتخب کریں۔ براؤزر کی اطلاعات اس صفحے کے کھلے رہنے پر چلتی ہیں۔ بند صفحے کی پش اطلاعات فعال نہیں ہیں۔ کیلنڈر کی یاد دہانیاں آپ کی کیلنڈر ایپ سے چلتی ہیں۔"],
   "Remind me for": ["इन नमाज़ों की याद दिलाएँ", "ان نمازوں کی یاد دہانی"], "On schedule": ["योजना के अनुसार", "منصوبے کے مطابق"],

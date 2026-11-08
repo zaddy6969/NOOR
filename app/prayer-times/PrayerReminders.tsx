@@ -1,67 +1,378 @@
 "use client";
+import { useEffect, useState } from "react";
 import { personalStorage } from "@/lib/personal-storage";
-
-
-import { useEffect, useRef, useState } from "react";
-import { duePrayer, REMINDER_KEY, validReminders, type ReminderSettings } from "@/lib/prayer-reminders";
+import {
+  REMINDER_KEY,
+  validReminders,
+  type ReminderSettings,
+} from "@/lib/prayer-reminders";
 import { PRAYERS, type PrayerSchedule } from "@/lib/prayer-schedule";
+import { readNoorLocation } from "../site/location-settings";
+import { readPrayerSettings } from "./usePrayerSchedule";
 import { useNoorCopy } from "../site/SiteUtilities";
 import NoorSelect from "../site/NoorSelect";
-
-const DEFAULT_REMINDERS: ReminderSettings = { enabled: false, prayers: [...PRAYERS], minutes: 0 };
-
-export default function PrayerReminders({ schedule, location, confirmed }: { schedule: PrayerSchedule | null; location: string; confirmed: boolean }) {
-  const { t } = useNoorCopy();
-  const copyRef = useRef(t);
-  useEffect(() => { copyRef.current = t; }, [t]);
-  const [settings, setSettings] = useState<ReminderSettings>(DEFAULT_REMINDERS);
-  const [permission, setPermission] = useState<string>("Checking support…");
-  const [message, setMessage] = useState("");
+const DEFAULT: ReminderSettings = {
+  enabled: false,
+  prayers: [...PRAYERS],
+  minutes: 0,
+};
+const DEVICE_KEY = "noor-push-device-v1";
+type Device = { id: string; token: string; expiresAt: string };
+function readDevice(): Device | null {
+  try {
+    const v = JSON.parse(localStorage.getItem(DEVICE_KEY) ?? "null");
+    return v && typeof v.id === "string" && typeof v.token === "string"
+      ? v
+      : null;
+  } catch {
+    return null;
+  }
+}
+export default function PrayerReminders({
+  schedule,
+  location,
+  confirmed,
+}: {
+  schedule: PrayerSchedule | null;
+  location: string;
+  confirmed: boolean;
+}) {
+  const { t, locale } = useNoorCopy();
+  const [settings, setSettings] = useState(DEFAULT),
+    [device, setDevice] = useState<Device | null>(null),
+    [available, setAvailable] = useState(false),
+    [permission, setPermission] = useState("Checking support…"),
+    [status, setStatus] = useState("off"),
+    [message, setMessage] = useState(""),
+    [busy, setBusy] = useState(false),
+    [days, setDays] = useState(7);
   useEffect(() => {
+    let active = true;
     const refresh = () => {
-      setPermission("Notification" in window ? Notification.permission : "unsupported");
-      try { const value = JSON.parse(personalStorage.getItem(REMINDER_KEY) ?? "null"); setSettings(validReminders(value) ? value : DEFAULT_REMINDERS); } catch { setSettings(DEFAULT_REMINDERS); }
-    };
-    refresh(); window.addEventListener("storage", refresh); window.addEventListener("focus", refresh); window.addEventListener("noor:reminders-change", refresh);
-    return () => { window.removeEventListener("storage", refresh); window.removeEventListener("focus", refresh); window.removeEventListener("noor:reminders-change", refresh); };
-  }, []);
-  const save = (next: ReminderSettings) => { try { personalStorage.setItem(REMINDER_KEY, JSON.stringify(next)); setSettings(next); } catch { setMessage("Reminder preferences could not be saved."); } };
-  const notify = async (title: string, body: string, tag: string) => {
-    if (!("serviceWorker" in navigator)) throw new Error("Browser alerts are unavailable. Use calendar reminders.");
-    const registration = await navigator.serviceWorker.getRegistration();
-    if (!registration) throw new Error("Reload NOOR once to prepare notifications, or use calendar reminders.");
-    await registration.showNotification(title, { body, icon: "/favicon.svg", tag, data: { url: "/prayer-times" } });
-  };
-  useEffect(() => {
-    if (!settings.enabled || !schedule || !confirmed || permission !== "granted") return;
-    const check = async () => {
+      setPermission(
+        "Notification" in window ? Notification.permission : "unsupported",
+      );
       try {
-      for (const prayer of duePrayer(schedule, settings, Date.now())) {
-        const tag = `noor-alert-${schedule.dateISO}-${location}-${prayer}-${settings.minutes}`;
-        if (personalStorage.getItem(tag)) continue;
-        personalStorage.setItem(tag, "sent");
-        try { await notify(`${copyRef.current(prayer)} · NOOR`, `${settings.minutes ? copyRef.current("{minutes} minutes before", { minutes: settings.minutes }) : copyRef.current("Prayer time")} · ${location} · ${schedule.timings[prayer]}`, tag); }
-        catch (error) { personalStorage.removeItem(tag); setMessage(error instanceof Error ? error.message : "Alert could not be delivered."); }
+        const v = JSON.parse(personalStorage.getItem(REMINDER_KEY) ?? "null");
+        if (validReminders(v)) setSettings(v);
+      } catch {
+        /* default preferences */
       }
-      } catch { setSettings((current) => ({ ...current, enabled: false })); setMessage("Your browser could not store reminder delivery status. Alerts are paused."); }
     };
-    void check(); const timer = window.setInterval(() => void check(), 15000);
-    return () => clearInterval(timer);
-  }, [settings, schedule, confirmed, permission, location]);
-  const enable = async () => {
-    if (!("Notification" in window)) { setMessage("This browser does not support alerts. Use the calendar option."); return; }
-    try { const result = await Notification.requestPermission(); setPermission(result); save({ ...settings, enabled: result === "granted" }); setMessage(result === "granted" ? "Alerts enabled while this prayer page stays open. Send a test to check delivery." : "Permission was not granted. You can use calendar reminders or change browser permissions."); } catch { setMessage("Permission could not be requested. On iPhone, install NOOR to your Home Screen first."); }
+    refresh();
+    const check = () => {
+      const saved = readDevice();
+      void fetch("/api/reminders" + (saved ? `?id=${saved.id}` : ""), {
+        headers: saved ? { Authorization: `Bearer ${saved.token}` } : {},
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (!active) return;
+          setAvailable(data.available === true);
+          if (data.device && saved) {
+            setDevice({ ...saved, expiresAt: data.device.expires_at });
+            setStatus(data.device.status);
+          } else if (data.available) {
+            setDevice(null);
+            setStatus("off");
+          }
+        })
+        .catch(() => {
+          if (active)
+            setMessage("Could not check reminder status. Please retry.");
+        });
+    };
+    check();
+    window.addEventListener("noor:reminders-change", refresh);
+    window.addEventListener("focus", check);
+    window.addEventListener("noor:push-change", check);
+    return () => {
+      active = false;
+      window.removeEventListener("noor:reminders-change", refresh);
+      window.removeEventListener("focus", check);
+      window.removeEventListener("noor:push-change", check);
+    };
+  }, []);
+  const save = (next: ReminderSettings) => {
+    try {
+      personalStorage.setItem(REMINDER_KEY, JSON.stringify(next));
+      setSettings(next);
+      window.dispatchEvent(new Event("noor:reminders-change"));
+      if (device) setMessage("Apply changes to update background reminders.");
+    } catch {
+      setMessage("Reminder preferences could not be saved.");
+    }
   };
-  const calendarHref = schedule && confirmed && settings.prayers.length ? "/api/prayer-times/calendar?" + new URLSearchParams({ date: schedule.dateISO, timezone: schedule.timezone, city: location, method: schedule.method, minutes: String(settings.minutes), prayers: settings.prayers.join(","), ...schedule.timings }) : null;
-  return <section className="noor-feature-card prayer-reminders" aria-label={t("Prayer reminders")}>
-    <h2>{t("Prayer reminders")}</h2>
-    <p>{t("Choose the prayers you want reminders for. Browser alerts run while this prayer page is open; closed-page push alerts are not enabled. Calendar reminders work through your calendar app.")}</p>
-    <fieldset><legend>{t("Remind me for")}</legend><div className="reminder-prayers">{PRAYERS.map((prayer) => <label key={prayer}><input type="checkbox" checked={settings.prayers.includes(prayer)} onChange={(event) => save({ ...settings, prayers: event.target.checked ? [...settings.prayers, prayer] : settings.prayers.filter((item) => item !== prayer) })} />{t(prayer)}</label>)}</div></fieldset>
-    <div className="noor-feature-controls"><label>{t("Reminder timing")}<NoorSelect aria-label={t("Reminder timing")} value={settings.minutes} onChange={(event) => save({ ...settings, minutes: Number(event.target.value) })}><option value={0}>{t("At prayer time")}</option>{[5, 10, 15].map((minutes) => <option key={minutes} value={minutes}>{t("{minutes} minutes before", { minutes })}</option>)}</NoorSelect></label>
-    <button type="button" disabled={!confirmed || !settings.prayers.length} onClick={() => settings.enabled ? save({ ...settings, enabled: false }) : void enable()}>{t(settings.enabled ? "Disable alerts" : "Enable browser alerts")}</button>
-    <button type="button" disabled={permission !== "granted"} onClick={async () => { try { await notify(t("NOOR test reminder"), t("Your browser can display NOOR prayer reminders."), "noor-test"); setMessage("Test notification sent. Check your device's notification settings if it does not appear."); } catch (error) { setMessage(error instanceof Error ? error.message : "Test failed."); } }}>{t("Send test notification")}</button>
-    {calendarHref ? <a className="calendar-download" href={calendarHref} download onClick={() => setMessage("Calendar export requested. Import the file into your calendar and check its alert settings. These are today's times only; export a new schedule for another day.")}>{t("Add today's prayers to calendar")}</a> : <button type="button" disabled>{t("Add today's prayers to calendar")}</button>}</div>
-    <p className="feature-status">{t("Permission")}: {t(permission)} · {t("Delivery")}: {t(settings.enabled && permission === "granted" ? "open prayer page" : "off")}{schedule ? ` · ${schedule.timezone}` : ""}</p>
-    {!confirmed ? <p>{t("Confirm your city above before enabling prayer reminders.")}</p> : null}<p role="status">{t(message)}</p>
-  </section>;
+  const send = async (body: object, registration = device) => {
+    const r = await fetch("/api/reminders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(registration
+          ? { Authorization: `Bearer ${registration.token}` }
+          : {}),
+      },
+      body: JSON.stringify({
+        ...body,
+        ...(registration ? { id: registration.id } : {}),
+      }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error ?? "Reminders unavailable.");
+    return data;
+  };
+  const enable = async () => {
+    setBusy(true);
+    setMessage("");
+    try {
+      if (!("Notification" in window) || !("PushManager" in window))
+        throw new Error(
+          "Install NOOR to your iPhone Home Screen, or use a browser with push support.",
+        );
+      const support = await fetch("/api/reminders").then((r) => r.json());
+      if (!support.available)
+        throw new Error(
+          "Background delivery is unavailable. Use calendar reminders.",
+        );
+      const result = await Notification.requestPermission();
+      setPermission(result);
+      if (result !== "granted")
+        throw new Error(
+          "Permission was not granted. Use calendar reminders or change browser permissions.",
+        );
+      const worker = await navigator.serviceWorker.getRegistration();
+      if (!worker?.active)
+        throw new Error("Reload NOOR to prepare notifications.");
+      const binary = atob(
+        support.publicKey.replace(/-/g, "+").replace(/_/g, "/"),
+      );
+      const key = Uint8Array.from(binary, (c: string) => c.charCodeAt(0));
+      const subscription =
+        (await worker.pushManager.getSubscription()) ??
+        (await worker.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: key,
+        }));
+      const city = readNoorLocation(),
+        calculation = readPrayerSettings();
+      const data = await send(
+        {
+          subscription: subscription.toJSON(),
+          settings: { ...settings, enabled: true },
+          location: {
+            latitude: city.latitude,
+            longitude: city.longitude,
+            city: city.label,
+            timezone: schedule?.timezone ?? city.timezone,
+            ...calculation,
+          },
+        },
+        device,
+      );
+      const next = {
+        id: data.id,
+        token: data.token,
+        expiresAt: data.expiresAt,
+      };
+      localStorage.setItem(DEVICE_KEY, JSON.stringify(next));
+      setDevice(next);
+      setStatus("queued");
+      save({ ...settings, enabled: true });
+      setMessage(
+        "Registration received. Check delivery status, then send a test.",
+      );
+      window.dispatchEvent(new Event("noor:push-change"));
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Reminders unavailable.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const disable = async () => {
+    setBusy(true);
+    try {
+      const saved = readDevice();
+      if (saved) await send({ action: "disable" }, saved);
+      const worker = await navigator.serviceWorker.getRegistration();
+      await (await worker?.pushManager.getSubscription())?.unsubscribe();
+      localStorage.removeItem(DEVICE_KEY);
+      setDevice(null);
+      setStatus("off");
+      save({ ...settings, enabled: false });
+      setMessage("Background reminders disabled.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "Could not disable reminders. Please retry.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+  const city = typeof window !== "undefined" ? readNoorLocation() : null,
+    calculation = typeof window !== "undefined" ? readPrayerSettings() : null;
+  const href =
+    schedule && confirmed && city && calculation && settings.prayers.length
+      ? "/api/prayer-times/calendar?" +
+        new URLSearchParams({
+          date: schedule.dateISO,
+          timezone: schedule.timezone,
+          city: location,
+          methodId: String(calculation.method),
+          school: String(calculation.school),
+          adjustment: String(calculation.adjustment),
+          latitude: String(city.latitude),
+          longitude: String(city.longitude),
+          minutes: String(settings.minutes),
+          prayers: settings.prayers.join(","),
+          days: String(days),
+        })
+      : null;
+  return (
+    <section className="noor-feature-card prayer-reminders" id="reminders">
+      <h2>{t("Prayer reminders")}</h2>
+      <p className="feature-status">
+        {t("Permission")}: {t(permission)} · {t("Delivery")}:{" "}
+        {t(available ? status : "unavailable")}
+      </p>
+      <div className="noor-feature-controls">
+        <button
+          disabled={
+            busy ||
+            !available ||
+            !confirmed ||
+            !schedule ||
+            !settings.prayers.length
+          }
+          onClick={() => void enable()}
+        >
+          {t(
+            device
+              ? "Apply changes / renew 30 days"
+              : "Enable background reminders",
+          )}
+        </button>
+        {device ? (
+          <button disabled={busy} onClick={() => void disable()}>
+            {t("Disable alerts")}
+          </button>
+        ) : null}
+        <button
+          disabled={busy || !device}
+          onClick={async () => {
+            setBusy(true);
+            try {
+              await send({ action: "test" });
+              setMessage(
+                "Test accepted by push service. Check your device for the notification.",
+              );
+            } catch (error) {
+              setMessage(
+                error instanceof Error ? error.message : "Test failed.",
+              );
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          {t("Send test notification")}
+        </button>
+        <button
+          disabled={busy}
+          onClick={() => window.dispatchEvent(new Event("noor:push-change"))}
+        >
+          {t("Check status")}
+        </button>
+      </div>
+      {!available ? (
+        <p>
+          {t("Background delivery is unavailable. Use calendar reminders.")}
+        </p>
+      ) : null}
+      {device ? (
+        <small>
+          {t("Scheduled until")}{" "}
+          {new Date(device.expiresAt).toLocaleDateString(locale)} ·{" "}
+          {t("Update reminders after changing city or calculation settings.")}
+        </small>
+      ) : null}
+      <details>
+        <summary>{t("Reminder settings & calendar")}</summary>
+        <fieldset>
+          <legend>{t("Remind me for")}</legend>
+          <div className="reminder-prayers">
+            {PRAYERS.map((p) => (
+              <label key={p}>
+                <input
+                  type="checkbox"
+                  checked={settings.prayers.includes(p)}
+                  onChange={(e) =>
+                    save({
+                      ...settings,
+                      prayers: e.target.checked
+                        ? [...settings.prayers, p]
+                        : settings.prayers.filter((v) => v !== p),
+                    })
+                  }
+                />
+                {t(p)}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <div className="noor-feature-controls">
+          <label>
+            {t("Reminder timing")}
+            <NoorSelect
+              value={settings.minutes}
+              aria-label={t("Reminder timing")}
+              onChange={(e) =>
+                save({ ...settings, minutes: Number(e.target.value) })
+              }
+            >
+              <option value={0}>{t("At prayer time")}</option>
+              {[5, 10, 15].map((n) => (
+                <option key={n} value={n}>
+                  {t("{minutes} minutes before", { minutes: n })}
+                </option>
+              ))}
+            </NoorSelect>
+          </label>
+          <label>
+            {t("Calendar range")}
+            <NoorSelect
+              value={days}
+              aria-label={t("Calendar range")}
+              onChange={(e) => setDays(Number(e.target.value))}
+            >
+              <option value={7}>7 {t("days")}</option>
+              <option value={30}>30 {t("days")}</option>
+            </NoorSelect>
+          </label>
+          {href ? (
+            <a href={href} download>
+              {t("Download prayer calendar")}
+            </a>
+          ) : null}
+        </div>
+        <p>
+          {t(
+            "Import the file into your calendar and enable its alerts. Times are calculated separately for each day.",
+          )}
+        </p>
+      </details>
+      <small>
+        {t(
+          "On iPhone, install NOOR to your Home Screen first. Device settings and connectivity can delay notifications.",
+        )}
+      </small>
+      {!confirmed ? (
+        <p>{t("Confirm your city above before enabling prayer reminders.")}</p>
+      ) : null}
+      <p role="status">{t(message)}</p>
+    </section>
+  );
 }

@@ -1,7 +1,7 @@
+import ToolHeader from "../../site/ToolHeader";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { HeaderUtilities } from "../../site/SiteUtilities";
 import { topicMap, topics } from "../topic-data";
 import ReviewBadge from "../../trust/ReviewBadge";
 
@@ -69,31 +69,7 @@ export default async function TopicPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
-      <header className="topic-topbar">
-        <Link className="brand" href="/" aria-label="NOOR home">
-          <span className="brand-mark">
-            <span className="brand-star">✦</span>
-          </span>
-          <span>
-            <strong>NOOR</strong>
-            <small>DAILY MUSLIM</small>
-          </span>
-        </Link>
-        <nav aria-label="Topic navigation">
-          <Link href="/quran">Quran</Link>
-          <Link href="/prayer-times">Prayer</Link>
-          <Link href="/duas">Duas</Link>
-          <a href="#guide">Full guide</a>
-          <a href="#questions">Questions</a>
-          <a href="#sources">Sources</a>
-        </nav>
-        <aside className="header-utility-cluster">
-          <HeaderUtilities compact />
-          <Link className="topic-home-link" href="/">
-            ← All topics
-          </Link>
-        </aside>
-      </header>
+      <ToolHeader title="Learn" subtitle="" />
 
       <section className="topic-hero">
         <div className="topic-hero-copy">

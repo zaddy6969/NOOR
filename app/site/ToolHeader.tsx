@@ -30,7 +30,7 @@ export default function ToolHeader({
         <Link href="/quran">{t("Quran")}</Link>
         <Link href="/prayer-times">{t("Prayer")}</Link>
         <Link href="/duas">{t("Duas")}</Link>
-        <Link href="/#learn">{t("Learn")}</Link>
+        <Link href="/#explore">{t("Explore")}</Link>
       </nav>
       <aside className="header-utility-cluster">
         <HeaderUtilities compact />

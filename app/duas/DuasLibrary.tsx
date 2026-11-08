@@ -1,6 +1,7 @@
 "use client";
 import { personalStorage } from "@/lib/personal-storage";
 
+import { useNoorCopy } from "../site/SiteUtilities";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { DUAS } from "./dua-data";
@@ -11,6 +12,7 @@ import {
   writeSavedList,
 } from "../site/saved-items";
 export default function DuasLibrary() {
+  const { t } = useNoorCopy();
   const [index, setIndex] = useState(0);
   const [saved, setSaved] = useState<string[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
@@ -92,15 +94,15 @@ export default function DuasLibrary() {
                 history.replaceState(null, "", "/duas?dua=" + entry.id);
             }}
           >
-            {entry.category}
+            {t(entry.category)}
           </button>
         ))}
       </nav>
       <article>
         <span>
-          {dua.category.toUpperCase()} · {dua.source}
+          {t(dua.category)} · {dua.source}
         </span>
-        <h3>{dua.title}</h3>
+        <h3>{t(dua.title)}</h3>
         {dua.excerpt ? (
           <p className="content-status">
             Excerpt from a longer supplication. Open the source for the full
@@ -110,8 +112,27 @@ export default function DuasLibrary() {
         <p className="arabic" lang="ar" dir="rtl">
           {dua.arabic}
         </p>
-        <p>{dua.roman}</p>
-        <blockquote>{dua.meaning}</blockquote>
+        <p lang="en" dir="ltr">
+          {dua.roman}
+        </p>
+        <small>{t("English meaning")}</small>
+        <blockquote lang="en" dir="ltr">
+          {dua.meaning}
+        </blockquote>
+        {dua.audio ? (
+          <div>
+            <small>{t("Full verse audio · Mishary Alafasy")}</small>
+            <audio
+              controls
+              preload="none"
+              key={dua.id}
+              src={dua.audio}
+              onError={() =>
+                setNotice("Audio unavailable. Please try again later.")
+              }
+            />
+          </div>
+        ) : null}
         <div>
           <button
             type="button"
@@ -126,38 +147,38 @@ export default function DuasLibrary() {
               }
             }}
           >
-            Copy
+            {t("Copy")}
           </button>
           <button type="button" onClick={() => updateCount(count + 1)}>
-            Count <b>{count}</b>
+            {t("Count")} <b>{count}</b>
           </button>
           <button type="button" onClick={() => updateCount(0)}>
-            Reset counter
+            {t("Reset counter")}
           </button>
           <button
             type="button"
             onClick={toggle}
             aria-pressed={saved.includes(dua.id)}
           >
-            {saved.includes(dua.id) ? "★ Saved" : "☆ Save"}
+            {saved.includes(dua.id) ? "★ " + t("Saved") : "☆ " + t("Save")}
           </button>
         </div>
         <p>
-          <Link href="/saved">Open Saved →</Link> ·{" "}
+          <Link href="/saved">{t("Open Saved →")}</Link> ·{" "}
           <a
             href={dua.href}
             target={dua.href.startsWith("https:") ? "_blank" : undefined}
             rel="noopener noreferrer"
           >
-            Open source ↗
+            {t("Open source ↗")}
           </a>
         </p>
         <small>
-          Personal counter · no prescribed repetition count is implied.
-          Interface and English meanings shown here; verify the full source.
-          Scholarly review pending.
+          {t(
+            "Personal counter · no prescribed count. Scholarly review pending.",
+          )}
         </small>
-        <p role="status">{notice}</p>
+        <p role="status">{t(notice)}</p>
       </article>
     </div>
   );

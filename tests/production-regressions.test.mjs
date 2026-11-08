@@ -49,6 +49,8 @@ test(
       for (const path of [
         "/",
         "/duas",
+        "/names",
+        "/islamic-calendar",
         "/offline",
         "/saved",
         "/content-review",
@@ -61,7 +63,7 @@ test(
         assert.equal(response.status, 200, path);
         assert.match(response.headers.get("content-type"), /text\/html/);
       }
-      for (const [query, expected] of [["सोने की दुआ", "/duas?dua=sleeping"], ["نماز کے اوقات", "/prayer-times"], ["how do I make wudhu", "/namaz"], ["maryam", "/quran?surah=19"], ["surah 36", "/quran?surah=36"], ["offline", "/offline"]]) {
+      for (const [query, expected] of [["anxiety", "/duas?dua=anxiety"], ["sone ki dua", "/duas?dua=sleeping"], ["सोने की दुआ", "/duas?dua=sleeping"], ["نماز کے اوقات", "/prayer-times"], ["how do I make wudhu", "/namaz"], ["maryam", "/quran?surah=19"], ["surah 36", "/quran?surah=36"], ["offline", "/offline"]]) {
         const response = await fetch(base + "/api/search?q=" + encodeURIComponent(query));
         assert.equal(response.status, 200, query);
         assert.ok((await response.json()).results.some(result => result.href.startsWith(expected)), query);

@@ -343,11 +343,11 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
     const timer = window.setTimeout(() => {
       fetch(`/api/search?q=${encodeURIComponent(cleanQuery)}`, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]) })
         .then(async response => {
-          const payload = await response.json() as { results?: SearchResult[]; error?: string };
+          const payload = await response.json() as { results?: SearchResult[]; error?: string; warning?: string };
           if (!response.ok) throw new Error(payload.error ?? "Search is temporarily unavailable. Please try again.");
           return payload;
         })
-        .then(payload => { if (!controller.signal.aborted) { setResults(Array.isArray(payload.results) ? payload.results : []); setSearchError(""); } })
+        .then(payload => { if (!controller.signal.aborted) { setResults(Array.isArray(payload.results) ? payload.results : []); setSearchError(payload.warning ?? ""); } })
         .catch((error: Error) => { if (!controller.signal.aborted) { setResults([]); setSearchError(error.message || "Search is temporarily unavailable. Please try again."); } })
         .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     }, 180);
@@ -524,6 +524,7 @@ export default function SiteUtilitiesProvider({ children }: { children: React.Re
                       <i className="global-result-arrow" aria-hidden="true">↗</i>
                     </button>
                   ))}
+                  {!loading && results.length>0 && searchError?<p role="status">{translateUI(searchError,locale)}</p>:null}
                   {!loading && results.length === 0 ? <div className="global-search-empty"><SearchIcon/><p role="status">{searchError ? translateUI(searchError, locale) : copy.noResult}</p><p>{translateUI("Try a topic, Surah name, dua, or verse reference such as 2:255.", locale)}</p><div className="global-search-popular">{POPULAR_SEARCHES[locale].slice(0, 4).map(item => <button type="button" key={item} onClick={() => updateSearchQuery(item)}>{item}</button>)}</div>{searchError ? <button type="button" onClick={() => { const value = query; updateSearchQuery(""); requestAnimationFrame(() => updateSearchQuery(value)); }}>{translateUI("Try again", locale)}</button> : null}</div> : null}
                 </div>
               </>
