@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { LocaleText } from "../site/SiteUtilities";
 import DuasLibrary from "./DuasLibrary";
 import ToolHeader from "../site/ToolHeader";
 import SiteFooter from "../site/SiteFooter";
@@ -13,14 +15,13 @@ export default function DuasPage() {
     <main className="trust-page">
       <ToolHeader title="DAILY DUAS" subtitle="Read · Remember · Save" />
       <section className="trust-hero">
-        <h1>Daily Duas</h1>
+        <h1><LocaleText text="Daily Duas" /></h1>
         <p>
-          Short supplications with visible references and clearly labelled
-          excerpts.
+          <LocaleText text="Arabic, meanings and sources" />
         </p>
       </section>
       <section className="daily-duas-page">
-        <DuasLibrary />
+        <Suspense><DuasLibrary /></Suspense>
       </section>
       <SiteFooter />
     </main>

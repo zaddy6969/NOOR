@@ -4,6 +4,7 @@ import { personalStorage } from "@/lib/personal-storage";
 import { useNoorCopy } from "../site/SiteUtilities";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { DUAS } from "./dua-data";
 import {
   readSavedList,
@@ -13,6 +14,7 @@ import {
 } from "../site/saved-items";
 export default function DuasLibrary() {
   const { t } = useNoorCopy();
+  const selected = useSearchParams().get("dua");
   const [index, setIndex] = useState(0);
   const [saved, setSaved] = useState<string[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
@@ -21,7 +23,6 @@ export default function DuasLibrary() {
     const sync = () => setSaved(readSavedList(SAVED_KEYS.duas));
     const frame = requestAnimationFrame(() => {
       sync();
-      const selected = new URLSearchParams(location.search).get("dua");
       const position = DUAS.findIndex((entry) => entry.id === selected);
       if (position >= 0) setIndex(position);
       try {
@@ -49,7 +50,7 @@ export default function DuasLibrary() {
       window.removeEventListener(SAVED_ITEMS_EVENT, sync);
       window.removeEventListener("storage", sync);
     };
-  }, []);
+  }, [selected]);
   const dua = DUAS[index];
   const count = counts[dua.id] ?? 0;
   const updateCount = (value: number) => {

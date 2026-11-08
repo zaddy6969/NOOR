@@ -1,4 +1,5 @@
 export const REFRESH_UI_COPY: Record<string, [string, string]> = {
+  "Arabic, meanings and sources": ["अरबी, अर्थ और संदर्भ", "عربی، معانی اور حوالے"],
   "Assalamu Alaikum": ["अस्सलामु अलैकुम", "السلام علیکم"],
   "May Allah bless your day": [
     "अल्लाह आपके दिन में बरकत दे",

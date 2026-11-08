@@ -2682,5 +2682,6 @@ html.noor-dark .reference-prayer-wrap .home-prayer-actions button { border-color
 .noor-home-v2 .daily-card-label{justify-content:flex-start;color:var(--muted);letter-spacing:.06em}
 .noor-home-v2 .daily-status-card>strong{display:block;margin:14px 0 0;color:var(--ink);font-family:Georgia,serif;line-height:1.2}
 .noor-home-v2 .daily-card-source{color:var(--green);margin-top:auto;padding-top:12px;font-size:13px}
+.noor-home-v2 .daily-card-meta b{color:var(--ink)}
 .noor-home-v2 .daily-card-meta{width:100%;margin-top:12px;color:var(--ink)}
 .noor-home-v2 .daily-status-card:hover{border-color:var(--green);background:var(--surface-soft);transform:none}
