@@ -110,7 +110,7 @@ export default function SavedLibrary({ syncConfigured }: { syncConfigured: boole
   return <section className={styles.library} aria-busy={!ready}>
     <header className={styles.heading}>
       <div><span className={styles.eyebrow}>{t("YOUR COLLECTION")}</span><h1>{t("Saved")} {ready && items.length > 0 ? <span>{items.length}</span> : null}</h1><p>{t("Saved on this device")}</p></div>
-      <Link className={styles.browse} href="/features">{t("Explore NOOR")} <span aria-hidden="true">↗</span></Link>
+      <Link className={styles.browse} href="/features">{t("Explore NOOR")} <span aria-hidden="true">→</span></Link>
     </header>
     <details className={styles.options}>
       <summary>{t("Collection options")} <span aria-hidden="true">⌄</span></summary>
@@ -121,7 +121,7 @@ export default function SavedLibrary({ syncConfigured }: { syncConfigured: boole
     </details>
     {!ready ? <div className={styles.empty} role="status">{t("Loading saved items…")}</div> : items.length === 0 ? <div className={styles.empty}>
       <span className={styles.emptyIcon}><BookmarkMark /></span>
-      <h2>{t("Keep what matters close")}</h2><p>{t("Tap the bookmark on an Ayah, dua or Darood to save it here.")}</p>
+      <h2>{t("Keep what matters close")}</h2><p>{t("Tap Save on an Ayah, dua or Darood to find it here.")}</p>
       <div className={styles.emptyActions}><Link href="/quran">{t("Read Quran")} <span aria-hidden="true">→</span></Link><Link href="/duas">{t("Browse duas")}</Link></div>
     </div> : <>
       <div className={styles.toolbar}>
@@ -131,7 +131,7 @@ export default function SavedLibrary({ syncConfigured }: { syncConfigured: boole
       <nav className={styles.filters} aria-label={t("Filter saved items")}>
         {FILTERS.map(([id, label]) => <button key={id} type="button" aria-pressed={filter === id} onClick={() => setFilter(id)}>{t(label)} <span>{counts[id]}</span></button>)}
       </nav>
-      <h2 ref={resultRef} tabIndex={-1} className={styles.resultCount} aria-live="polite">{t("{count} saved items", { count: visible.length })}</h2>
+      <h2 ref={resultRef} tabIndex={-1} className={styles.resultCount} aria-live="polite">{t(visible.length === 1 ? "1 saved item" : "{count} saved items", { count: visible.length })}</h2>
       {visible.length ? <div className={styles.grid}>{visible.map(item => <article className={styles.card} key={`${item.key}:${item.id}`}>
         <div className={styles.cardTop}><span className={styles.kind}><BookmarkMark />{t(item.kind)}</span><button type="button" className={styles.remove} aria-label={t("Remove {label} from Saved", { label: item.title })} onClick={() => remove(item)}>{t("Remove")}</button></div>
         <Link href={item.href} className={styles.cardLink}><h3 dir="auto">{item.title}</h3>{item.detail ? <p dir="auto">{item.detail}</p> : null}{item.arabic ? <p className={styles.arabic} lang="ar" dir="rtl">{item.arabic}</p> : null}<span className={styles.open}>{t("Open")} <span aria-hidden="true">→</span></span></Link>
