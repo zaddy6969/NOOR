@@ -1,4 +1,13 @@
 export const REFRESH_UI_COPY: Record<string, [string, string]> = {
+  "Explore all features": ["सभी सुविधाएँ देखें", "تمام سہولیات دیکھیں"],
+  "Discover NOOR": ["नूर को जानें", "نور کو جانیں"],
+  "Browse directory": ["सूची देखें", "فہرست دیکھیں"],
+  "Matching unavailable": ["मैचिंग उपलब्ध नहीं", "میچنگ دستیاب نہیں"],
+  "No checkout": ["खरीदारी उपलब्ध नहीं", "خریداری دستیاب نہیں"],
+  "Worship guides": ["इबादत की रहनुमाई", "عبادات کی رہنمائی"],
+  "Naat & resources": ["नात और संसाधन", "نعت اور وسائل"],
+  "Giving & charity": ["दान और सदक़ा", "عطیات اور صدقہ"],
+
   "All features": ["सभी सुविधाएँ", "تمام سہولیات"],
   "Every NOOR tool and guide, in one place.": ["नूर के सभी टूल और मार्गदर्शिकाएँ, एक जगह।", "نور کے تمام اوزار اور رہنما ایک جگہ۔"],
   "Faith & learning": ["ईमान और शिक्षा", "ایمان اور تعلیم"],
