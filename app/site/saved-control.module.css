@@ -1,0 +1,7 @@
+.link[aria-current=page] { color:var(--green); background:var(--mint); border-color:var(--line); }
+.link[aria-current=page] svg { fill:currentColor; }
+@media(min-width:901px) {
+  .link:global(.saved-header-link) { width:auto; min-width:86px; padding:0 12px; border-radius:22px; gap:8px; }
+  .link:global(.saved-header-link)>span { display:inline; }
+  .link:global(.saved-header-link)>b { position:static; }
+}

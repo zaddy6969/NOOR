@@ -3,7 +3,8 @@ import { ACCOUNT_CHANGE_EVENT, personalStorage } from "@/lib/personal-storage";
 
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import savedControl from "./saved-control.module.css";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { readSavedCollections, SAVED_ITEMS_EVENT, savedItemsTotal } from "./saved-items";
 import NoorSelect from "./NoorSelect";
@@ -196,9 +197,11 @@ function useSavedItemCount() {
     sync();
     window.addEventListener(SAVED_ITEMS_EVENT, sync);
     window.addEventListener("storage", sync);
+    window.addEventListener(ACCOUNT_CHANGE_EVENT, sync);
     return () => {
       window.removeEventListener(SAVED_ITEMS_EVENT, sync);
       window.removeEventListener("storage", sync);
+      window.removeEventListener(ACCOUNT_CHANGE_EVENT, sync);
     };
   }, []);
 
@@ -208,6 +211,7 @@ function useSavedItemCount() {
 export function HeaderUtilities({ compact = false, showSearch = true }: { compact?: boolean; showSearch?: boolean }) {
   const utilities = useContext(UtilitiesContext);
   const savedCount = useSavedItemCount();
+  const pathname = usePathname();
   if (!utilities) return null;
   const copy = UTILITY_COPY[utilities.locale];
   return (
@@ -217,7 +221,7 @@ export function HeaderUtilities({ compact = false, showSearch = true }: { compac
           <SearchIcon/><span>{copy.search}</span><kbd>⌘ K</kbd>
         </button>
       ) : null}
-      <Link className={`saved-header-link${compact ? " compact" : ""}`} href="/saved" aria-label={copy.savedLabel(savedCount)} title={copy.saved}>
+      <Link className={`saved-header-link ${savedControl.link}${compact ? " compact" : ""}`} href="/saved" aria-current={pathname === "/saved" ? "page" : undefined} aria-label={copy.savedLabel(savedCount)} title={copy.saved}>
         <SavedIcon/><span>{copy.saved}</span>{savedCount > 0 ? <b aria-hidden="true">{savedCount > 99 ? "99+" : savedCount}</b> : null}
       </Link>
       <button className="theme-toggle" type="button" onClick={utilities.toggleTheme} aria-label={utilities.dark ? copy.lightTheme : copy.darkTheme}>
