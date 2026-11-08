@@ -1,4 +1,18 @@
 export const REFRESH_UI_COPY: Record<string, [string, string]> = {
+  "All features": ["सभी सुविधाएँ", "تمام سہولیات"],
+  "Every NOOR tool and guide, in one place.": ["नूर के सभी टूल और मार्गदर्शिकाएँ, एक जगह।", "نور کے تمام اوزار اور رہنما ایک جگہ۔"],
+  "Faith & learning": ["ईमान और शिक्षा", "ایمان اور تعلیم"],
+  "History & knowledge": ["इतिहास और ज्ञान", "تاریخ اور علم"],
+  "Naat & literature": ["नात और साहित्य", "نعت اور ادب"],
+  "Places & community": ["स्थान और समुदाय", "مقامات اور برادری"],
+  "Interactive family tree": ["परिवार का इंटरैक्टिव वृक्ष", "خاندان کا تعاملی شجرہ"],
+  "Salah step by step": ["नमाज़ चरण दर चरण", "نماز مرحلہ وار"],
+  "Prayer recitations": ["नमाज़ की तिलावत", "نماز کی قراءت"],
+  "Common prayer mistakes": ["नमाज़ की आम गलतियाँ", "نماز کی عام غلطیاں"],
+  "Product ideas · no checkout": ["उत्पाद सुझाव · खरीदारी उपलब्ध नहीं", "مصنوعات کی تجاویز · خریداری دستیاب نہیں"],
+  "Matrimony · not yet open": ["निकाह · अभी उपलब्ध नहीं", "رشتۂ نکاح · ابھی دستیاب نہیں"],
+  "Muslim destinations": ["मुस्लिम स्थल", "مسلم مقامات"],
+
   "Arabic, meanings and sources": ["अरबी, अर्थ और संदर्भ", "عربی، معانی اور حوالے"],
   "Assalamu Alaikum": ["अस्सलामु अलैकुम", "السلام علیکم"],
   "May Allah bless your day": [

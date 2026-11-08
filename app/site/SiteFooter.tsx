@@ -160,6 +160,7 @@ export default function SiteFooter({ locale: providedLocale, compact = false }: 
           <Link href="/prayer-times">{text("Prayer Times")}</Link>
           <Link href="/duas">{text("Duas")}</Link>
           <Link href="/saved">{text("Saved")}</Link>
+          <Link href="/features">{t("All features")}</Link>
         </nav>
       </div> : null}
       {!compact ? <details className="footer-directory">

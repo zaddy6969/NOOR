@@ -67,7 +67,7 @@ export default function Home() {
           }
         />
         <section id="explore">
-          <h2>{t("Explore")}</h2>
+          <div className="home-explore-heading"><h2>{t("Explore")}</h2><Link href="/features">{t("All features")} →</Link></div>
           <div className="home-feature-grid">
             {features.map(([label, href, icon]) => (
               <Link href={href} key={href}>

@@ -7,6 +7,8 @@ const SITE_URL =
 const routes = [
   "",
   "/duas",
+  "/features",
+  "/names",
   "/offline",
   "/corrections",
   "/quran",
