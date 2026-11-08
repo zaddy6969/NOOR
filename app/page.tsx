@@ -73,7 +73,6 @@ export default function Home() {
               <Link href={href} key={href}>
                 <NoorIcon name={icon} />
                 <span>{t(label)}</span>
-                <b aria-hidden="true">↗</b>
               </Link>
             ))}
           </div>
