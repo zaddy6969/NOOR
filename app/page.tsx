@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import styles from "./site/feature-directory.module.css";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ToolHeader from "./site/ToolHeader";
@@ -67,7 +68,7 @@ export default function Home() {
           }
         />
         <section id="explore">
-          <div className="home-explore-heading"><h2>{t("Explore")}</h2><Link href="/features">{t("All features")} →</Link></div>
+          <div className={styles.homeHeading}><h2>{t("Explore")}</h2><Link href="/features">{t("All features")} →</Link></div>
           <div className="home-feature-grid">
             {features.map(([label, href, icon]) => (
               <Link href={href} key={href}>

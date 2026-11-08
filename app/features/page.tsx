@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import styles from "../site/feature-directory.module.css";
 import Link from "next/link";
 import ToolHeader from "../site/ToolHeader";
 import SiteFooter from "../site/SiteFooter";
@@ -45,10 +46,10 @@ const groups = [
 export default function FeaturesPage() {
   return <main className="noor-home-v2">
     <ToolHeader title="All features" subtitle="" />
-    <div className="feature-directory">
+    <div className={styles.directory}>
       <h1><LocaleText text="All features" /></h1>
       <p><LocaleText text="Every NOOR tool and guide, in one place." /></p>
-      <div className="feature-directory-grid">
+      <div className={styles.grid}>
         {groups.map(([title, links]) => <section key={title}>
           <h2><LocaleText text={title} /></h2>
           <ul>{links.map(([label, href]) => <li key={href}><Link href={href}><LocaleText text={label} /></Link></li>)}</ul>
